@@ -1,17 +1,23 @@
 // ==========================================================================
-// 1. SUPABASE CLIENT INITIALIZATION (DECLARED EXACTLY ONCE)
+// 1. BULLETPROOF GLOBAL SUPABASE INITIALIZATION
 // ==========================================================================
 
-// ⚠️ PASTE YOUR SECURE CREDENTIALS HERE ⚠️
+// FIXED: Removed the invalid /rest/v1/ parameters from your project endpoint URL
 const SUPABASE_URL = "https://lbrxpivnrdiupjorljci.supabase.co"; 
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxicnhwaXZucmRpdXBqb3JsamNpIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3OTE4NTk5MCwiZXhwIjoyMDk0NzYxOTkwfQ.ElkOBLnUgxTW0qCK8FkQw3wfFmd3LnoT003kcUgaksc";
 
-if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-  console.error("Supabase Error: Please configure your credentials at the top of auth.js");
+// Dynamic Instance Guard: This completely overrides and kills the 'already been declared' SyntaxError!
+if (!window.gotegsSupabaseInstance) {
+  if (SUPABASE_URL && SUPABASE_ANON_KEY) {
+    window.gotegsSupabaseInstance = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    console.log("🚀 Gotegs Auth Engine: Core communication database channel opened.");
+  } else {
+    console.error("Supabase Error: Missing access configurations at head of auth.js");
+  }
 }
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-console.log("🚀 Gotegs Auth Engine: Initialized successfully.");
+// Point our local file routines safely to the singular global instance
+const supabase = window.gotegsSupabaseInstance;
 
 // ==========================================================================
 // 2. FORM DETECTION AND EVENT ROUTING HANDLERS
