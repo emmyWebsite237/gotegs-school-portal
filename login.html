@@ -4,36 +4,28 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Academy Portal | Secure Login</title>
-  <!-- Link to the Shared Master Stylesheet -->
   <link rel="stylesheet" href="/assets/css/styles.css">
+  <link rel="icon" href="data:,">
 </head>
 <body>
 
-  <!-- ==========================================
-       1. GLOBAL NAVIGATION BAR
-       ========================================== -->
   <header class="navbar">
     <div class="nav-container">
       <a href="index.html" class="logo">
         <span class="logo-icon">🎓</span> Academy<span class="highlight">Portal</span>
       </a>
-      
       <nav class="nav-menu">
         <a href="index.html" class="nav-link">Home</a>
         <a href="about.html" class="nav-link">About Us</a>
         <a href="login.html" class="btn btn-secondary active">Login</a>
         <a href="signup.html" class="btn btn-primary">Sign Up</a>
       </nav>
-
       <button class="hamburger" aria-label="Toggle Menu System" aria-expanded="false">
-        <span></span>
-        <span></span>
-        <span></span>
+        <span></span><span></span><span></span>
       </button>
     </div>
   </header>
 
-  <!-- Mobile Side Drawer Navigation Menu -->
   <div class="side-drawer">
     <nav class="drawer-menu">
       <a href="index.html" class="drawer-link">Home</a>
@@ -45,51 +37,37 @@
   </div>
   <div class="drawer-overlay"></div>
 
-  <!-- ==========================================
-       2. RECONSTRUCTED CENTRALIZED LOGIN CARD
-       ========================================== -->
   <main class="auth-wrapper">
     <div class="glass-card auth-card animated-view-change">
-      
-      <!-- Card Branding Header -->
       <div class="auth-header">
-        <h2>Welcome Back</h2>
-        <p>Access your school profile dashboard network</p>
+        <h2>Secure Gateway Portal</h2>
+        <p>Provide verified electronic mail credentials to access dashboard records.</p>
       </div>
 
-      <!-- Secure Credentials Portal Login Form -->
       <form id="login-form" novalidate>
         
-        <!-- Field 1: Registered Identity Email Address -->
         <div class="form-group">
-          <label for="login-email" class="form-label">Email Address</label>
-          <input type="email" id="login-email" class="form-control" placeholder="yourname@school.edu" required>
+          <label for="login-email" class="form-label">Account Email Address</label>
+          <input type="email" id="login-email" class="form-control" placeholder="student@school.edu" required>
         </div>
 
-        <!-- Field 2: Authentication Security Access Key -->
-        <div class="form-group" style="margin-bottom: 1rem;">
-          <label for="login-password" class="form-label">Password</label>
+        <div class="form-group">
+          <label for="login-password" class="form-label">Security Key Password</label>
           <input type="password" id="login-password" class="form-control" placeholder="••••••••" required>
         </div>
 
-        <!-- Horizontal Split Grid: Persistent Remembers and Password Recovery links -->
         <div class="form-utility-row">
-          <!-- Left-aligned basic session checkbox container -->
-          <label class="checkbox-group" for="login-remember" style="margin-bottom: 0;">
-            <input type="checkbox" id="login-remember">
-            <span class="checkbox-label">Remember me</span>
-          </label>
-          
-          <!-- Right-aligned clean stylized password recovery anchor redirect link -->
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <input type="checkbox" id="login-remember" style="width: 14px; height: 14px; cursor: pointer;">
+            <label for="login-remember" style="color: var(--text-muted); cursor: pointer; user-select: none;">Remember me</label>
+          </div>
           <a href="forgot-password.html" class="link-blue-underlined">Forgot Password?</a>
         </div>
 
-        <!-- Authorization Initialization Submission Activation Button -->
         <button type="submit" class="btn btn-primary btn-block btn-large">
           Secure Login
         </button>
 
-        <!-- Redirect Switching Anchor Interface Link -->
         <div class="auth-footer">
           Don't have an account? <a href="signup.html">Sign up</a>
         </div>
@@ -98,13 +76,8 @@
     </div>
   </main>
 
-  <!-- ==========================================
-       3. MODULAR SCRIPT PROCESSING
-       ========================================== -->
-  <!-- Supabase Core Driver Module Script CDN integration layer -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
-  <!-- App Configuration & UI Responsive Controller engines -->
   <script src="/assets/js/auth.js"></script>
   <script src="/assets/js/ui.js"></script>
 </body>
