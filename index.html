@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Academy Portal | Update Security Credentials</title>
+  <title>Academy Portal | Modern School Management Ecosystem</title>
   <link rel="stylesheet" href="/assets/css/styles.css">
+  <link rel="icon" href="data:,">
 </head>
 <body>
 
@@ -13,14 +14,16 @@
       <a href="index.html" class="logo">
         <span class="logo-icon">🎓</span> Academy<span class="highlight">Portal</span>
       </a>
+      
       <nav class="nav-menu">
-        <a href="index.html" class="nav-link">Home</a>
+        <a href="index.html" class="nav-link active">Home</a>
         <a href="about.html" class="nav-link">About Us</a>
         <a href="#" class="nav-link authenticated-link">Academic Records</a>
         <a href="#" class="nav-link authenticated-link">E-Learning</a>
         <a href="login.html" class="btn btn-secondary">Login</a>
         <a href="signup.html" class="btn btn-primary">Sign Up</a>
       </nav>
+
       <button class="hamburger" aria-label="Toggle Menu System" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
@@ -29,7 +32,7 @@
 
   <div class="side-drawer">
     <nav class="drawer-menu">
-      <a href="index.html" class="drawer-link">Home</a>
+      <a href="index.html" class="drawer-link active">Home</a>
       <a href="about.html" class="drawer-link">About Us</a>
       <a href="#" class="drawer-link authenticated-link">Academic Records</a>
       <a href="#" class="drawer-link authenticated-link">E-Learning</a>
@@ -40,30 +43,27 @@
   </div>
   <div class="drawer-overlay"></div>
 
-  <main class="auth-wrapper">
-    <div class="glass-card auth-card animated-view-change">
-      <div class="auth-header">
-        <h2>Modify Portal Security Key</h2>
-        <p>Establish a new secure password for your account portal.</p>
+  <main class="auth-wrapper" style="flex-direction: column; text-align: center; padding-top: 140px; justify-content: flex-start; min-height: 100vh;">
+    <div class="glass-card animated-view-change" style="max-width: 700px; width: 100%; padding: 3rem; margin: 1rem;">
+      <span class="badge">Institutional Management Network</span>
+      
+      <h1 style="font-size: 2.8rem; font-weight: 800; line-height: 1.2; margin-bottom: 1rem; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+        Welcome to Gotegs Academy Portal
+      </h1>
+      
+      <p style="color: var(--text-muted); font-size: 1.1rem; line-height: 1.6; margin-bottom: 2.5rem;">
+        An all-in-one unified dashboard environment for students, parents, and administrative instructors. Track real-time academic progression records, access cloud e-learning modules, and coordinate school communications securely.
+      </p>
+
+      <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+        <a href="signup.html" class="btn btn-primary btn-large" style="min-width: 180px;">Get Started</a>
+        <a href="login.html" class="btn btn-secondary btn-large" style="min-width: 180px;">Portal Gateway</a>
       </div>
-
-      <form id="update-password-form" novalidate>
-        <div class="form-group">
-          <label for="update-password" class="form-label">New Password</label>
-          <input type="password" id="update-password" class="form-control" placeholder="••••••••" minlength="6" required>
-        </div>
-
-        <div class="form-group" style="margin-bottom: 2rem;">
-          <label for="update-confirm" class="form-label">Confirm New Password</label>
-          <input type="password" id="update-confirm" class="form-control" placeholder="••••••••" required>
-        </div>
-
-        <button type="submit" class="btn btn-primary btn-block btn-large">Update Password</button>
-      </form>
     </div>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
   <script src="/assets/js/auth.js"></script>
   <script src="/assets/js/ui.js"></script>
 </body>
