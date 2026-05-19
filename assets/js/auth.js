@@ -1,18 +1,18 @@
 // ==========================================================================
-// 1. BULLETPROOF GLOBAL SUPABASE INITIALIZATION
+// 1. FRESH GLOBAL SUPABASE INITIALIZATION
 // ==========================================================================
 
-// FIXED: Removed the invalid /rest/v1/ parameters from your project endpoint URL
-const SUPABASE_URL = "https://lbrxpivnrdiupjorljci.supabase.co"; 
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxicnhwaXZucmRpdXBqb3JsamNpIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3OTE4NTk5MCwiZXhwIjoyMDk0NzYxOTkwfQ.ElkOBLnUgxTW0qCK8FkQw3wfFmd3LnoT003kcUgaksc";
+// ⚠️ PASTE YOUR BRAND NEW SUPABASE PROJECT CREDENTIALS HERE ⚠️
+const SUPABASE_URL = "YOUR_NEW_CLEAN_SUPABASE_PROJECT_URL_HERE"; 
+const SUPABASE_ANON_KEY = "YOUR_NEW_SUPABASE_ANON_PUBLIC_KEY_HERE";
 
-// Dynamic Instance Guard: This completely overrides and kills the 'already been declared' SyntaxError!
+// Dynamic Instance Guard: This completely prevents your browser from crashing with duplicate declaration errors.
 if (!window.gotegsSupabaseInstance) {
-  if (SUPABASE_URL && SUPABASE_ANON_KEY) {
+  if (SUPABASE_URL && SUPABASE_ANON_KEY && !SUPABASE_URL.includes("YOUR_NEW")) {
     window.gotegsSupabaseInstance = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    console.log("🚀 Gotegs Auth Engine: Core communication database channel opened.");
+    console.log("🚀 Gotegs Auth Engine: Core communication database channel opened successfully.");
   } else {
-    console.error("Supabase Error: Missing access configurations at head of auth.js");
+    console.warn("Supabase Configuration Notice: Please make sure to fill out your new credentials at the top of auth.js");
   }
 }
 
@@ -30,19 +30,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const updatePasswordForm = document.getElementById('update-password-form');
 
   if (signupForm) {
-    console.log("📌 Interceptor active: Signup Form");
+    console.log("📌 Interceptor active: Signup Form Ready");
     signupForm.addEventListener('submit', handleSignUp);
   }
   if (loginForm) {
-    console.log("📌 Interceptor active: Login Form");
+    console.log("📌 Interceptor active: Login Form Ready");
     loginForm.addEventListener('submit', handleLogin);
   }
   if (forgotPasswordForm) {
-    console.log("📌 Interceptor active: Recovery Request Form");
+    console.log("📌 Interceptor active: Recovery Request Form Ready");
     forgotPasswordForm.addEventListener('submit', handleForgotPassword);
   }
   if (updatePasswordForm) {
-    console.log("📌 Interceptor active: Password Update Commit Form");
+    console.log("📌 Interceptor active: Password Update Form Ready");
     updatePasswordForm.addEventListener('submit', handleUpdatePassword);
   }
 });
