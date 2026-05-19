@@ -1,1 +1,192 @@
+/* ==========================================================================
+   AUTH COMPONENTS & INTERACTIVE FORM UTILITIES (Appended to master styles.css)
+   ========================================================================== */
 
+/* --- Centralized Auth Layout Container --- */
+.auth-wrapper {
+  min-height: calc(100vh - 70px);
+  padding-top: 90px;
+  padding-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+/* --- The Master Auth Card --- */
+.auth-card {
+  width: 100%;
+  max-width: 480px;
+  padding: 2.5rem;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-card:hover {
+  border-color: rgba(37, 99, 235, 0.2);
+  box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
+}
+
+/* --- Form Headers & Typography --- */
+.auth-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.auth-header h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.01em;
+}
+
+.auth-header p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+/* --- Form Input Component Framework --- */
+.form-group {
+  margin-bottom: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-main);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+/* --- Inputs, Select Dropdowns, Textareas --- */
+.form-control {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  color: var(--text-main);
+  font-size: 0.95rem;
+  outline: none;
+  transition: var(--transition);
+}
+
+.form-control:focus {
+  border-color: var(--primary);
+  background: rgba(15, 23, 42, 0.9);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* Custom styling for drop-down option elements inside dark background */
+select.form-control option {
+  background-color: #1e293b;
+  color: var(--text-main);
+}
+
+/* --- Flexbox Input Control Split-Row (Forgot Password alignment) --- */
+.form-utility-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  font-size: 0.85rem;
+}
+
+.link-blue-underlined {
+  color: #3b82f6;
+  text-decoration: underline;
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.link-blue-underlined:hover {
+  color: #60a5fa;
+}
+
+/* --- Checkbox Design Component --- */
+.checkbox-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  cursor: pointer;
+}
+
+.checkbox-group input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary);
+  margin-top: 0.15rem;
+  cursor: pointer;
+}
+
+.checkbox-label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+  user-select: none;
+}
+
+/* --- Authentication Card Footer System --- */
+.auth-footer {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.auth-footer a {
+  color: var(--text-main);
+  text-decoration: none;
+  font-weight: 600;
+  margin-left: 0.25rem;
+  transition: var(--transition);
+}
+
+.auth-footer a:hover {
+  color: var(--primary);
+}
+
+/* --- Dynamic View Flip Transition Classes --- */
+.animated-view-change {
+  animation: viewFadeSlide 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes viewFadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- Mobile Device Screen Protection for Forms --- */
+@media (max-width: 576px) {
+  .auth-card {
+    padding: 1.75rem 1.25rem;
+    border-radius: 12px;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  
+  .auth-header h2 {
+    font-size: 1.5rem;
+  }
+}
