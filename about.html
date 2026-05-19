@@ -1,1 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Academy Portal | About Our Platform</title>
+  <!-- Absolute Path Link to the Shared Master Stylesheet -->
+  <link rel="stylesheet" href="/assets/css/styles.css">
+</head>
+<body>
 
+  <!-- ==========================================
+       1. GLOBAL NAVIGATION BAR
+       ========================================== -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo">
+        <span class="logo-icon">🎓</span> Academy<span class="highlight">Portal</span>
+      </a>
+      
+      <nav class="nav-menu">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="about.html" class="nav-link active">About Us</a>
+        <a href="#" class="nav-link authenticated-link">Academic Records</a>
+        <a href="#" class="nav-link authenticated-link">E-Learning</a>
+        <a href="login.html" class="btn btn-secondary">Login</a>
+        <a href="signup.html" class="btn btn-primary">Sign Up</a>
+      </nav>
+
+      <button class="hamburger" aria-label="Toggle Menu System" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Side Drawer Navigation Menu -->
+  <div class="side-drawer">
+    <nav class="drawer-menu">
+      <a href="index.html" class="drawer-link">Home</a>
+      <a href="about.html" class="drawer-link active">About Us</a>
+      <a href="#" class="drawer-link authenticated-link">Academic Records</a>
+      <a href="#" class="drawer-link authenticated-link">E-Learning</a>
+      <hr class="drawer-divider">
+      <a href="login.html" class="btn btn-secondary btn-block">Login Portal</a>
+      <a href="signup.html" class="btn btn-primary btn-block">Create Account</a>
+    </nav>
+  </div>
+  <div class="drawer-overlay"></div>
+
+  <!-- ==========================================
+       2. ABOUT US CONTENT SHOWCASE
+       ========================================== -->
+  <main class="auth-wrapper" style="padding: 4rem 1rem; flex-direction: column; justify-content: flex-start; min-height: auto;">
+    
+    <!-- Centralized Glass Header Card -->
+    <div class="glass-card" style="max-width: 800px; width: 100%; padding: 2.5rem; margin-bottom: 2rem; text-align: center;">
+      <span class="badge">Our Mission</span>
+      <h1 style="font-size: 2.5rem; margin-bottom: 1rem; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+        Next-Gen Educational Infrastructure
+      </h1>
+      <p style="color: var(--text-muted); font-size: 1.1rem; line-height: 1.7; text-align: left; margin-top: 1.5rem;">
+        The Academy Portal is designed to dissolve communication barriers between administrative offices, instructors, students, and parent networks. By consolidating assignments, report cards, class registrations, and institutional notifications into a single, lightning-fast dashboard ecosystem, we empower learning groups to focus entirely on academic success.
+      </p>
+    </div>
+
+    <!-- Core Platform Pillars Feature Grid Layout -->
+    <div style="max-width: 800px; width: 100%; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem;">
+      
+      <!-- Feature Card 1 -->
+      <div class="glass-card" style="padding: 1.5rem;">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🖥️</div>
+        <h3 style="margin-bottom: 0.5rem; color: #fff;">Cloud E-Learning</h3>
+        <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5;">Access lectures, course resources, and upload completed modules directly from your secure student interface.</p>
+      </div>
+
+      <!-- Feature Card 2 -->
+      <div class="glass-card" style="padding: 1.5rem;">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">📊</div>
+        <h3 style="margin-bottom: 0.5rem; color: #fff;">Real-Time Grading</h3>
+        <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5;">Immediate analytical clarity for both students and parents on exams, attendance rates, and continuous assessment benchmarks.</p>
+      </div>
+
+      <!-- Feature Card 3 -->
+      <div class="glass-card" style="padding: 1.5rem;">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔒</div>
+        <h3 style="margin-bottom: 0.5rem; color: #fff;">Role Protection</h3>
+        <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5;">Built using strict database access policies to guarantee personal identity information stays private and heavily encrypted.</p>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ==========================================
+       3. MODULAR SCRIPT PROCESSING
+       ========================================== -->
+  <!-- Supabase Client Connection Module -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <!-- Absolute Path Scripts Deployment Layer -->
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/ui.js"></script>
+</body>
+</html>
