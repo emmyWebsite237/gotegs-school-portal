@@ -6,9 +6,10 @@
 const SUPABASE_URL = "https://srexdwtbuaevlkbnvdoy.supabase.co"; 
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyZXhkd3RidWFldmxrYm52ZG95Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyMDcwNDMsImV4cCI6MjA5NDc4MzA0M30.PMClOZCg7haWIS0N5hY_9-sjyXPQUwYTXvVt0ZgZwmQ";
 
-// Dynamic Instance Guard: This completely prevents your browser from crashing with duplicate declaration errors.
+// Dynamic Instance Guard: This prevents your browser from crashing with duplicate declaration errors.
 if (!window.gotegsSupabaseInstance) {
   if (SUPABASE_URL && SUPABASE_ANON_KEY && !SUPABASE_URL.includes("YOUR_NEW")) {
+    // We use the window.supabase object provided automatically by the CDN script
     window.gotegsSupabaseInstance = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     console.log("🚀 Gotegs Auth Engine: Core communication database channel opened successfully.");
   } else {
@@ -16,8 +17,8 @@ if (!window.gotegsSupabaseInstance) {
   }
 }
 
-// Point our local file routines safely to the singular global instance
-const supabase = window.gotegsSupabaseInstance;
+// FIX: Renamed from 'supabase' to 'supabaseClient' to completely eliminate the declaration crash!
+const supabaseClient = window.gotegsSupabaseInstance;
 
 // ==========================================================================
 // 2. FORM DETECTION AND EVENT ROUTING HANDLERS
@@ -78,7 +79,7 @@ async function handleSignUp(e) {
   }
 
   try {
-    const { data, error } = await supabase.auth.signUp({
+    const { data, error } = await supabaseClient.auth.signUp({
       email: email,
       password: password,
       options: {
@@ -118,7 +119,7 @@ async function handleLogin(e) {
   }
 
   try {
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
       email: email,
       password: password
     });
@@ -148,7 +149,7 @@ async function handleForgotPassword(e) {
   }
 
   try {
-    const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+    const { data, error } = await supabaseClient.auth.resetPasswordForEmail(email, {
       redirectTo: window.location.origin + '/update-password.html',
     });
 
@@ -180,7 +181,7 @@ async function handleUpdatePassword(e) {
   }
 
   try {
-    const { data, error } = await supabase.auth.updateUser({
+    const { data, error } = await supabaseClient.auth.updateUser({
       password: newPassword
     });
 
