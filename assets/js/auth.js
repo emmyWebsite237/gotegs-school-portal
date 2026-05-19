@@ -3,7 +3,7 @@
 // ==========================================================================
 
 // ⚠️ PASTE YOUR BRAND NEW SUPABASE PROJECT CREDENTIALS HERE ⚠️
-const SUPABASE_URL = "YOUR_NEW_CLEAN_SUPABASE_PROJECT_URL_HERE"; 
+const SUPABASE_URL = "https://srexdwtbuaevlkbnvdoy.supabase.co"; 
 const SUPABASE_ANON_KEY = "YOUR_NEW_SUPABASE_ANON_PUBLIC_KEY_HERE";
 
 // Dynamic Instance Guard: This completely prevents your browser from crashing with duplicate declaration errors.
