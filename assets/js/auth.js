@@ -199,3 +199,24 @@ async function handleUpdatePassword(e) {
     console.error(error);
   }
 }
+
+// ==========================================================================
+// SECURITY ROUTE GUARD: UPDATE-PASSWORD PROTECTION
+// ==========================================================================
+document.addEventListener('DOMContentLoaded', () => {
+  // Check if we are currently looking at the update-password page
+  if (window.location.pathname.includes('update-password.html')) {
+    
+    // Supabase places recovery tokens inside the URL hash fragment (#access_token=...)
+    const hasRecoveryToken = window.location.hash.includes('access_token=');
+    
+    // Also check if they happen to already be logged in normally
+    const hasActiveSession = localStorage.getItem('supabase.auth.token');
+
+    // If they have neither, they typed the URL manually without clicking the email link!
+    if (!hasRecoveryToken && !hasActiveSession) {
+      alert("⚠️ Access Denied: This recovery gate requires an authentic email validation token sequence. Redirecting to home portal...");
+      window.location.href = 'index.html';
+    }
+  }
+});
