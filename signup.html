@@ -1,1 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Academy Portal | Create Account</title>
+  <!-- Link to the Shared Master Stylesheet -->
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
 
+  <!-- ==========================================
+       1. GLOBAL NAVIGATION BAR
+       ========================================== -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo">
+        <span class="logo-icon">🎓</span> Academy<span class="highlight">Portal</span>
+      </a>
+      
+      <nav class="nav-menu">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="about.html" class="nav-link">About Us</a>
+        <a href="login.html" class="btn btn-secondary">Login</a>
+        <a href="signup.html" class="btn btn-primary active">Sign Up</a>
+      </nav>
+
+      <button class="hamburger" aria-label="Toggle Menu System" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Side Drawer Navigation Menu -->
+  <div class="side-drawer">
+    <nav class="drawer-menu">
+      <a href="index.html" class="drawer-link">Home</a>
+      <a href="about.html" class="drawer-link">About Us</a>
+      <hr class="drawer-divider">
+      <a href="login.html" class="btn btn-secondary btn-block">Login Portal</a>
+      <a href="signup.html" class="btn btn-primary btn-block">Create Account</a>
+    </nav>
+  </div>
+  <div class="drawer-overlay"></div>
+
+  <!-- ==========================================
+       2. RECONSTRUCTED CENTRALIZED AUTH CARD
+       ========================================== -->
+  <main class="auth-wrapper">
+    <div class="glass-card auth-card animated-view-change">
+      
+      <!-- Card Branding Header -->
+      <div class="auth-header">
+        <h2>Create Registration</h2>
+        <p>Join the digital school system network portal</p>
+      </div>
+
+      <!-- Registration Form Layout Submission Form -->
+      <form id="signup-form" novalidate>
+        
+        <!-- Field 1: Full Name Input -->
+        <div class="form-group">
+          <label for="reg-fullname" class="form-label">Full Name</label>
+          <input type="text" id="reg-fullname" class="form-control" placeholder="John Doe" required>
+        </div>
+
+        <!-- Field 2: Email Address Input -->
+        <div class="form-group">
+          <label for="reg-email" class="form-label">Email Address</label>
+          <input type="email" id="reg-email" class="form-control" placeholder="yourname@school.edu" required>
+        </div>
+
+        <!-- Row Grid Block split on large displays, stacked on mobile screen assets -->
+        <div class="form-row">
+          <!-- Field 3: Phone Number Input -->
+          <div class="form-group">
+            <label for="reg-phone" class="form-label">Phone Number</label>
+            <input type="tel" id="reg-phone" class="form-control" placeholder="+234..." required>
+          </div>
+
+          <!-- Field 4: Dropdown Role Selection System -->
+          <div class="form-group">
+            <label for="reg-role" class="form-label">Portal Role</label>
+            <select id="reg-role" class="form-control" required>
+              <option value="" disabled selected>Select Account Type</option>
+              <option value="Student">Student</option>
+              <option value="Parent">Parent</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <!-- Field 5: Secret Key Password Input Container -->
+          <div class="form-group">
+            <label for="reg-password" class="form-label">Password</label>
+            <input type="password" id="reg-password" class="form-control" placeholder="••••••••" minlength="6" required>
+          </div>
+
+          <!-- Field 6: Matching Password Verification Confirmation -->
+          <div class="form-group">
+            <label for="reg-confirm" class="form-label">Confirm Password</label>
+            <input type="password" id="reg-confirm" class="form-control" placeholder="••••••••" required>
+          </div>
+        </div>
+
+        <!-- Field 7: Checkbox Communication Acceptance Consent Loop -->
+        <label class="checkbox-group" for="reg-consent">
+          <input type="checkbox" id="reg-consent" required>
+          <span class="checkbox-label">
+            I explicitly agree to receive official school information transcripts, academic notification messages, and platform updates from the website admin router.
+          </span>
+        </label>
+
+        <!-- Submit Registration Command Button -->
+        <button type="submit" class="btn btn-primary btn-block btn-large" style="margin-top: 0.5rem;">
+          Register Account
+        </button>
+
+        <!-- Redirect Switching Anchor Interface Link -->
+        <div class="auth-footer">
+          Already have an account? <a href="login.html">Login</a>
+        </div>
+
+      </form>
+    </div>
+  </main>
+
+  <!-- ==========================================
+       3. MODULAR SCRIPT PROCESSING
+       ========================================== -->
+  <!-- Supabase Core Driver Module Script CDN integration layer -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <!-- App Configuration & UI Responsive Controller engines -->
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/ui.js"></script>
+</body>
+</html>
