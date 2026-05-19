@@ -35,8 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     link.addEventListener('click', (e) => {
       e.preventDefault();
       
-      // Look for Supabase's local storage session data
-      // Supabase storage keys look similar to: sb-xxxxxxxx-auth-token
+      // Safe Session Scanner: Scan browser storage to see if an active user token exists
       let hasActiveSession = false;
       for (let i = 0; i < localStorage.length; i++) {
         if (localStorage.key(i).includes('-auth-token')) {
