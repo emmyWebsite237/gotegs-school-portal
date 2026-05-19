@@ -3,8 +3,8 @@
 // ==========================================================================
 
 // ⚠️ PASTE YOUR SECURE CREDENTIALS HERE WHEN READY ⚠️
-const SUPABASE_URL = ""; 
-const SUPABASE_ANON_KEY = "";
+const SUPABASE_URL = "https://lbrxpivnrdiupjorljci.supabase.co/rest/v1/"; 
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxicnhwaXZucmRpdXBqb3JsamNpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxODU5OTAsImV4cCI6MjA5NDc2MTk5MH0.spQfI7yG1GlrNdLMkMj8drg_aVg4eUewK4JfpmcqoYs";
 
 if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
   console.error("Supabase Error: Please configure your SUPABASE_URL and SUPABASE_ANON_KEY inside assets/js/auth.js");
