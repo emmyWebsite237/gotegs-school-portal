@@ -1,1 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Academy Portal | Modern School Management Ecosystem</title>
+  <!-- Link to the Shared Master Stylesheet -->
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
 
+  <!-- ==========================================
+       1. GLOBAL NAVIGATION BAR
+       ========================================== -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo">
+        <span class="logo-icon">🎓</span> Academy<span class="highlight">Portal</span>
+      </a>
+      
+      <!-- Desktop Navigation Layout -->
+      <nav class="nav-menu">
+        <a href="index.html" class="nav-link active">Home</a>
+        <a href="about.html" class="nav-link">About Us</a>
+        <a href="#" class="nav-link authenticated-link">Academic Records</a>
+        <a href="#" class="nav-link authenticated-link">E-Learning</a>
+        <a href="login.html" class="btn btn-secondary">Login</a>
+        <a href="signup.html" class="btn btn-primary">Sign Up</a>
+      </nav>
+
+      <!-- Mobile Hamburger Control Button -->
+      <button class="hamburger" aria-label="Toggle Menu System" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ==========================================
+       2. MOBILE SIDE DRAWER MENU
+       ========================================== -->
+  <div class="side-drawer">
+    <nav class="drawer-menu">
+      <a href="index.html" class="drawer-link active">Home</a>
+      <a href="about.html" class="drawer-link">About Us</a>
+      <a href="#" class="drawer-link authenticated-link">Academic Records</a>
+      <a href="#" class="drawer-link authenticated-link">E-Learning</a>
+      <hr class="drawer-divider">
+      <a href="login.html" class="btn btn-secondary btn-block">Login Portal</a>
+      <a href="signup.html" class="btn btn-primary btn-block">Create Account</a>
+    </nav>
+  </div>
+  <!-- Clickable backdrop element to close out side navigation drawer -->
+  <div class="drawer-overlay"></div>
+
+  <!-- ==========================================
+       3. HERO SHOWCASE SECTION
+       ========================================== -->
+  <main class="hero-section">
+    <div class="hero-container">
+      
+      <!-- Left Column: Copywriting and CTA Gateways -->
+      <div class="hero-content">
+        <span class="badge">Unified School Portal Infrastructure</span>
+        <h1>Empowering Minds, Shaping Next-Gen <span class="text-gradient">Leaders</span></h1>
+        <p>Welcome to your all-in-one educational dashboard. Streamline communication, access real-time grading reports, manage course registrations, and connect parents and instructors on a single secure network.</p>
+        <div class="hero-actions">
+          <a href="signup.html" class="btn btn-primary btn-large">Get Started</a>
+          <a href="login.html" class="btn btn-secondary btn-large">Portal Login</a>
+        </div>
+      </div>
+      
+      <!-- Right Column: Glassmorphic App Core UI Rendering Mockup -->
+      <div class="hero-visual">
+        <div class="glass-card visual-card">
+          <div class="card-header">
+            <span class="dot red"></span>
+            <span class="dot yellow"></span>
+            <span class="dot green"></span>
+          </div>
+          <div class="card-mock-body">
+            <!-- Mock Student Profile Header Component -->
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;">
+              <div style="width: 45px; height: 45px; border-radius: 50%; background: var(--accent-gradient);"></div>
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 0.4rem;">
+                <div class="mock-line" style="width: 50%; height: 14px; background: rgba(255,255,255,0.2);"></div>
+                <div class="mock-line" style="width: 30%; height: 10px;"></div>
+              </div>
+            </div>
+            <hr style="border: 0; height: 1px; background: var(--glass-border); margin: 0.5rem 0;">
+            <!-- Mock Analytics Grid Items -->
+            <div class="mock-grid">
+              <div class="mock-block" style="display:flex; flex-direction:column; padding:0.75rem; justify-content:space-between;">
+                <span style="font-size:10px; color:var(--text-muted); font-weight:600; text-transform:uppercase;">GPA Metrics</span>
+                <span style="font-size:1.4rem; font-weight:700; color:#10b981;">3.92 / 4.00</span>
+              </div>
+              <div class="mock-block" style="display:flex; flex-direction:column; padding:0.75rem; justify-content:space-between;">
+                <span style="font-size:10px; color:var(--text-muted); font-weight:600; text-transform:uppercase;">Attendance Rate</span>
+                <span style="font-size:1.4rem; font-weight:700; color:#3b82f6;">98.4%</span>
+              </div>
+            </div>
+            <!-- Mock Text Rows mimicking upcoming platform announcements -->
+            <div class="mock-line long" style="margin-top: 0.5rem;"></div>
+            <div class="mock-line short"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ==========================================
+       4. INTERACTIVE SCRIPTS & DATA PIPELINES
+       ========================================== -->
+  <!-- Supabase Core Client Library CDN Integration -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <!-- Custom Modular Frontend Engine Architectures -->
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/ui.js"></script>
+</body>
+</html>
