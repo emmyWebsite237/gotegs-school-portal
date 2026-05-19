@@ -3,7 +3,7 @@
 // ==========================================================================
 
 // ⚠️ PASTE YOUR SECURE CREDENTIALS HERE ⚠️
-const SUPABASE_URL = "https://lbrxpivnrdiupjorljci.supabase.co/rest/v1/"; 
+const SUPABASE_URL = "https://lbrxpivnrdiupjorljci.supabase.co"; 
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxicnhwaXZucmRpdXBqb3JsamNpIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3OTE4NTk5MCwiZXhwIjoyMDk0NzYxOTkwfQ.ElkOBLnUgxTW0qCK8FkQw3wfFmd3LnoT003kcUgaksc";
 
 if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
