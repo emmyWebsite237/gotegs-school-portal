@@ -1,5 +1,226 @@
 /* ==========================================================================
-   AUTH COMPONENTS & INTERACTIVE FORM UTILITIES (Appended to master styles.css)
+   1. GLOBAL SYSTEM VARIABLES & ROOT FOUNDATIONS
+   ========================================================================== */
+:root {
+  --bg-dark: #0b0f19;
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --glass-bg: rgba(15, 23, 42, 0.45);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-blur: blur(16px);
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+  background-color: var(--bg-dark);
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(37, 99, 235, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(29, 78, 216, 0.1) 0%, transparent 40%);
+  background-attachment: fixed;
+  color: var(--text-main);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* --- Reusable Glass Container Utility --- */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+/* --- Reusable Button Framework --- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem 1.25rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: var(--accent-gradient);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  color: var(--text-main);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.btn-block { width: 100%; }
+.btn-large { padding: 0.85rem 1.5rem; font-size: 1rem; }
+
+/* --- Text Accent Badges --- */
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background: rgba(37, 99, 235, 0.2);
+  border: 1px solid rgba(37, 99, 235, 0.3);
+  color: #60a5fa;
+  border-radius: 50px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+/* ==========================================================================
+   2. GLOBAL NAVIGATION BAR & RESPONSIVE DRAWER
+   ========================================================================== */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 70px;
+  background: rgba(11, 15, 25, 0.8);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-bottom: 1px solid var(--glass-border);
+  z-index: 1000;
+}
+
+.nav-container {
+  max-width: 1200px;
+  height: 100%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+}
+
+.logo {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logo .highlight { color: #3b82f6; }
+
+.nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.nav-link {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.nav-link:hover, .nav-link.active {
+  color: #fff;
+}
+
+/* Hamburger Icon */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 1100;
+}
+
+.hamburger span {
+  width: 24px;
+  height: 2px;
+  background-color: var(--text-main);
+  transition: var(--transition);
+}
+
+/* Responsive Slide Drawer Styles */
+.side-drawer {
+  position: fixed;
+  top: 0;
+  right: -280px;
+  width: 280px;
+  height: 100vh;
+  background: #0f172a;
+  border-left: 1px solid var(--glass-border);
+  z-index: 1050;
+  padding: 80px 1.5rem 2rem;
+  transition: var(--transition);
+}
+
+.side-drawer.open { right: 0; }
+
+.drawer-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.drawer-link {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 1.1rem;
+}
+
+.drawer-divider {
+  border: 0;
+  border-top: 1px solid var(--glass-border);
+  margin: 0.5rem 0;
+}
+
+.drawer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(4px);
+  z-index: 1040;
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .nav-menu { display: none; }
+  .hamburger { display: flex; }
+}
+
+/* ==========================================================================
+   3. YOUR AUTH COMPONENTS & INTERACTIVE FORM UTILITIES
    ========================================================================== */
 
 /* --- Centralized Auth Layout Container --- */
