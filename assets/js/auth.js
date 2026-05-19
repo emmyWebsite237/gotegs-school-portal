@@ -4,7 +4,7 @@
 
 // ⚠️ PASTE YOUR BRAND NEW SUPABASE PROJECT CREDENTIALS HERE ⚠️
 const SUPABASE_URL = "https://srexdwtbuaevlkbnvdoy.supabase.co"; 
-const SUPABASE_ANON_KEY = "YOUR_NEW_SUPABASE_ANON_PUBLIC_KEY_HERE";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyZXhkd3RidWFldmxrYm52ZG95Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyMDcwNDMsImV4cCI6MjA5NDc4MzA0M30.PMClOZCg7haWIS0N5hY_9-sjyXPQUwYTXvVt0ZgZwmQ";
 
 // Dynamic Instance Guard: This completely prevents your browser from crashing with duplicate declaration errors.
 if (!window.gotegsSupabaseInstance) {
