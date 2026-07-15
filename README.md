@@ -1,0 +1,1 @@
+# gotegs-school-portal
