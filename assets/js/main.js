@@ -16,14 +16,20 @@
 // Hide the page immediately (before it renders) if this is an admin page
 // and the gate hasn't been passed yet this session — avoids a flash of
 // real content before the password prompt appears.
-if (window.location.pathname.startsWith("/admin/") && sessionStorage.getItem("gotegs_admin_authed") !== "true") {
+if (isAdminPathCheck(window.location.pathname) && sessionStorage.getItem("gotegs_admin_authed") !== "true") {
   document.documentElement.style.visibility = "hidden";
 }
 
 const ADMIN_GATE_PASSWORD = "qwer12ty";
 
+function isAdminPathCheck(pathname) {
+  // Catches "/admin", "/admin/", and everything under "/admin/..." —
+  // the bare "/admin" (no trailing slash) was previously slipping through.
+  return pathname === "/admin" || pathname.startsWith("/admin/");
+}
+
 function isAdminPage() {
-  return window.location.pathname.startsWith("/admin/");
+  return isAdminPathCheck(window.location.pathname);
 }
 
 function showAdminGate() {
@@ -157,4 +163,44 @@ document.addEventListener("DOMContentLoaded", () => {
   } else {
     showAdminGate();
   }
+
+  setupAdminInactivityTimeout();
 });
+
+// ==========================================================================
+// Admin inactivity timeout — 3 minutes. Clock starts the moment the tab
+// loses focus (switched away, minimized, or another window/app takes
+// focus); if more than 3 minutes pass before returning, both the site-wide
+// admin gate and the admin-records login are cleared, forcing re-entry.
+// ==========================================================================
+
+function setupAdminInactivityTimeout() {
+  if (!isAdminPage()) return;
+
+  const TIMEOUT_MS = 3 * 60 * 1000;
+  let hiddenAt = null;
+
+  function markHidden() {
+    if (hiddenAt === null) hiddenAt = Date.now();
+  }
+
+  function checkReturn() {
+    if (hiddenAt === null) return;
+    const elapsed = Date.now() - hiddenAt;
+    hiddenAt = null;
+
+    if (elapsed >= TIMEOUT_MS) {
+      sessionStorage.removeItem("gotegs_admin_authed");
+      sessionStorage.removeItem("gotegs_records_authed");
+      window.location.reload();
+    }
+  }
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) markHidden();
+    else checkReturn();
+  });
+
+  window.addEventListener("blur", markHidden);
+  window.addEventListener("focus", checkReturn);
+}
