@@ -7,28 +7,17 @@
   <link rel="stylesheet" href="/assets/css/style.css" />
   <link rel="stylesheet" href="/assets/css/admin.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     #authCard {
       max-width: 380px; margin-top: 1.5rem; padding: 1.75rem;
       border: 1px solid var(--border); border-radius: var(--radius); background: var(--paper);
     }
     #authCard label { font-family: var(--font-display); font-weight: 600; font-size: 0.85rem; }
-    #authCard input, #authCard select {
+    #authCard input {
       width: 100%; font-family: var(--font-body); font-size: 0.95rem; padding: 0.7rem 0.8rem;
-      margin: 0.4rem 0 0.9rem; border: 1px solid var(--border); border-radius: 8px;
+      margin: 0.4rem 0 0.9rem; border: 1px solid var(--border); border-radius: 8px; box-sizing: border-box;
     }
     #authMsg { font-size: 0.85rem; font-weight: 600; color: #dc2626; min-height: 1.2rem; }
-
-    #ledgerArea { display: none; }
-    .table-responsive-wrapper { width: 100%; overflow-x: auto; margin-top: 1.5rem; }
-    #captureArea { background: #fff; padding: 15px; min-width: 1000px; }
-    .ledger-table { width: 100%; border-collapse: collapse; font-size: 11.5px; border: 1px solid var(--ink); margin-bottom: 20px; }
-    .ledger-table th { background: var(--teal); color: #fff; padding: 6px; border: 1px solid var(--ink); font-size: 9px; font-family: var(--font-display); }
-    .ledger-table td { padding: 4px; border: 1px solid var(--ink); text-align: center; color: var(--ink); }
-    .ledger-table .name-cell { text-align: left !important; padding-left: 6px; font-weight: 600; width: 180px; }
-    .class-heading { background: var(--teal-light); padding: 8px 10px; border-left: 6px solid var(--teal); font-weight: 700; font-family: var(--font-display); margin: 14px 0 8px; }
   </style>
 </head>
 <body>
@@ -37,17 +26,11 @@
   <main class="page-container admin-page" style="max-width: 1100px;">
     <nav class="breadcrumb">Admin / Records</nav>
     <h1>Manage Student Records</h1>
-    <p>Login to view and export the consolidated result ledger for a class section.</p>
+    <p>Login to view Mid-Term Test and Full Session records, broken down by section and class.</p>
 
     <div id="authCard">
       <label for="adminName">Admin Username</label>
       <input type="text" id="adminName" />
-
-      <label for="targetSection">Section</label>
-      <select id="targetSection">
-        <option value="jss_students">Junior Section (JSS)</option>
-        <option value="sss_students">Senior Section (SSS)</option>
-      </select>
 
       <label for="adminPin">Security PIN</label>
       <input type="password" id="adminPin" />
@@ -55,36 +38,12 @@
       <button class="btn" id="loginBtn">Open Records</button>
       <p id="authMsg"></p>
     </div>
-
-    <div id="ledgerArea">
-      <div class="table-responsive-wrapper">
-        <div id="captureArea">
-          <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:3px solid var(--teal); padding-bottom:10px;">
-            <img src="/assets/img/logo.png" style="width:60px; border-radius:6px;" alt="Logo" />
-            <div style="text-align:center;">
-              <h2 style="margin:0; color:var(--teal-dark); font-family:var(--font-display);">Go-Tegs International School</h2>
-              <p style="margin:2px 0; font-weight:600; text-transform:uppercase; font-size:12px; color:var(--slate);">Consolidated Result Ledger</p>
-            </div>
-            <img src="/assets/img/signature.png" style="width:80px;" alt="Signature" />
-          </div>
-          <div id="tablesContainer"></div>
-        </div>
-      </div>
-
-      <div style="text-align:center; padding:1.5rem 0;">
-        <button class="btn" id="downloadLedgerBtn">Download Full Ledger (PDF)</button>
-        <button class="btn-save" id="logoutBtn" style="margin-left:0.6rem;">Logout</button>
-      </div>
-    </div>
   </main>
 
   <div id="footer-placeholder"></div>
 
   <script src="/assets/js/main.js"></script>
   <script>
-    // Direct connection to the RESULTS Supabase project (same one used by
-    // jss_students / sss_students / admin_portal) — this is the exact
-    // connection + query approach confirmed already working.
     const RESULTS_SB_URL = "https://lsyegaciprnerysmyesy.supabase.co";
     const RESULTS_SB_KEY = "sb_publishable_sM0x3SdV4iy8GwYb5S5HUg_S9qLZLeJ";
     const resultsClient = supabase.createClient(RESULTS_SB_URL, RESULTS_SB_KEY);
@@ -92,7 +51,6 @@
     document.getElementById('loginBtn').addEventListener('click', async () => {
       const name = document.getElementById('adminName').value.trim();
       const pin = document.getElementById('adminPin').value;
-      const section = document.getElementById('targetSection').value;
       const msg = document.getElementById('authMsg');
 
       if (!name || !pin) { msg.textContent = 'Enter username and PIN.'; return; }
@@ -114,101 +72,20 @@
           return;
         }
 
-        document.getElementById('authCard').style.display = 'none';
-        document.getElementById('ledgerArea').style.display = 'block';
-        loadData(section);
+        sessionStorage.setItem('gotegs_records_authed', 'true');
+
+        // Section choice, shown inline after successful login
+        document.getElementById('authCard').outerHTML = `
+          <div id="sectionChoice" style="max-width:420px; margin-top:1.5rem;">
+            <ul class="link-grid">
+              <li><a href="jss/index.html">Junior Section (JSS) Records</a></li>
+              <li><a href="sss/index.html">Senior Section (SSS) Records</a></li>
+            </ul>
+          </div>
+        `;
       } catch (err) {
         msg.style.color = '#dc2626';
         msg.textContent = 'Access denied.';
-      }
-    });
-
-    document.getElementById('logoutBtn').addEventListener('click', () => location.reload());
-
-    async function loadData(tableName) {
-      const container = document.getElementById('tablesContainer');
-      container.innerHTML = 'Loading...';
-
-      try {
-        const { data } = await resultsClient.from(tableName).select('*').order('class').order('full_name');
-        container.innerHTML = '';
-
-        const mapping = tableName === 'sss_students'
-          ? { dept: 'DEPT', maths_score: 'MTH', english_score: 'ENG', civic_score: 'CIV', physics_score: 'PHY', chem_score: 'CHM', bio_score: 'BIO', fmath_score: 'FMT', dp_score: 'D.P', econs_score: 'ECO', agric_score: 'AGS', crs_score: 'CRS', catering_c_p_score: 'CAT', dic_score: 'DIC', lit_in_eng_score: 'LIT' }
-          : { english_score: 'ENG', maths_score: 'MTH', basic_science_score: 'BSC', basic_tech_score: 'BTH', bus_stud_score: 'BST', agric_score: 'AGS', social_stud_score: 'SOS', home_econs_score: 'HEC', sec_edu_score: 'SEC', french_score: 'FRE', music_score: 'MUS', dic_score: 'DIC', history_score: 'HIS', cmp_score: 'CMP', phe_score: 'PHE', cca_score: 'CCA', lit_score: 'LIT' };
-
-        const grouped = (data || []).reduce((acc, obj) => {
-          const key = obj.class || 'Unclassed';
-          if (!acc[key]) acc[key] = [];
-          acc[key].push(obj);
-          return acc;
-        }, {});
-
-        for (const className in grouped) {
-          let html = `<div class="class-heading">${className}</div><table class="ledger-table"><thead><tr><th>S/N</th><th>NAME</th>`;
-          Object.values(mapping).forEach((v) => (html += `<th>${v}</th>`));
-          html += `<th>TOT</th><th>AVG</th><th>GRD</th></tr></thead><tbody>`;
-
-          grouped[className].forEach((row, idx) => {
-            let total = 0, count = 0;
-            html += `<tr><td>${idx + 1}</td><td class="name-cell">${row.full_name}</td>`;
-            Object.keys(mapping).forEach((k) => {
-              const val = row[k] || '-';
-              html += `<td>${val}</td>`;
-              if (k.includes('score') && !isNaN(val) && val !== '-') { total += parseFloat(val); count++; }
-            });
-            const avg = count > 0 ? (total / count).toFixed(1) : 0;
-            html += `<td style="background:#fffbe6; font-weight:bold;">${total}</td><td style="background:#fffbe6; font-weight:bold;">${avg}%</td><td style="background:#fffbe6; font-weight:bold;">${calculateGrade(avg)}</td></tr>`;
-          });
-
-          container.innerHTML += html + `</tbody></table>`;
-        }
-      } catch (err) {
-        container.innerHTML = `<p style="color:#dc2626;">Could not load records: ${err.message}</p>`;
-      }
-    }
-
-    function calculateGrade(avg) {
-      if (avg >= 75) return 'A1'; if (avg >= 70) return 'B2'; if (avg >= 65) return 'B3';
-      if (avg >= 60) return 'C4'; if (avg >= 50) return 'C6'; if (avg >= 45) return 'D7'; return 'F9';
-    }
-
-    document.getElementById('downloadLedgerBtn').addEventListener('click', async () => {
-      const btn = document.getElementById('downloadLedgerBtn');
-      btn.disabled = true;
-      btn.textContent = 'Processing...';
-      try {
-        const capture = document.getElementById('captureArea');
-        const canvas = await html2canvas(capture, { scale: 2 });
-        const imgData = canvas.toDataURL('image/jpeg', 0.95);
-
-        const pdf = new jspdf.jsPDF('l', 'mm', 'a4');
-        const pageWidth = pdf.internal.pageSize.getWidth();
-        const pageHeight = pdf.internal.pageSize.getHeight();
-        const margin = 10;
-        const imgWidth = pageWidth - margin * 2;
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-        let heightLeft = imgHeight;
-        let position = margin;
-
-        // First page
-        pdf.addImage(imgData, 'JPEG', margin, position, imgWidth, imgHeight);
-        heightLeft -= (pageHeight - margin * 2);
-
-        // Add as many extra pages as needed, shifting the image up each time
-        // so each page reveals the next vertical slice of the ledger.
-        while (heightLeft > 0) {
-          position = heightLeft * -1 + margin;
-          pdf.addPage();
-          pdf.addImage(imgData, 'JPEG', margin, position, imgWidth, imgHeight);
-          heightLeft -= (pageHeight - margin * 2);
-        }
-
-        pdf.save('GoTegs_Ledger.pdf');
-      } finally {
-        btn.disabled = false;
-        btn.textContent = 'Download Full Ledger (PDF)';
       }
     });
   </script>

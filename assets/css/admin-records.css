@@ -1,0 +1,4 @@
+.ledger-table { width: 100%; border-collapse: collapse; font-size: 11.5px; border: 1px solid var(--ink); margin-bottom: 20px; }
+.ledger-table th { background: var(--teal); color: #fff; padding: 6px; border: 1px solid var(--ink); font-size: 9px; font-family: var(--font-display); }
+.ledger-table td { padding: 4px; border: 1px solid var(--ink); text-align: center; color: var(--ink); }
+.ledger-table .name-cell { text-align: left !important; padding-left: 6px; font-weight: 600; width: 180px; }
