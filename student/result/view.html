@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Result | Go-Tegs International School</title>
+  <link rel="stylesheet" href="/assets/css/report.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+  <div class="report-wrap">
+    <div class="report-card" id="pdfArea">
+      <div class="unofficial-overlay" id="unofficialOverlay">UNOFFICIAL COPY</div>
+
+      <div class="report-header">
+        <img class="school-logo" src="/assets/img/logo.png" alt="Go-Tegs logo" />
+        <div class="header-text">
+          <h1 class="school-name">Go-Tegs International School</h1>
+          <div class="motto">Motto: Training the Leaders of Tomorrow</div>
+          <div class="address">15, Ayesanmi Street, GloryLand Estate, Powerline Bus Stop, Isheri Olofin, Alimosho, Lagos</div>
+          <div class="address">Tel: 08066525319, 08106958638</div>
+        </div>
+      </div>
+
+      <div class="report-title" id="dispTerm"></div>
+
+      <div class="info-grid">
+        <div class="info-item"><span class="info-label">Name:</span> <span id="dispName"></span></div>
+        <div class="info-item"><span class="info-label">School Opened:</span> <span id="dispOpened"></span></div>
+        <div class="info-item"><span class="info-label">Date of Birth:</span> <span id="dispDob"></span></div>
+        <div class="info-item"><span class="info-label">Times Present:</span> <span id="dispPresent"></span></div>
+        <div class="info-item"><span class="info-label">Class:</span> <span id="dispClass"></span></div>
+        <div class="info-item"><span class="info-label">Times Absent:</span> <span id="dispAbsent"></span></div>
+      </div>
+
+      <table class="report-table">
+        <thead>
+          <tr>
+            <th>Subject</th>
+            <th style="text-align:center;">MTT</th>
+            <th style="text-align:center;">Examination</th>
+            <th style="text-align:center;">TMB</th>
+            <th style="text-align:center;">Percentage</th>
+            <th style="text-align:center;">Grade</th>
+          </tr>
+        </thead>
+        <tbody id="resBody"></tbody>
+      </table>
+
+      <p style="font-size:10.5px; color:var(--slate); margin-top:4px;">
+        <strong>Guide:</strong> MTT = Mid-Term Test (out of 40) &nbsp;|&nbsp; Examination (out of 60) &nbsp;|&nbsp; TMB = Total Mark Obtained (out of 100)
+      </p>
+
+      <div class="bottom-wrap">
+        <table class="comments-table">
+          <tr><td><strong>Class Teacher's Remark:</strong><br /><span id="dispTeacher"></span></td></tr>
+          <tr><td><strong>Principal's Remark:</strong><br /><span id="dispPrincipal"></span></td></tr>
+        </table>
+        <table class="summary-table">
+          <tr><td>Total Mark Obtainable</td><td id="resObtainable" style="text-align:center;"></td></tr>
+          <tr><td>Total Mark Obtained</td><td id="resTotal" style="text-align:center;"></td></tr>
+          <tr><td>Mean Percentage</td><td id="resMean" style="text-align:center;"></td></tr>
+          <tr><td>Overall Grade</td><td id="resGrade" style="text-align:center;"></td></tr>
+        </table>
+      </div>
+
+      <div class="report-footer">
+        <div class="timestamp" id="dispTime"></div>
+        <div class="sig-space">
+          <img src="/assets/img/signature.png" style="width:110px; display:block; margin-left:30px; margin-bottom:2px;" alt="Signature" onerror="this.style.display='none'" />
+          <div class="sig-line"></div>
+          <strong style="text-transform:uppercase; font-size:12px;">School Principal</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="report-actions">
+      <button class="btn" id="downloadBtn">Download Result PDF</button>
+      <button class="btn btn-secondary" id="checkAnotherBtn">Check Another</button>
+    </div>
+
+    <p id="msg"></p>
+  </div>
+
+  <script>
+    const subjectNames = {
+      maths: "Mathematics", english: "English Language", physics: "Physics", chem: "Chemistry",
+      bio: "Biology", fmath: "Further Mathematics", civic: "Civic Education", govt: "Government",
+      econs: "Economics", markt: "Marketing", dp: "Data Processing", comme: "Commerce",
+      agric: "Agricultural Science", crs: "C.R.S", finacc: "Financial Accounting", lit: "Literature",
+      philo: "Philosophy", geo: "Geography", basic_science: "Basic Science", basic_tech: "Basic Technology",
+      bus_stud: "Business Studies", cmp: "Computer Studies", phe: "P.H.E", cca: "C.C.A",
+      social_stud: "Social Studies", home_econs: "Home Economics", yoruba: "Yoruba", french: "French",
+      sec_edu: "Security Education", lit_in_eng: "Literature in English", music: "Music", dic: "Diction",
+      history: "History", catering_c_p: "Catering and Craft Practice",
+    };
+
+    function getGradeInfo(score) {
+      if (score >= 75) return { g: "A1", c: "Excellent" };
+      if (score >= 70) return { g: "B2", c: "V.Good" };
+      if (score >= 65) return { g: "B3", c: "Good" };
+      if (score >= 60) return { g: "C4", c: "Credit" };
+      if (score >= 55) return { g: "C5", c: "Credit" };
+      if (score >= 50) return { g: "C6", c: "Pass" };
+      if (score >= 45) return { g: "D7", c: "Pass" };
+      if (score >= 40) return { g: "E8", c: "Weak" };
+      return { g: "F9", c: "Poor" };
+    }
+
+    function getPrincipalComment(mean) {
+      if (mean >= 75) return "An outstanding result. Keep the flag flying high.";
+      if (mean >= 60) return "A very good performance. Keep it up.";
+      if (mean >= 45) return "A fair result, but there is room for much improvement.";
+      return "Poor performance. You need to be more focused and work harder.";
+    }
+
+    const CURRENT_TERM = "Second Term Report";
+    const raw = sessionStorage.getItem('gotegs_result_data');
+
+    if (!raw) {
+      window.location.href = '/student/result/index.html';
+    } else {
+      const data = JSON.parse(raw);
+
+      document.getElementById('unofficialOverlay').style.display = data.is_paid ? 'none' : 'block';
+      document.getElementById('dispTerm').textContent = `${CURRENT_TERM}`;
+      document.getElementById('dispName').textContent = data.full_name;
+      document.getElementById('dispDob').textContent = data.dob || '---';
+      document.getElementById('dispClass').textContent = data.class + (data.dept ? ` (${data.dept})` : '');
+      document.getElementById('dispOpened').textContent = data.opened || '0';
+      document.getElementById('dispPresent').textContent = data.present || '0';
+      document.getElementById('dispAbsent').textContent = (data.opened || 0) - (data.present || 0);
+      document.getElementById('dispTeacher').textContent = data.teacher_remark || '---';
+
+      let rows = '';
+      let total = 0;
+      (data.scores || []).forEach((s) => {
+        total += s.total;
+        const info = getGradeInfo(s.total);
+        rows += `<tr>
+          <td>${subjectNames[s.subject] || s.subject}</td>
+          <td style="text-align:center;">${s.mtt}</td>
+          <td style="text-align:center;">${s.exam}</td>
+          <td style="text-align:center; font-weight:bold;">${s.total}</td>
+          <td style="text-align:center;">${s.total}%</td>
+          <td style="text-align:center; font-weight:bold;">${info.g}</td>
+        </tr>`;
+      });
+      const count = (data.scores || []).length;
+      const mean = count ? (total / count).toFixed(1) : 0;
+
+      document.getElementById('resBody').innerHTML = rows;
+      document.getElementById('resObtainable').textContent = count * 100;
+      document.getElementById('resTotal').textContent = total;
+      document.getElementById('resMean').textContent = mean + '%';
+      document.getElementById('resGrade').textContent = getGradeInfo(mean).g;
+      document.getElementById('dispPrincipal').textContent = getPrincipalComment(parseFloat(mean));
+      document.getElementById('dispTime').textContent = 'Generated: ' + new Date().toLocaleString();
+    }
+
+    async function generatePDFBlob() {
+      const originalArea = document.getElementById('pdfArea');
+      const clone = originalArea.cloneNode(true);
+      clone.classList.add('canvas-clone');
+      clone.style.display = 'flex';
+      document.body.appendChild(clone);
+
+      try {
+        const canvas = await html2canvas(clone, { scale: 2, useCORS: true, backgroundColor: '#ffffff', logging: false, width: 850 });
+        const imgData = canvas.toDataURL('image/jpeg', 1.0);
+        const pdf = new jspdf.jsPDF('p', 'mm', 'a4');
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+        const ratio = Math.min(pdfWidth / canvas.width, pdfHeight / canvas.height);
+        const finalWidth = canvas.width * ratio;
+        const finalHeight = canvas.height * ratio;
+        pdf.addImage(imgData, 'JPEG', (pdfWidth - finalWidth) / 2, 5, finalWidth, finalHeight);
+        return pdf.output('blob');
+      } finally {
+        document.body.removeChild(clone);
+      }
+    }
+
+    document.getElementById('downloadBtn').addEventListener('click', async () => {
+      const btn = document.getElementById('downloadBtn');
+      const studentName = document.getElementById('dispName').textContent || 'Student';
+      btn.disabled = true;
+      btn.textContent = 'Preparing...';
+      try {
+        const blob = await generatePDFBlob();
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${studentName}_GoTegs_Result.pdf`;
+        link.click();
+        URL.revokeObjectURL(url);
+      } catch (err) {
+        document.getElementById('msg').textContent = 'Could not generate PDF. Try again.';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Download Result PDF';
+      }
+    });
+
+    document.getElementById('checkAnotherBtn').addEventListener('click', () => {
+      sessionStorage.removeItem('gotegs_result_data');
+      window.location.href = '/student/result/index.html';
+    });
+  </script>
+</body>
+</html>

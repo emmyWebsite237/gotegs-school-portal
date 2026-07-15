@@ -1,0 +1,153 @@
+/* ==========================================================================
+   Go-Tegs — Printable Report Styling (Result & Testimonial views)
+   Retheme of the original report design, using the site's teal palette.
+   Loaded ONLY on the bare view.html pages (no navbar/footer there).
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Sora:wght@600;700&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  --teal: #3fb0aa;
+  --teal-dark: #2c8c87;
+  --teal-light: #eaf7f6;
+  --ink: #16231f;
+  --slate: #5c6b68;
+  --paper: #ffffff;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 24px;
+  background: var(--teal-light);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.report-wrap { width: 100%; max-width: 850px; }
+
+.report-card {
+  padding: 25px;
+  background: #fff;
+  border: 5px double var(--teal);
+  position: relative;
+  min-height: 950px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.report-card::before {
+  content: "";
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60%; height: 60%;
+  background-image: url('/assets/img/logo.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  opacity: 0.06;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.unofficial-overlay {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%) rotate(-45deg);
+  font-size: 64px; color: rgba(220, 38, 38, 0.14);
+  font-weight: bold; z-index: 10; pointer-events: none;
+  white-space: nowrap; display: none;
+}
+
+.report-header {
+  display: flex; align-items: center;
+  border-bottom: 2px solid var(--teal);
+  padding-bottom: 10px; margin-bottom: 14px;
+  position: relative; z-index: 1;
+}
+
+.school-logo { width: 90px; height: auto; flex-shrink: 0; border-radius: 6px; }
+.header-text { flex-grow: 1; text-align: center; padding-right: 90px; }
+.school-name { font-family: 'Great Vibes', cursive; font-size: 40px; color: var(--teal-dark); margin: 0; font-weight: normal; }
+.motto { font-style: italic; font-weight: 600; font-size: 13px; margin: 2px 0; color: var(--slate); }
+.address { font-size: 11px; font-weight: 600; color: var(--slate); margin: 1px 0; }
+
+.report-title {
+  font-family: 'Sora', sans-serif;
+  font-weight: 700; font-style: italic; text-align: center;
+  margin-bottom: 14px; color: var(--teal-dark);
+  text-transform: uppercase; font-size: 14px; position: relative; z-index: 1;
+}
+
+.info-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+  margin-bottom: 15px; border: 1px solid var(--ink); padding: 12px;
+  background: #fafafa; position: relative; z-index: 1;
+}
+.info-item { font-size: 13px; border-bottom: 1px solid #eee; padding: 3px 0; }
+.info-label { font-family: 'Sora', sans-serif; font-weight: 600; color: var(--teal-dark); }
+
+.report-table {
+  width: 100%; border-collapse: collapse; margin-top: 5px;
+  position: relative; z-index: 1;
+}
+.report-table th, .report-table td {
+  border: 1px solid var(--ink); padding: 8px; text-align: left; font-size: 13px;
+}
+.report-table th {
+  background: var(--teal-light); color: var(--teal-dark);
+  font-family: 'Sora', sans-serif; font-weight: 600;
+}
+
+.bottom-wrap { display: flex; margin-top: 15px; gap: 10px; position: relative; z-index: 1; }
+.comments-table { width: 55%; border-collapse: collapse; }
+.comments-table td { border: 1px solid var(--ink); padding: 8px; vertical-align: top; font-size: 12px; height: 55px; line-height: 1.35; }
+.summary-table { width: 45%; border-collapse: collapse; margin-left: auto; }
+.summary-table td { border: 1px solid var(--ink); padding: 8px; font-family: 'Sora', sans-serif; font-weight: 600; font-size: 13px; }
+
+.report-body-text {
+  position: relative; z-index: 1; font-size: 13.5px; line-height: 1.8;
+  border: 1px solid var(--ink); padding: 16px; background: #fafafa; margin-top: 5px;
+}
+
+.report-footer {
+  margin-top: auto; padding-top: 20px; display: flex;
+  justify-content: space-between; align-items: flex-end;
+  position: relative; z-index: 1;
+}
+.sig-space { text-align: center; width: 180px; }
+.sig-line { border-top: 2px solid var(--ink); margin-bottom: 3px; }
+.timestamp { font-size: 10px; color: var(--slate); font-style: italic; }
+
+.report-actions { margin-top: 20px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+.btn {
+  font-family: 'Sora', sans-serif; font-weight: 600; font-size: 0.92rem;
+  padding: 0.75rem 1.5rem; border-radius: 8px; border: none;
+  background: var(--teal); color: #fff; cursor: pointer;
+}
+.btn:hover { background: var(--teal-dark); }
+.btn-secondary { background: var(--slate); }
+.btn-secondary:hover { background: #445250; }
+
+#msg {
+  text-align: center; font-weight: 600; margin-top: 16px; font-size: 15px;
+  color: var(--teal-dark); font-family: 'Sora', sans-serif;
+}
+
+/* Cloned copy used only for canvas capture at fixed desktop width */
+.canvas-clone {
+  position: absolute !important; left: -9999px !important; top: 0 !important;
+  width: 850px !important; transform: none !important; margin: 0 !important;
+}
+
+@media screen and (max-width: 600px) {
+  .report-card { width: 800px; transform: scale(0.42); transform-origin: top left; margin-bottom: -560px; }
+  .header-text { padding-right: 0; }
+  .report-wrap { overflow-x: auto; }
+}

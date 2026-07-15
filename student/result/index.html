@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Check My Result | Go-Tegs International School</title>
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <style>
+    .result-form {
+      max-width: 420px;
+      margin-top: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      padding: 1.75rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--paper);
+    }
+    .result-form label { font-family: var(--font-display); font-weight: 600; font-size: 0.85rem; margin-top: 0.4rem; }
+    .result-form input, .result-form select {
+      font-family: var(--font-body); font-size: 0.95rem; padding: 0.7rem 0.8rem;
+      border: 1px solid var(--border); border-radius: 8px;
+    }
+    .result-form .btn { margin-top: 1rem; }
+    #deptDiv { display: none; }
+    #formMsg { margin-top: 0.9rem; font-size: 0.88rem; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+
+  <main class="page-container">
+    <nav class="breadcrumb">Home / Student / Result</nav>
+    <h1>Check My Result</h1>
+    <p>Enter your details below to view and download your result.</p>
+
+    <form class="result-form" id="resultForm">
+      <label for="sid">Student ID</label>
+      <input type="text" id="sid" placeholder="GT/..." required />
+
+      <label for="yearSelect">Session</label>
+      <select id="yearSelect" required>
+        <option value="">Select Session</option>
+        <option value="2025/2026">2025/2026</option>
+      </select>
+
+      <label for="classSelect">Class</label>
+      <select id="classSelect" required>
+        <option value="">Select Class</option>
+        <option value="JSS 1">JSS 1</option>
+        <option value="JSS 2">JSS 2</option>
+        <option value="JSS 3">JSS 3</option>
+        <option value="SSS 1">SSS 1</option>
+        <option value="SSS 2">SSS 2</option>
+        <option value="SSS 3">SSS 3</option>
+      </select>
+
+      <div id="deptDiv">
+        <label for="deptSelect">Department</label>
+        <select id="deptSelect">
+          <option value="">Select Department</option>
+          <option value="Science">Science</option>
+          <option value="Art">Art</option>
+          <option value="Commerce">Commerce</option>
+        </select>
+      </div>
+
+      <label for="pin">Access PIN</label>
+      <input type="password" id="pin" placeholder="Access PIN" required />
+
+      <button type="submit" class="btn" id="checkBtn">Check Result</button>
+      <p id="formMsg"></p>
+    </form>
+  </main>
+
+  <div id="footer-placeholder"></div>
+
+  <script src="/assets/js/main.js"></script>
+  <script>
+    document.getElementById('classSelect').addEventListener('change', (e) => {
+      document.getElementById('deptDiv').style.display = e.target.value.includes('SSS') ? 'block' : 'none';
+    });
+
+    document.getElementById('resultForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const sid = document.getElementById('sid').value.trim();
+      const yr = document.getElementById('yearSelect').value;
+      const cls = document.getElementById('classSelect').value;
+      const dept = document.getElementById('deptSelect').value;
+      const pin = document.getElementById('pin').value;
+      const msg = document.getElementById('formMsg');
+      const btn = document.getElementById('checkBtn');
+
+      if (!sid || !yr || !cls || !pin || (cls.includes('SSS') && !dept)) {
+        msg.style.color = '#d97706';
+        msg.textContent = 'Please fill all fields.';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Checking...';
+      msg.style.color = '#5c6b68';
+      msg.textContent = 'Verifying credentials...';
+
+      try {
+        const res = await fetch(`/api/verify-result?student_id=${encodeURIComponent(sid)}&year=${encodeURIComponent(yr)}&class=${encodeURIComponent(cls)}&dept=${encodeURIComponent(dept)}&pin=${encodeURIComponent(pin)}`);
+        const data = await res.json();
+
+        if (res.status !== 200) {
+          msg.style.color = '#dc2626';
+          msg.textContent = data.error || 'Something went wrong.';
+          btn.disabled = false;
+          btn.textContent = 'Check Result';
+          return;
+        }
+
+        sessionStorage.setItem('gotegs_result_data', JSON.stringify({ ...data, class: cls, dept }));
+        window.location.href = '/student/result/view.html';
+      } catch (err) {
+        msg.style.color = '#dc2626';
+        msg.textContent = 'Connection error. Please try again.';
+        btn.disabled = false;
+        btn.textContent = 'Check Result';
+      }
+    });
+  </script>
+</body>
+</html>

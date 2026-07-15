@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Post / Manage Updates | Admin | Go-Tegs</title>
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <link rel="stylesheet" href="/assets/css/admin.css" />
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+
+  <main class="page-container admin-page">
+    <nav class="breadcrumb">Admin / Updates</nav>
+    <h1>Post / Manage Updates</h1>
+    <p>Upload a picture and message to post an update. It goes live on the homepage 30 seconds after posting.</p>
+
+    <form id="update-form" class="admin-update-form">
+      <label for="update-image">Picture (optional)</label>
+      <input type="file" id="update-image" accept="image/*" />
+
+      <label for="update-message">Message</label>
+      <textarea id="update-message" rows="4" placeholder="What's the update?" required></textarea>
+
+      <button type="submit" class="btn" id="post-update-btn">Post Update</button>
+      <p id="post-status" class="upload-status"></p>
+    </form>
+
+    <h2 style="margin-top:2.5rem;">Posted Updates</h2>
+    <div id="posted-updates-list"></div>
+  </main>
+
+  <div id="footer-placeholder"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/assets/js/main.js"></script>
+  <script src="/assets/js/supabase-config.js"></script>
+  <script src="/assets/js/updates.js"></script>
+  <script>
+    const form = document.getElementById("update-form");
+    const statusEl = document.getElementById("post-status");
+    const listEl = document.getElementById("posted-updates-list");
+
+    function renderAdminList(updates) {
+      if (!updates.length) {
+        listEl.innerHTML = `<div class="empty-state">No updates posted yet.</div>`;
+        return;
+      }
+
+      const now = new Date();
+
+      listEl.innerHTML = updates.map((u) => {
+        const isLive = new Date(u.visible_at) <= now;
+        const date = new Date(u.created_at).toLocaleString("en-GB", {
+          day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit",
+        });
+
+        return `
+          <article class="update-card" style="display:flex; align-items:center; gap:1rem; padding:0.9rem 1.2rem;">
+            ${u.image_url ? `<img src="${u.image_url}" alt="" style="width:70px; height:70px; object-fit:cover; border-radius:6px; flex-shrink:0;" />` : ""}
+            <div style="flex:1;">
+              <div class="update-card-date">${date} — ${isLive ? "Live" : "Pending (goes live shortly)"}</div>
+              <p class="update-card-message">${u.message}</p>
+            </div>
+            <button class="btn-save" type="button" data-delete-id="${u.id}">Delete</button>
+          </article>
+        `;
+      }).join("");
+
+      listEl.querySelectorAll("[data-delete-id]").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          if (!confirm("Delete this update? This can't be undone.")) return;
+          btn.textContent = "Deleting...";
+          try {
+            await deleteUpdate(btn.dataset.deleteId);
+            await refreshAdminList();
+          } catch (err) {
+            alert("Failed to delete: " + err.message);
+          }
+        });
+      });
+    }
+
+    async function refreshAdminList() {
+      try {
+        const updates = await fetchAllUpdatesForAdmin();
+        renderAdminList(updates);
+      } catch (err) {
+        listEl.innerHTML = `<div class="empty-state">Could not load updates: ${err.message}</div>`;
+      }
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const fileInput = document.getElementById("update-image");
+      const message = document.getElementById("update-message").value.trim();
+
+      if (!message) return;
+
+      const btn = document.getElementById("post-update-btn");
+      btn.disabled = true;
+      btn.textContent = "Posting...";
+      statusEl.textContent = "";
+
+      try {
+        await postUpdate({ file: fileInput.files[0] || null, message });
+        statusEl.textContent = "Posted! It will appear on the homepage in about 30 seconds.";
+        form.reset();
+        await refreshAdminList();
+      } catch (err) {
+        statusEl.textContent = "Error: " + err.message;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Post Update";
+      }
+    });
+
+    refreshAdminList();
+  </script>
+</body>
+</html>

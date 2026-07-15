@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manage Store Products | Admin | Go-Tegs</title>
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <link rel="stylesheet" href="/assets/css/admin.css" />
+  <style>
+    .product-add-form {
+      display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: flex-end;
+      padding: 1.5rem; border: 1px solid var(--border); border-radius: var(--radius);
+      background: var(--paper); margin-top: 1.5rem;
+    }
+    .product-add-form > div { display: flex; flex-direction: column; gap: 0.3rem; }
+    .product-add-form label { font-family: var(--font-display); font-weight: 600; font-size: 0.82rem; }
+    .product-add-form input, .product-add-form select {
+      font-size: 0.9rem; padding: 0.55rem 0.7rem; border: 1px solid var(--border); border-radius: 8px;
+    }
+
+    .product-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem; margin-top: 1.25rem;
+    }
+    .product-card {
+      border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; background: var(--paper);
+    }
+    .product-card .thumb { width: 100%; height: 120px; object-fit: cover; background: var(--teal-light); }
+    .product-card .thumb-placeholder {
+      width: 100%; height: 120px; background: var(--teal-light); display: flex;
+      align-items: center; justify-content: center; color: var(--teal-dark); font-size: 0.75rem;
+    }
+    .product-card .body { padding: 0.8rem; }
+    .product-card .name { font-family: var(--font-display); font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem; }
+    .product-card .price-row { display: flex; gap: 0.4rem; margin-bottom: 0.5rem; }
+    .product-card .price-row input { flex: 1; padding: 0.4rem 0.5rem; font-size: 0.85rem; border: 1px solid var(--border); border-radius: 6px; }
+    .product-card .actions { display: flex; gap: 0.4rem; }
+    .product-card .actions button { flex: 1; font-size: 0.78rem; padding: 0.4rem; }
+    .btn-delete { background: #fef2f2; color: #dc2626; border: 1px solid #fca5a5; }
+    .btn-delete:hover { background: #dc2626; color: #fff; }
+
+    .category-heading { margin-top: 2rem; }
+    #newCategoryInput { display: none; }
+  </style>
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+
+  <main class="page-container admin-page" style="max-width: 1000px;">
+    <nav class="breadcrumb">Admin / Store</nav>
+    <h1>Manage Store Products</h1>
+    <p>Add products under Books or Stationery, or create a new category anytime. Set prices, upload images, or remove products.</p>
+
+    <form class="product-add-form" id="addProductForm">
+      <div>
+        <label for="newName">Product Name</label>
+        <input type="text" id="newName" placeholder="e.g. 40 Leaves Note" required />
+      </div>
+      <div>
+        <label for="newCategorySelect">Category</label>
+        <select id="newCategorySelect">
+          <option value="Books">Books</option>
+          <option value="Stationery">Stationery</option>
+          <option value="__new__">+ Add New Category</option>
+        </select>
+      </div>
+      <div id="newCategoryInput">
+        <label for="newCategoryText">New Category Name</label>
+        <input type="text" id="newCategoryText" placeholder="e.g. Uniforms" />
+      </div>
+      <div>
+        <label for="newPrice">Price (₦, optional)</label>
+        <input type="number" id="newPrice" placeholder="Leave blank if unavailable" min="0" />
+      </div>
+      <div>
+        <label for="newImage">Image</label>
+        <input type="file" id="newImage" accept="image/*" />
+      </div>
+      <button type="submit" class="btn" id="addBtn">Add Product</button>
+    </form>
+    <p id="addMsg" class="upload-status"></p>
+
+    <div id="categoriesContainer"></div>
+  </main>
+
+  <div id="footer-placeholder"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/assets/js/main.js"></script>
+  <script src="/assets/js/supabase-config.js"></script>
+  <script>
+    const PRODUCTS_BUCKET = "product-images";
+    const DEFAULT_CATEGORIES = ["Books", "Stationery"];
+    let allProducts = [];
+
+    function productCard(p) {
+      const priceDisplay = p.price === null || p.price === undefined ? "" : p.price;
+      return `
+        <div class="product-card" data-id="${p.id}">
+          ${p.image_url ? `<img class="thumb" src="${p.image_url}" alt="${p.name}" />` : `<div class="thumb-placeholder">No image</div>`}
+          <div class="body">
+            <div class="name">${p.name}</div>
+            <div class="price-row">
+              <input type="number" min="0" placeholder="Price (₦)" value="${priceDisplay}" class="price-input" />
+              <button class="btn-save save-price-btn" type="button">Save</button>
+            </div>
+            <div class="actions">
+              <button class="btn-delete delete-btn" type="button">Delete</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function getAllCategories() {
+      const fromProducts = allProducts.map(p => p.category);
+      return [...new Set([...DEFAULT_CATEGORIES, ...fromProducts])];
+    }
+
+    function renderCategorySelect() {
+      const select = document.getElementById('newCategorySelect');
+      const categories = getAllCategories();
+      select.innerHTML = categories.map(c => `<option value="${c}">${c}</option>`).join('') +
+        `<option value="__new__">+ Add New Category</option>`;
+    }
+
+    function renderCategoriesAndGrids() {
+      const container = document.getElementById('categoriesContainer');
+      const categories = getAllCategories();
+
+      container.innerHTML = categories.map(cat => `
+        <h2 class="category-heading">${cat}</h2>
+        <div class="product-grid" id="grid-${cssSafe(cat)}"></div>
+      `).join('');
+
+      categories.forEach(cat => {
+        const items = allProducts.filter(p => p.category === cat);
+        document.getElementById(`grid-${cssSafe(cat)}`).innerHTML =
+          items.length ? items.map(productCard).join('') : `<p class="empty-state">No products yet.</p>`;
+      });
+
+      wireCardButtons();
+    }
+
+    function cssSafe(str) {
+      return str.replace(/[^a-z0-9]/gi, '-').toLowerCase();
+    }
+
+    async function loadProducts() {
+      const { data, error } = await supabaseClient
+        .from('products')
+        .select('*')
+        .order('category', { ascending: true })
+        .order('display_order', { ascending: true });
+
+      if (error) {
+        document.getElementById('addMsg').style.color = '#dc2626';
+        document.getElementById('addMsg').textContent = "Failed to load products: " + error.message;
+        return;
+      }
+
+      allProducts = data;
+      renderCategorySelect();
+      renderCategoriesAndGrids();
+    }
+
+    document.getElementById('newCategorySelect').addEventListener('change', (e) => {
+      document.getElementById('newCategoryInput').style.display = e.target.value === '__new__' ? 'flex' : 'none';
+    });
+
+    function wireCardButtons() {
+      document.querySelectorAll('.save-price-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const card = btn.closest('.product-card');
+          const id = card.dataset.id;
+          const priceInput = card.querySelector('.price-input');
+          const rawVal = priceInput.value.trim();
+          const price = rawVal === "" ? null : parseFloat(rawVal);
+
+          btn.textContent = "Saving...";
+          const { error } = await supabaseClient.from('products').update({ price }).eq('id', id);
+          btn.textContent = error ? "Error" : "Saved!";
+          setTimeout(() => (btn.textContent = "Save"), 1200);
+        });
+      });
+
+      document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const card = btn.closest('.product-card');
+          const id = card.dataset.id;
+          const name = card.querySelector('.name').textContent;
+
+          if (!confirm(`Do you really want to delete "${name}"? This can't be undone.`)) return;
+
+          btn.textContent = "Deleting...";
+          const { error } = await supabaseClient.from('products').delete().eq('id', id);
+          if (error) {
+            alert("Failed to delete: " + error.message);
+            btn.textContent = "Delete";
+          } else {
+            await loadProducts();
+          }
+        });
+      });
+    }
+
+    document.getElementById('addProductForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('newName').value.trim();
+      const select = document.getElementById('newCategorySelect');
+      const newCategoryText = document.getElementById('newCategoryText').value.trim();
+      const category = select.value === '__new__' ? newCategoryText : select.value;
+      const rawPrice = document.getElementById('newPrice').value.trim();
+      const price = rawPrice === "" ? null : parseFloat(rawPrice);
+      const file = document.getElementById('newImage').files[0] || null;
+      const addMsg = document.getElementById('addMsg');
+      const addBtn = document.getElementById('addBtn');
+
+      if (!name) return;
+      if (!category) {
+        addMsg.style.color = '#d97706';
+        addMsg.textContent = "Please enter a category name.";
+        return;
+      }
+
+      addBtn.disabled = true;
+      addBtn.textContent = "Adding...";
+      addMsg.textContent = "";
+
+      try {
+        let imageUrl = null;
+
+        if (file) {
+          const filePath = `${Date.now()}-${file.name}`;
+          const { error: uploadError } = await supabaseClient.storage.from(PRODUCTS_BUCKET).upload(filePath, file);
+          if (uploadError) throw uploadError;
+          const { data: publicUrlData } = supabaseClient.storage.from(PRODUCTS_BUCKET).getPublicUrl(filePath);
+          imageUrl = publicUrlData.publicUrl;
+        }
+
+        const { error: insertError } = await supabaseClient.from('products').insert({ name, category, price, image_url: imageUrl });
+        if (insertError) throw insertError;
+
+        addMsg.style.color = '#2c8c87';
+        addMsg.textContent = "Product added!";
+        document.getElementById('addProductForm').reset();
+        document.getElementById('newCategoryInput').style.display = 'none';
+        await loadProducts();
+      } catch (err) {
+        addMsg.style.color = '#dc2626';
+        addMsg.textContent = "Error: " + err.message;
+      } finally {
+        addBtn.disabled = false;
+        addBtn.textContent = "Add Product";
+      }
+    });
+
+    loadProducts();
+  </script>
+</body>
+</html>

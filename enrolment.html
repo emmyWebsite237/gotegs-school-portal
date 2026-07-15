@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Enrolment | Go-Tegs International School</title>
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <style>
+    .enrol-form {
+      max-width: 560px; margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem;
+      padding: 1.75rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--paper);
+    }
+    .enrol-form label { font-family: var(--font-display); font-weight: 600; font-size: 0.85rem; margin-top: 0.5rem; }
+    .enrol-form input, .enrol-form select, .enrol-form textarea {
+      font-family: var(--font-body); font-size: 0.95rem; padding: 0.7rem 0.8rem;
+      border: 1px solid var(--border); border-radius: 8px;
+    }
+    .enrol-form textarea { resize: vertical; min-height: 100px; }
+    .enrol-form .btn { margin-top: 1rem; }
+    #enrolMsg { margin-top: 0.9rem; font-size: 0.88rem; font-weight: 600; }
+    .thank-you-note {
+      background: var(--teal-light); border-left: 3px solid var(--teal);
+      padding: 1rem 1.2rem; border-radius: 0 8px 8px 0; margin-top: 1.25rem; font-size: 0.92rem;
+    }
+  </style>
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+
+  <main class="page-container">
+    <nav class="breadcrumb">Home / Enrolment</nav>
+    <h1>Enrolment</h1>
+    <p>Fill the form below to enrol your child. We'll review it and get in touch to arrange class screening before full registration.</p>
+
+    <form class="enrol-form" id="enrolForm">
+      <label for="parentName">Your Name (Parent/Guardian)</label>
+      <input type="text" id="parentName" name="Parent Name" required />
+
+      <label for="childName">Child's Name</label>
+      <input type="text" id="childName" name="Child's Name" required />
+
+      <label for="email">Email</label>
+      <input type="email" id="email" name="Email" required />
+
+      <label for="phone">Phone</label>
+      <input type="tel" id="phone" name="Phone" required />
+
+      <label for="heard">How did you hear about us?</label>
+      <select id="heard" name="How did you hear about us?">
+        <option value="">Select one option</option>
+        <option>Search Engine</option>
+        <option>Social Media</option>
+        <option>TV</option>
+        <option>Radio</option>
+        <option>Friend or Family</option>
+        <option>Other</option>
+      </select>
+
+      <label for="details">Other Details</label>
+      <textarea id="details" name="Other Details" placeholder="Anything else we should know (intended class, age, etc.)"></textarea>
+
+      <button type="submit" class="btn" id="enrolBtn">Send</button>
+      <p id="enrolMsg"></p>
+    </form>
+
+    <div class="thank-you-note">
+      Thank you for your interest in Go-Tegs International School. We'll review your child's enrolment request and reach out to schedule class screening before full registration is completed.
+    </div>
+  </main>
+
+  <div id="footer-placeholder"></div>
+
+  <script src="/assets/js/main.js"></script>
+  <script>
+    const form = document.getElementById('enrolForm');
+    const msg = document.getElementById('enrolMsg');
+    const btn = document.getElementById('enrolBtn');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
+      msg.style.color = 'var(--slate)';
+      msg.textContent = 'Sending your enrolment request...';
+
+      const payload = {
+        "Parent Name": document.getElementById('parentName').value,
+        "Child's Name": document.getElementById('childName').value,
+        "Email": document.getElementById('email').value,
+        "Phone": document.getElementById('phone').value,
+        "How did you hear about us?": document.getElementById('heard').value,
+        "Other Details": document.getElementById('details').value,
+        "_subject": "New Enrolment Request - Go-Tegs International School",
+        "_cc": "sammyemmy237@gmail.com",
+        "_captcha": "false",
+        "_template": "table"
+      };
+
+      try {
+        const res = await fetch("https://formsubmit.co/ajax/gotegs622@gmail.com", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Accept": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) throw new Error("Failed to send");
+
+        msg.style.color = '#2c8c87';
+        msg.textContent = "Thank you! Your enrolment request has been sent successfully.";
+        form.reset();
+      } catch (err) {
+        msg.style.color = '#dc2626';
+        msg.textContent = "Something went wrong sending your request. Please try again or call the school directly.";
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Send';
+      }
+    });
+  </script>
+</body>
+</html>

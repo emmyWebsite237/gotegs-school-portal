@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Check My Testimonial | Go-Tegs International School</title>
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <style>
+    .result-form {
+      max-width: 420px; margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0.6rem;
+      padding: 1.75rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--paper);
+    }
+    .result-form label { font-family: var(--font-display); font-weight: 600; font-size: 0.85rem; margin-top: 0.4rem; }
+    .result-form input {
+      font-family: var(--font-body); font-size: 0.95rem; padding: 0.7rem 0.8rem;
+      border: 1px solid var(--border); border-radius: 8px;
+    }
+    .result-form .btn { margin-top: 1rem; }
+    #formMsg { margin-top: 0.9rem; font-size: 0.88rem; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+
+  <main class="page-container">
+    <nav class="breadcrumb">Home / Student / Testimonial</nav>
+    <h1>Check My School Leaving Testimonial</h1>
+    <p>Enter your Student ID and PIN to view and download your testimonial.</p>
+
+    <form class="result-form" id="testimonialForm">
+      <label for="sid">Student ID</label>
+      <input type="text" id="sid" placeholder="GT/..." required />
+
+      <label for="pin">Access PIN</label>
+      <input type="password" id="pin" placeholder="Access PIN" required />
+
+      <button type="submit" class="btn" id="checkBtn">Check Testimonial</button>
+      <p id="formMsg"></p>
+    </form>
+  </main>
+
+  <div id="footer-placeholder"></div>
+
+  <script src="/assets/js/main.js"></script>
+  <script>
+    document.getElementById('testimonialForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const sid = document.getElementById('sid').value.trim();
+      const pin = document.getElementById('pin').value;
+      const msg = document.getElementById('formMsg');
+      const btn = document.getElementById('checkBtn');
+
+      if (!sid || !pin) {
+        msg.style.color = '#d97706';
+        msg.textContent = 'Please fill all fields.';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Checking...';
+      msg.style.color = '#5c6b68';
+      msg.textContent = 'Verifying credentials...';
+
+      try {
+        const res = await fetch(`/api/verify-testimonial?student_id=${encodeURIComponent(sid)}&pin=${encodeURIComponent(pin)}`);
+        const data = await res.json();
+
+        if (res.status !== 200) {
+          msg.style.color = '#dc2626';
+          msg.textContent = data.error || 'Something went wrong.';
+          btn.disabled = false;
+          btn.textContent = 'Check Testimonial';
+          return;
+        }
+
+        sessionStorage.setItem('gotegs_testimonial_data', JSON.stringify(data));
+        window.location.href = '/student/testimonial/upload-photo.html';
+      } catch (err) {
+        msg.style.color = '#dc2626';
+        msg.textContent = 'Connection error. Please try again.';
+        btn.disabled = false;
+        btn.textContent = 'Check Testimonial';
+      }
+    });
+  </script>
+</body>
+</html>

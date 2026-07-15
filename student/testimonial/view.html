@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Testimonial | Go-Tegs International School</title>
+  <link rel="stylesheet" href="/assets/css/testimonial.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+  <div class="cert-wrap">
+    <div class="cert-card" id="pdfArea">
+      <div class="unofficial-overlay" id="unofficialOverlay">UNOFFICIAL COPY</div>
+
+      <div class="cert-ribbon">
+        <h1>Go-Tegs International School</h1>
+        <div class="sub">Nursery, Primary &amp; Secondary School</div>
+        <div class="motto">Motto: Training the Leaders of Tomorrow</div>
+      </div>
+
+      <div class="cert-photo-box" id="photoBox">
+        <img id="studentPhoto" src="" alt="Student passport photo" />
+      </div>
+
+      <div class="cert-crest">GO-TEGS<br />CREST</div>
+
+      <div class="cert-title">Testimonial</div>
+
+      <div class="cert-certify-line">This is to certify that</div>
+
+      <div class="cert-name-block">
+        <span class="cert-name" id="dispName"></span>
+      </div>
+
+      <p class="cert-body-text">
+        has been a genuine pupil of this school, from <strong id="dispAdmission"></strong> to <strong id="dispLeaving"></strong>,
+        during which period he/she completed his/her <strong id="dispClass"></strong> education at Go-Tegs International School.
+      </p>
+
+      <div class="cert-details">
+        <div class="detail-row"><span class="detail-label">Date of Birth</span><span id="dispDob"></span></div>
+        <div class="detail-row"><span class="detail-label">Conduct</span><span id="dispConduct"></span></div>
+        <div class="detail-row"><span class="detail-label">Hobby</span><span id="dispHobby"></span></div>
+        <div class="detail-row"><span class="detail-label">Post Held</span><span id="dispPosition"></span></div>
+      </div>
+
+      <p class="cert-recommend" id="dispPrincipal"></p>
+
+      <div class="cert-signatures">
+        <div class="cert-sig">
+          <img src="/assets/img/signature.png" alt="Signature" onerror="this.style.display='none'" />
+          <div class="sig-line"></div>
+          <div class="sig-label">Headmaster's Signature</div>
+          <div class="sig-date" id="dispTimeHead"></div>
+        </div>
+        <div class="cert-sig">
+          <div class="sig-line" style="margin-top: 48px;"></div>
+          <div class="sig-label">Pupil's Signature</div>
+          <div class="sig-date">Date: ______________</div>
+        </div>
+      </div>
+
+      <div class="cert-timestamp" id="dispTime"></div>
+    </div>
+
+    <div class="cert-actions">
+      <button class="btn" id="downloadBtn">Download Testimonial PDF</button>
+      <button class="btn btn-secondary" id="checkAnotherBtn">Check Another</button>
+    </div>
+
+    <p id="msg"></p>
+  </div>
+
+  <script>
+    const raw = sessionStorage.getItem('gotegs_testimonial_data');
+    const photo = sessionStorage.getItem('gotegs_testimonial_photo');
+
+    if (!raw || !photo) {
+      window.location.href = '/student/testimonial/index.html';
+    } else {
+      const data = JSON.parse(raw);
+
+      document.getElementById('unofficialOverlay').style.display = data.is_paid ? 'none' : 'block';
+      document.getElementById('studentPhoto').src = photo;
+      document.getElementById('dispName').textContent = data.full_name;
+      document.getElementById('dispDob').textContent = data.dob || '---';
+      document.getElementById('dispClass').textContent = data.last_class + (data.dept ? ` (${data.dept})` : '');
+      document.getElementById('dispAdmission').textContent = data.admission_date || '---';
+      document.getElementById('dispLeaving').textContent = data.leaving_date || '---';
+      document.getElementById('dispConduct').textContent = data.conduct || '---';
+      document.getElementById('dispHobby').textContent = data.extracurricular || '---';
+      document.getElementById('dispPosition').textContent = data.position_held || 'None';
+      document.getElementById('dispPrincipal').textContent = '"' + (data.principal_remark || 'We strongly recommend him/her to wherever he/she may need his/her service.') + '"';
+      const now = new Date();
+      document.getElementById('dispTime').textContent = 'Generated: ' + now.toLocaleString();
+      document.getElementById('dispTimeHead').textContent = 'Date: ' + now.toLocaleDateString();
+    }
+
+    async function generatePDFBlob() {
+      const originalArea = document.getElementById('pdfArea');
+      const clone = originalArea.cloneNode(true);
+      clone.classList.add('canvas-clone');
+      clone.style.display = 'flex';
+      document.body.appendChild(clone);
+
+      try {
+        const canvas = await html2canvas(clone, { scale: 2, useCORS: true, backgroundColor: '#fffdf8', logging: false, width: 860 });
+        const imgData = canvas.toDataURL('image/jpeg', 1.0);
+        const pdf = new jspdf.jsPDF('p', 'mm', 'a4');
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+        const ratio = Math.min(pdfWidth / canvas.width, pdfHeight / canvas.height);
+        const finalWidth = canvas.width * ratio;
+        const finalHeight = canvas.height * ratio;
+        pdf.addImage(imgData, 'JPEG', (pdfWidth - finalWidth) / 2, 5, finalWidth, finalHeight);
+        return pdf.output('blob');
+      } finally {
+        document.body.removeChild(clone);
+      }
+    }
+
+    document.getElementById('downloadBtn').addEventListener('click', async () => {
+      const btn = document.getElementById('downloadBtn');
+      const studentName = document.getElementById('dispName').textContent || 'Student';
+      btn.disabled = true;
+      btn.textContent = 'Preparing...';
+      try {
+        const blob = await generatePDFBlob();
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${studentName}_GoTegs_Testimonial.pdf`;
+        link.click();
+        URL.revokeObjectURL(url);
+      } catch (err) {
+        document.getElementById('msg').textContent = 'Could not generate PDF. Try again.';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Download Testimonial PDF';
+      }
+    });
+
+    document.getElementById('checkAnotherBtn').addEventListener('click', () => {
+      sessionStorage.removeItem('gotegs_testimonial_data');
+      sessionStorage.removeItem('gotegs_testimonial_photo');
+      window.location.href = '/student/testimonial/index.html';
+    });
+  </script>
+</body>
+</html>

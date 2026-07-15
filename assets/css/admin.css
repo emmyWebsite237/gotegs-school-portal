@@ -1,0 +1,36 @@
+/* Admin-only styles */
+
+.admin-page { max-width: 800px; }
+
+.admin-update-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--paper);
+}
+
+.admin-update-form label {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.88rem;
+  margin-top: 0.5rem;
+}
+
+.admin-update-form input[type="file"],
+.admin-update-form textarea {
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  resize: vertical;
+}
+
+.admin-update-form .btn {
+  align-self: flex-start;
+  margin-top: 0.75rem;
+}

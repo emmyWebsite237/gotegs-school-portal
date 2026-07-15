@@ -1,0 +1,295 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Go-Tegs Store | Go-Tegs International School</title>
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <style>
+    .category-tabs { display: flex; gap: 0.6rem; margin: 1.5rem 0; flex-wrap: wrap; }
+    .category-tab {
+      font-family: var(--font-display); font-weight: 600; font-size: 0.9rem;
+      padding: 0.6rem 1.2rem; border-radius: 999px; border: 1px solid var(--border);
+      background: var(--paper); cursor: pointer;
+    }
+    .category-tab.active { background: var(--teal); color: #fff; border-color: var(--teal); }
+
+    .store-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 1.1rem;
+    }
+    .store-card {
+      border: 1px solid var(--border); border-radius: var(--radius); background: var(--paper);
+      overflow: hidden; display: flex; flex-direction: column;
+    }
+    .store-card .thumb { width: 100%; height: 130px; object-fit: cover; background: var(--teal-light); }
+    .store-card .thumb-placeholder {
+      width: 100%; height: 130px; background: var(--teal-light); display: flex;
+      align-items: center; justify-content: center; color: var(--teal-dark); font-size: 0.78rem;
+    }
+    .store-card .body { padding: 0.9rem; display: flex; flex-direction: column; gap: 0.5rem; flex: 1; }
+    .store-card .name { font-family: var(--font-display); font-weight: 600; font-size: 0.92rem; }
+    .store-card .price { color: var(--teal-dark); font-weight: 700; }
+    .store-card .unavailable { color: var(--slate); font-style: italic; font-size: 0.85rem; }
+    .store-card .qty-row { display: flex; align-items: center; gap: 0.5rem; margin-top: auto; }
+    .store-card .qty-row input {
+      width: 60px; padding: 0.4rem; border: 1px solid var(--border); border-radius: 6px; text-align: center;
+    }
+
+    #cartSection {
+      margin-top: 3rem; padding: 1.5rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--paper);
+    }
+    #cartItems { margin: 1rem 0; }
+    .cart-row { display: flex; justify-content: space-between; padding: 0.4rem 0; border-bottom: 1px solid var(--border); font-size: 0.92rem; }
+    #cartTotal { text-align: right; font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; margin-top: 0.75rem; }
+
+    .order-form { margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0.6rem; max-width: 480px; }
+    .order-form label { font-family: var(--font-display); font-weight: 600; font-size: 0.85rem; }
+    .order-form input { padding: 0.7rem 0.8rem; border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem; }
+
+    .disclaimer {
+      background: #fff7ed; border-left: 3px solid #d97706; padding: 0.9rem 1.1rem;
+      border-radius: 0 8px 8px 0; font-size: 0.85rem; color: #92400e; margin-top: 1rem;
+    }
+
+    .bank-details {
+      background: var(--teal-light); border-left: 3px solid var(--teal); padding: 1rem 1.2rem;
+      border-radius: 0 8px 8px 0; margin-top: 1rem; font-size: 0.92rem;
+    }
+    .bank-details strong { display: block; font-family: var(--font-display); margin-bottom: 0.3rem; }
+
+    #orderMsg { margin-top: 0.9rem; font-size: 0.9rem; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+
+  <main class="page-container">
+    <nav class="breadcrumb">Home / Store</nav>
+    <h1>Go-Tegs Store</h1>
+    <p>Browse school books and stationery below. There's no limit on quantity — order as much as you need. Set quantities for what you'd like, then place your order at the bottom of the page.</p>
+
+    <div class="category-tabs" id="categoryTabs"></div>
+
+    <div class="store-grid" id="storeGrid"></div>
+
+    <div id="cartSection">
+      <h2>Your Order</h2>
+      <div id="cartItems"><p class="empty-state">No items selected yet.</p></div>
+      <div id="cartTotal"></div>
+
+      <div class="disclaimer">
+        Please only place an order if you intend to pay and collect it. Kindly do not place test orders just to
+        check if the store is working — this takes up staff time preparing orders that are never collected or paid for.
+      </div>
+
+      <form class="order-form" id="orderForm">
+        <label for="buyerName">Your Name (person paying)</label>
+        <input type="text" id="buyerName" required />
+
+        <label for="receiverName">Name of Person Receiving the Order in School</label>
+        <input type="text" id="receiverName" required />
+
+        <label for="senderBankName">Name on the Bank Account Used to Pay</label>
+        <input type="text" id="senderBankName" required placeholder="So we can match your payment to your order" />
+
+        <div class="bank-details">
+          <strong>Payment Details</strong>
+          Account Number: 3015286007<br />
+          Bank: First Bank PLC<br />
+          Account Name: Akhimien Glory Osas
+        </div>
+
+        <button type="submit" class="btn" id="submitOrderBtn" style="margin-top:1rem;">Submit Order</button>
+        <p id="orderMsg"></p>
+      </form>
+    </div>
+  </main>
+
+  <div id="footer-placeholder"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/assets/js/main.js"></script>
+  <script src="/assets/js/supabase-config.js"></script>
+  <script>
+    const DEFAULT_CATEGORIES = ["Books", "Stationery"];
+    let allProducts = [];
+    let activeCategory = "Books";
+    const cart = {}; // { productId: { name, price, qty } }
+
+    // Case-insensitive helper so "Books" and "books" are treated as the same category
+    function normalizeCat(cat) {
+      const match = DEFAULT_CATEGORIES.find(c => c.toLowerCase() === String(cat).toLowerCase());
+      return match || cat;
+    }
+
+    async function loadProducts() {
+      const { data, error } = await supabaseClient
+        .from('products')
+        .select('*')
+        .order('category', { ascending: true })
+        .order('display_order', { ascending: true });
+
+      if (error) {
+        document.getElementById('storeGrid').innerHTML = `<p class="empty-state">Could not load products.</p>`;
+        return;
+      }
+
+      // Normalize each product's category so mismatched capitalization doesn't create duplicate tabs
+      allProducts = data.map(p => ({ ...p, category: normalizeCat(p.category) }));
+
+      const extraCategories = [...new Set(allProducts.map(p => p.category))].filter(c => !DEFAULT_CATEGORIES.includes(c));
+      const categories = [...DEFAULT_CATEGORIES, ...extraCategories];
+
+      document.getElementById('categoryTabs').innerHTML = categories.map(cat =>
+        `<button class="category-tab ${cat === activeCategory ? 'active' : ''}" data-cat="${cat}">${cat}</button>`
+      ).join('');
+
+      document.querySelectorAll('.category-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          activeCategory = tab.dataset.cat;
+          renderGrid();
+        });
+      });
+
+      renderGrid();
+    }
+
+    function renderGrid() {
+      const items = allProducts.filter(p => p.category === activeCategory);
+      const grid = document.getElementById('storeGrid');
+
+      if (!items.length) {
+        grid.innerHTML = `<p class="empty-state">No products in this category yet.</p>`;
+        return;
+      }
+
+      grid.innerHTML = items.map(p => {
+        const available = p.price !== null && p.price !== undefined;
+        return `
+          <div class="store-card">
+            ${p.image_url ? `<img class="thumb" src="${p.image_url}" alt="${p.name}" />` : `<div class="thumb-placeholder">No image</div>`}
+            <div class="body">
+              <div class="name">${p.name}</div>
+              ${available ? `<div class="price">₦${Number(p.price).toLocaleString()}</div>` : `<div class="unavailable">Unavailable yet</div>`}
+              ${available ? `
+                <div class="qty-row">
+                  <label style="font-weight:500; font-size:0.85rem;">Qty:</label>
+                  <input type="number" min="0" value="${cart[p.id]?.qty || 0}" data-id="${p.id}" data-name="${p.name}" data-price="${p.price}" class="qty-input" />
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      grid.querySelectorAll('.qty-input').forEach(input => {
+        input.addEventListener('input', () => {
+          const id = input.dataset.id;
+          const qty = Math.max(0, parseInt(input.value) || 0);
+          if (qty === 0) {
+            delete cart[id];
+          } else {
+            cart[id] = { name: input.dataset.name, price: parseFloat(input.dataset.price), qty };
+          }
+          renderCart();
+        });
+      });
+    }
+
+    function renderCart() {
+      const cartItemsEl = document.getElementById('cartItems');
+      const entries = Object.values(cart);
+
+      if (!entries.length) {
+        cartItemsEl.innerHTML = `<p class="empty-state">No items selected yet.</p>`;
+        document.getElementById('cartTotal').textContent = '';
+        return;
+      }
+
+      let total = 0;
+      cartItemsEl.innerHTML = entries.map(item => {
+        const subtotal = item.price * item.qty;
+        total += subtotal;
+        return `<div class="cart-row"><span>${item.name} × ${item.qty}</span><span>₦${subtotal.toLocaleString()}</span></div>`;
+      }).join('');
+
+      document.getElementById('cartTotal').textContent = `Total: ₦${total.toLocaleString()}`;
+    }
+
+    document.getElementById('orderForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const entries = Object.values(cart);
+      const msg = document.getElementById('orderMsg');
+
+      if (!entries.length) {
+        msg.style.color = '#d97706';
+        msg.textContent = 'Please select at least one item before ordering.';
+        return;
+      }
+
+      const buyerName = document.getElementById('buyerName').value.trim();
+      const receiverName = document.getElementById('receiverName').value.trim();
+      const senderBankName = document.getElementById('senderBankName').value.trim();
+
+      if (!buyerName || !receiverName || !senderBankName) {
+        msg.style.color = '#d97706';
+        msg.textContent = 'Please fill in all fields.';
+        return;
+      }
+
+      let total = 0;
+      const itemsList = entries.map(item => {
+        const subtotal = item.price * item.qty;
+        total += subtotal;
+        return `${item.name} x${item.qty} = ₦${subtotal.toLocaleString()}`;
+      }).join('\n');
+
+      const btn = document.getElementById('submitOrderBtn');
+      btn.disabled = true;
+      btn.textContent = 'Submitting...';
+      msg.style.color = 'var(--slate)';
+      msg.textContent = 'Submitting your order...';
+
+      const payload = {
+        "Buyer's Name": buyerName,
+        "Receiving in School": receiverName,
+        "Name on Sender's Bank Account": senderBankName,
+        "Order Items": itemsList,
+        "Total Amount": `₦${total.toLocaleString()}`,
+        "_subject": "New Store Order - Go-Tegs International School",
+        "_cc": "sammyemmy237@gmail.com",
+        "_captcha": "false",
+        "_template": "table"
+      };
+
+      try {
+        const res = await fetch("https://formsubmit.co/ajax/gotegs622@gmail.com", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Accept": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) throw new Error("Failed to send");
+
+        msg.style.color = '#2c8c87';
+        msg.textContent = "Order submitted! Please make payment to the account details above and send proof of payment to the whatsapp number, 08066525319.";
+        document.getElementById('orderForm').reset();
+        Object.keys(cart).forEach(k => delete cart[k]);
+        renderGrid();
+        renderCart();
+      } catch (err) {
+        msg.style.color = '#dc2626';
+        msg.textContent = "Something went wrong submitting your order. Please try again.";
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Submit Order';
+      }
+    });
+
+    loadProducts();
+  </script>
+</body>
+</html>
