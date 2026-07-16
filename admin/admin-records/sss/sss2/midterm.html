@@ -14,7 +14,7 @@
   <link rel="stylesheet" href="/assets/css/admin-records.css" />
   <script>
     guardRecordsAuth();
-    (async () => {
+    document.addEventListener("DOMContentLoaded", async () => {
       try {
         const students = await fetchClassStudents("sss_students", "SSS 2");
         document.getElementById("tablesContainer").innerHTML = students.length
@@ -23,8 +23,8 @@
       } catch (err) {
         document.getElementById("tablesContainer").innerHTML = "Error: " + err.message;
       }
-    })();
-    document.getElementById("downloadBtn")?.addEventListener("click", () => downloadLedgerPDF("captureArea", "GoTegs_SSS2_MidTerm.pdf"));
+      document.getElementById("downloadBtn")?.addEventListener("click", () => downloadLedgerPDF("captureArea", "GoTegs_SSS2_MidTerm.pdf"));
+    });
   </script>
 </head>
 <body>

@@ -116,7 +116,6 @@
       return "Poor performance. You need to be more focused and work harder.";
     }
 
-    const CURRENT_TERM = "Second Term Report";
     const raw = sessionStorage.getItem('gotegs_result_data');
 
     if (!raw) {
@@ -125,7 +124,7 @@
       const data = JSON.parse(raw);
 
       document.getElementById('unofficialOverlay').style.display = data.is_paid ? 'none' : 'block';
-      document.getElementById('dispTerm').textContent = `${CURRENT_TERM}`;
+      document.getElementById('dispTerm').textContent = `${data.term || 'Term'} Report`;
       document.getElementById('dispName').textContent = data.full_name;
       document.getElementById('dispDob').textContent = data.dob || '---';
       document.getElementById('dispClass').textContent = data.class + (data.dept ? ` (${data.dept})` : '');

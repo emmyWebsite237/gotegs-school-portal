@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Check My Result | Go-Tegs International School</title>
   <link rel="stylesheet" href="/assets/css/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     .result-form {
       max-width: 420px;
@@ -41,8 +42,7 @@
 
       <label for="yearSelect">Session</label>
       <select id="yearSelect" required>
-        <option value="">Select Session</option>
-        <option value="2025/2026">2025/2026</option>
+        <option value="">Loading session...</option>
       </select>
 
       <label for="classSelect">Class</label>
@@ -78,6 +78,34 @@
 
   <script src="/assets/js/main.js"></script>
   <script>
+    // Read the school's current Year/Term directly from the admin_portal
+    // table — so when the admin updates it in Supabase, this page (and the
+    // result it generates) reflect the new term automatically.
+    const RESULTS_SB_URL = "https://lsyegaciprnerysmyesy.supabase.co";
+    const RESULTS_SB_KEY = "sb_publishable_sM0x3SdV4iy8GwYb5S5HUg_S9qLZLeJ";
+    const resultsClient = supabase.createClient(RESULTS_SB_URL, RESULTS_SB_KEY);
+
+    let currentYear = "";
+    let currentTerm = "";
+
+    async function loadCurrentYearTerm() {
+      const yearSelect = document.getElementById('yearSelect');
+      try {
+        const { data, error } = await resultsClient.from('admin_portal').select('year, term').limit(1).single();
+        if (error || !data) throw error || new Error("No settings row found");
+
+        currentYear = data.year;
+        currentTerm = data.term;
+
+        yearSelect.innerHTML = `<option value="${currentYear}">${currentYear}</option>`;
+        yearSelect.value = currentYear;
+      } catch (err) {
+        yearSelect.innerHTML = `<option value="">Could not load session</option>`;
+      }
+    }
+
+    loadCurrentYearTerm();
+
     document.getElementById('classSelect').addEventListener('change', (e) => {
       document.getElementById('deptDiv').style.display = e.target.value.includes('SSS') ? 'block' : 'none';
     });
@@ -116,7 +144,7 @@
           return;
         }
 
-        sessionStorage.setItem('gotegs_result_data', JSON.stringify({ ...data, class: cls, dept }));
+        sessionStorage.setItem('gotegs_result_data', JSON.stringify({ ...data, class: cls, dept, year: currentYear, term: currentTerm }));
         window.location.href = '/student/result/view.html';
       } catch (err) {
         msg.style.color = '#dc2626';
