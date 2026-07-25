@@ -148,7 +148,7 @@
         window.location.href = '/student/result/view.html';
       } catch (err) {
         msg.style.color = '#dc2626';
-        msg.textContent = 'Connection error. Please try again.';
+        msg.textContent = 'Connection error: ' + err.message;
         btn.disabled = false;
         btn.textContent = 'Check Result';
       }
