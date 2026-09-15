@@ -8,22 +8,240 @@
   <meta property="og:title" content="Go-Tegs International School - Home" />
   <link rel="icon" type="image/png" href="/assets/img/logo.png" />
   <title>Home | Go-Tegs International School</title>
-  <link rel="stylesheet" href="/assets/css/style.css" /></head>
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <link rel="stylesheet" href="/assets/css/home.css" />
+
+  <script>
+    /* Decide BEFORE the page paints whether to show the intro, so there's
+       no flash of the homepage first.
+
+       A "visit" = a new browser session. Moving between pages inside the
+       site does NOT count again (sessionStorage survives navigation);
+       leaving the site and coming back later does.
+       Shown on visit 1, then 11, 21, 31 ... */
+    (function () {
+      try {
+        var SESSION_KEY = "gotegs_session_seen";
+        var COUNT_KEY = "gotegs_visits";
+        if (!sessionStorage.getItem(SESSION_KEY)) {
+          sessionStorage.setItem(SESSION_KEY, "1");
+          var n = parseInt(localStorage.getItem(COUNT_KEY) || "0", 10) + 1;
+          localStorage.setItem(COUNT_KEY, String(n));
+          if ((n - 1) % 10 === 0) {
+            document.documentElement.classList.add("splash-active");
+          }
+        }
+      } catch (e) { /* private mode / storage blocked — just skip the intro */ }
+    })();
+  </script>
+</head>
 <body>
+
+  <!-- ===== Splash intro ===== -->
+  <div id="splash" aria-hidden="true">
+    <div class="home-shield splash-crest" id="splashCrest">
+      <img src="/assets/img/logo.png" alt="" />
+    </div>
+    <div class="splash-name" id="splashName">
+      Go-Tegs
+      <small>International School</small>
+    </div>
+  </div>
+
   <div id="navbar-placeholder"></div>
 
-  <main class="page-container">
-    <nav class="breadcrumb">Home</nav>
-    <h1>Home</h1>
-    <p>Welcome to Go-Tegs International School. Latest updates and posts will appear here.</p>
-    <section id="updates-feed"></section>
-  </main>
+  <!-- ===== Hero ===== -->
+  <section class="home-hero">
+    <!-- Drop a photo at /assets/img/hero.jpg and it shows here automatically -->
+    <img class="home-hero__photo" src="/assets/img/hero.jpg" alt=""
+         onerror="this.style.display='none'" />
+
+    <div class="home-hero__brand">
+      <div class="home-shield home-hero__crest" id="heroCrest">
+        <img src="/assets/img/logo.png" alt="Go-Tegs International School crest" />
+      </div>
+      <div class="home-hero__name" id="heroName">
+        Go-Tegs
+        <small>International School</small>
+      </div>
+    </div>
+
+    <h1>Welcome to a <em>New Session</em></h1>
+    <p>Training the Leaders of Tomorrow — from nursery through senior secondary, right here in Isheri Olofin, Lagos.</p>
+
+    <div class="home-hero__actions">
+      <a class="home-btn home-btn--gold" href="/enrolment.html">Enrol Your Child</a>
+      <a class="home-btn home-btn--ghost" href="/student/index.html">Student Portal</a>
+    </div>
+  </section>
+
+  <!-- ===== Quick links ===== -->
+  <section class="home-section">
+    <div class="home-section-head">
+      <span class="eyebrow">Explore</span>
+      <h2>Everything in one place</h2>
+      <p>Check results, read lesson notes, practise with quizzes, or shop for school supplies.</p>
+    </div>
+
+    <div class="home-links">
+      <a class="home-link-card" href="/student/index.html">
+        <span class="home-shield">1</span>
+        <span>
+          <h3>Student Portal</h3>
+          <p>Check results and school leaving testimonials.</p>
+        </span>
+      </a>
+
+      <a class="home-link-card" href="/lesson-notes/index.html">
+        <span class="home-shield">2</span>
+        <span>
+          <h3>Lesson Notes</h3>
+          <p>Notes by class, term and subject for JSS and SSS.</p>
+        </span>
+      </a>
+
+      <a class="home-link-card" href="/quiz.html">
+        <span class="home-shield">3</span>
+        <span>
+          <h3>Quiz</h3>
+          <p>Practise questions with instant answers and explanations.</p>
+        </span>
+      </a>
+
+      <a class="home-link-card" href="/updates.html">
+        <span class="home-shield">4</span>
+        <span>
+          <h3>Updates &amp; Events</h3>
+          <p>The latest news and announcements from the school.</p>
+        </span>
+      </a>
+
+      <a class="home-link-card" href="/store.html">
+        <span class="home-shield">5</span>
+        <span>
+          <h3>School Store</h3>
+          <p>Order books, stationery and other school items.</p>
+        </span>
+      </a>
+
+      <a class="home-link-card" href="/enrolment.html">
+        <span class="home-shield">6</span>
+        <span>
+          <h3>Enrolment</h3>
+          <p>Start your child's admission in a few minutes.</p>
+        </span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ===== Mission ===== -->
+  <section class="home-section--cream">
+    <div class="home-section home-section-inner">
+      <div class="home-section-head">
+        <span class="eyebrow">Who we are</span>
+        <h2>Our Mission</h2>
+      </div>
+
+      <div class="home-mission">
+        <div class="home-shield"><img src="/assets/img/logo.png" alt="" /></div>
+        <p>
+          Empowering students to excel as confident, resilient leaders, fostering excellence, and social
+          responsibility, through rigorous academics, innovative teaching, and community engagement, guided
+          by integrity, respect, and empathy.
+        </p>
+      </div>
+
+      <p style="text-align:center; margin-top:1.4rem;">
+        <a class="home-btn home-btn--gold" href="/about.html">Read more about us</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- ===== Programmes ===== -->
+  <section class="home-section">
+    <div class="home-section-head">
+      <span class="eyebrow">Academics</span>
+      <h2>Programmes We Offer</h2>
+      <p>A complete path from early years right through to senior secondary.</p>
+    </div>
+
+    <div class="home-programs">
+      <div class="home-program"><span class="dot"></span>Preparatory</div>
+      <div class="home-program"><span class="dot"></span>Kindergarten / Pre-K</div>
+      <div class="home-program"><span class="dot"></span>Nursery</div>
+      <div class="home-program"><span class="dot"></span>Primary (Grade 1–6)</div>
+      <div class="home-program"><span class="dot"></span>Junior Secondary (7–9)</div>
+      <div class="home-program"><span class="dot"></span>Senior Secondary (10–12)</div>
+      <div class="home-program"><span class="dot"></span>Extracurricular</div>
+    </div>
+  </section>
+
+  <!-- ===== CTA ===== -->
+  <section class="home-cta">
+    <h2>Ready to join Go-Tegs?</h2>
+    <p>Send us an enrolment request and we'll get in touch to arrange class screening.</p>
+    <div class="home-hero__actions">
+      <a class="home-btn home-btn--gold" href="/enrolment.html">Start Enrolment</a>
+      <a class="home-btn home-btn--ghost" href="/contact.html">Contact the School</a>
+    </div>
+  </section>
 
   <div id="footer-placeholder"></div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/assets/js/main.js"></script>
-  <script src="/assets/js/supabase-config.js"></script>
-  <script src="/assets/js/updates.js"></script>
+
+  <script>
+    /* Splash timeline — total ~3 seconds.
+       0.00–0.95s  crest bounces in            (CSS)
+       0.72–1.32s  name rises in               (CSS)
+       1.32–1.90s  hold
+       1.90–2.75s  crest + name shrink and fly to their hero position (below)
+       2.75–3.00s  overlay clears              */
+    (function () {
+      if (!document.documentElement.classList.contains("splash-active")) return;
+
+      var splash = document.getElementById("splash");
+      var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      function clearSplash() {
+        document.documentElement.classList.remove("splash-active");
+        if (splash) splash.remove();
+      }
+
+      if (reduced) { setTimeout(clearSplash, 400); return; }
+
+      // Move an element from where it is now to where its hero twin sits.
+      function flyTo(fromEl, toEl, delay) {
+        if (!fromEl || !toEl) return;
+        var a = fromEl.getBoundingClientRect();
+        var b = toEl.getBoundingClientRect();
+        if (!a.width || !b.width) return;
+
+        var scale = b.width / a.width;
+        var dx = (b.left + b.width / 2) - (a.left + a.width / 2);
+        var dy = (b.top + b.height / 2) - (a.top + a.height / 2);
+
+        fromEl.animate(
+          [
+            { transform: "translate(0,0) scale(1)" },
+            { transform: "translate(" + dx + "px," + dy + "px) scale(" + scale + ")" }
+          ],
+          { duration: 850, delay: delay, easing: "cubic-bezier(0.65,0,0.35,1)", fill: "forwards" }
+        );
+      }
+
+      setTimeout(function () {
+        flyTo(document.getElementById("splashCrest"), document.getElementById("heroCrest"), 0);
+        flyTo(document.getElementById("splashName"), document.getElementById("heroName"), 0);
+
+        splash.animate(
+          [{ opacity: 1 }, { opacity: 0 }],
+          { duration: 700, delay: 300, easing: "ease-in", fill: "forwards" }
+        );
+
+        setTimeout(clearSplash, 1100);
+      }, 1900);
+    })();
+  </script>
 </body>
 </html>
