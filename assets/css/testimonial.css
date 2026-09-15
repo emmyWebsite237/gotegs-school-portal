@@ -5,12 +5,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Cormorant+Garamond:wght@500;600;700&family=Sora:wght@600;700&display=swap');
 
 :root {
-  --teal: #3fb0aa;
-  --teal-dark: #2c8c87;
-  --teal-light: #eaf7f6;
-  --gold: #b8912f;
-  --ink: #16231f;
-  --slate: #5c6b68;
+  --teal: #7b1418;
+  --teal-dark: #5a0e12;
+  --teal-light: #fbf3e3;
+  --gold: #c9a227;
+  --ink: #1c1614;
+  --slate: #6b5f5a;
 }
 
 * { box-sizing: border-box; }

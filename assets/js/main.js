@@ -36,15 +36,15 @@ function showAdminGate() {
   const overlay = document.createElement("div");
   overlay.id = "adminGateOverlay";
   overlay.style.cssText = `
-    position: fixed; inset: 0; background: #16231f; z-index: 9999; visibility: visible;
+    position: fixed; inset: 0; background: #3f0a0d; z-index: 9999; visibility: visible;
     display: flex; align-items: center; justify-content: center;
   `;
   overlay.innerHTML = `
     <div style="background:#fff; padding:2rem; border-radius:12px; width:100%; max-width:340px; text-align:center; font-family: sans-serif;">
-      <h2 style="margin:0 0 0.75rem; font-size:1.2rem; color:#16231f;">Admin Access</h2>
-      <p style="color:#5c6b68; font-size:0.9rem; margin-bottom:1rem;">Enter the password to continue.</p>
-      <input type="password" id="adminGateInput" style="width:100%; padding:0.7rem; border:1px solid #e3ece9; border-radius:8px; margin-bottom:0.75rem; box-sizing:border-box;" />
-      <button id="adminGateBtn" style="width:100%; padding:0.7rem; border:none; border-radius:8px; background:#3fb0aa; color:#fff; font-weight:600; cursor:pointer;">Enter</button>
+      <h2 style="margin:0 0 0.75rem; font-size:1.2rem; color:#1c1614;">Admin Access</h2>
+      <p style="color:#6b5f5a; font-size:0.9rem; margin-bottom:1rem;">Enter the password to continue.</p>
+      <input type="password" id="adminGateInput" style="width:100%; padding:0.7rem; border:1px solid #e8dfcf; border-radius:8px; margin-bottom:0.75rem; box-sizing:border-box;" />
+      <button id="adminGateBtn" style="width:100%; padding:0.7rem; border:none; border-radius:8px; background:#7b1418; color:#fff; font-weight:600; cursor:pointer;">Enter</button>
       <p id="adminGateMsg" style="color:#dc2626; font-size:0.85rem; margin-top:0.6rem; min-height:1.1rem;"></p>
     </div>
   `;
@@ -109,12 +109,46 @@ function highlightActiveLink() {
 
 function wireMobileToggle() {
   const toggle = document.getElementById("nav-toggle");
-  const links = document.getElementById("nav-links");
-  if (!toggle || !links) return;
+  const drawer = document.getElementById("nav-drawer");
+  const scrim = document.getElementById("nav-scrim");
+  const closeBtn = document.getElementById("nav-drawer-close");
+  if (!toggle || !drawer || !scrim) return;
 
-  toggle.addEventListener("click", () => {
-    const isOpen = links.classList.toggle("open");
-    toggle.setAttribute("aria-expanded", String(isOpen));
+  function setDrawer(open) {
+    drawer.classList.toggle("open", open);
+    scrim.classList.toggle("open", open);
+    toggle.setAttribute("aria-expanded", String(open));
+    document.body.style.overflow = open ? "hidden" : "";
+  }
+
+  toggle.addEventListener("click", () => setDrawer(!drawer.classList.contains("open")));
+  scrim.addEventListener("click", () => setDrawer(false));
+  if (closeBtn) closeBtn.addEventListener("click", () => setDrawer(false));
+
+  // Close the drawer when any link inside it is tapped
+  drawer.querySelectorAll("a").forEach((a) => a.addEventListener("click", () => setDrawer(false)));
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && drawer.classList.contains("open")) setDrawer(false);
+  });
+}
+
+// Collapsible nav groups (sidebar + drawer). A group auto-opens when one
+// of its own links is the active page.
+function wireNavGroups() {
+  document.querySelectorAll(".nav-group").forEach((group) => {
+    const btn = group.querySelector(".nav-group-toggle");
+    if (!btn) return;
+
+    if (group.querySelector("a.active")) {
+      group.classList.add("open");
+      btn.setAttribute("aria-expanded", "true");
+    }
+
+    btn.addEventListener("click", () => {
+      const isOpen = group.classList.toggle("open");
+      btn.setAttribute("aria-expanded", String(isOpen));
+    });
   });
 }
 
@@ -151,6 +185,7 @@ async function initShell() {
   await injectPartial("/partials/footer.html", "footer-placeholder");
 
   highlightActiveLink();
+  wireNavGroups();
   wireMobileToggle();
   setFooterYear();
 

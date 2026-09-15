@@ -1,20 +1,74 @@
-<div class="site-navbar">
-  <div class="nav-inner">
-    <a href="/index.html" class="nav-brand">
-      <img src="/assets/img/logo.png" alt="Go-Tegs International School logo" />
-      <span>Go-Tegs International School</span>
-    </a>
+<!-- Desktop sidebar -->
+<aside class="site-sidebar">
+  <a href="/index.html" class="nav-brand">
+    <img src="/assets/img/logo.png" alt="Go-Tegs International School logo" />
+    <span>Go-Tegs<small>International School</small></span>
+  </a>
 
-    <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+  <nav class="nav-links" aria-label="Main">
+    <a href="/index.html">Home</a>
+    <a href="/about.html">About</a>
+    <a href="/enrolment.html">Enrolment</a>
 
-    <ul class="nav-links" id="nav-links">
-      <li><a href="/index.html" data-nav="home">Home</a></li>
-      <li><a href="/about.html" data-nav="about">About</a></li>
-      <li><a href="/enrolment.html" data-nav="enrolment">Enrolment</a></li>
-      <li><a href="/lesson-notes/index.html" data-nav="lesson-notes">Lesson Notes</a></li>
-      <li><a href="/student/index.html" data-nav="student">Student</a></li>
-      <li><a href="/store.html" data-nav="store">Store</a></li>
-      <li><a href="/contact.html" data-nav="contact">Contact</a></li>
-    </ul>
+    <div class="nav-group" data-group="academics">
+      <button type="button" class="nav-group-toggle" aria-expanded="false">
+        <span class="nav-group-label">Academics</span>
+        <span class="chev">&#9662;</span>
+      </button>
+      <div class="nav-group-items">
+        <div>
+          <a href="/lesson-notes/index.html">Lesson Notes</a>
+          <a href="/quiz.html">Quiz</a>
+        </div>
+      </div>
+    </div>
+
+    <a href="/student/index.html">Student</a>
+    <a href="/store.html">Store</a>
+    <a href="/contact.html">Contact</a>
+  </nav>
+
+  <p class="nav-foot">Training the Leaders of Tomorrow</p>
+</aside>
+
+<!-- Mobile top bar -->
+<header class="site-topbar">
+  <a href="/index.html" class="nav-brand">
+    <img src="/assets/img/logo.png" alt="Go-Tegs International School logo" />
+    <span>Go-Tegs<small>International School</small></span>
+  </a>
+  <button class="nav-toggle" id="nav-toggle" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+</header>
+
+<!-- Mobile drawer -->
+<div class="nav-scrim" id="nav-scrim"></div>
+
+<aside class="nav-drawer" id="nav-drawer">
+  <div class="nav-drawer-head">
+    <span>Menu</span>
+    <button class="nav-drawer-close" id="nav-drawer-close" aria-label="Close menu">&times;</button>
   </div>
-</div>
+
+  <nav class="nav-links" aria-label="Mobile">
+    <a href="/index.html">Home</a>
+    <a href="/about.html">About</a>
+    <a href="/enrolment.html">Enrolment</a>
+
+    <div class="nav-group" data-group="academics">
+      <button type="button" class="nav-group-toggle" aria-expanded="false">
+        <span class="nav-group-label">Academics</span>
+        <span class="chev">&#9662;</span>
+      </button>
+      <div class="nav-group-items">
+        <div>
+          <a href="/lesson-notes/index.html">Lesson Notes</a>
+          <a href="/quiz.html">Quiz</a>
+        </div>
+      </div>
+    </div>
+
+    <a href="/student/index.html">Student</a>
+    <a href="/store.html">Store</a>
+    <a href="/contact.html">Contact</a>
+  </nav>
+</aside>
