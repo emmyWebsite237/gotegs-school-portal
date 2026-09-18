@@ -12,27 +12,10 @@
   <link rel="stylesheet" href="/assets/css/home.css" />
 
   <script>
-    /* Decide BEFORE the page paints whether to show the intro, so there's
-       no flash of the homepage first.
-
-       A "visit" = a new browser session. Moving between pages inside the
-       site does NOT count again (sessionStorage survives navigation);
-       leaving the site and coming back later does.
-       Shown on visit 1, then 11, 21, 31 ... */
-    (function () {
-      try {
-        var SESSION_KEY = "gotegs_session_seen";
-        var COUNT_KEY = "gotegs_visits";
-        if (!sessionStorage.getItem(SESSION_KEY)) {
-          sessionStorage.setItem(SESSION_KEY, "1");
-          var n = parseInt(localStorage.getItem(COUNT_KEY) || "0", 10) + 1;
-          localStorage.setItem(COUNT_KEY, String(n));
-          if ((n - 1) % 10 === 0) {
-            document.documentElement.classList.add("splash-active");
-          }
-        }
-      } catch (e) { /* private mode / storage blocked — just skip the intro */ }
-    })();
+    /* Plays every time the homepage loads — no throttling. Decided before
+       the page paints, so there's no flash of the homepage first.
+       Tap/click anywhere on the splash to skip straight to the hero. */
+    document.documentElement.classList.add("splash-active");
   </script>
 </head>
 <body>
@@ -46,6 +29,7 @@
       Go-Tegs
       <small>International School</small>
     </div>
+    <p class="splash-skip">Tap to skip</p>
   </div>
 
   <div id="navbar-placeholder"></div>
@@ -202,11 +186,16 @@
 
       var splash = document.getElementById("splash");
       var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      var finished = false;
 
       function clearSplash() {
+        if (finished) return;
+        finished = true;
         document.documentElement.classList.remove("splash-active");
         if (splash) splash.remove();
       }
+
+      if (splash) splash.addEventListener("click", clearSplash);
 
       if (reduced) { setTimeout(clearSplash, 400); return; }
 

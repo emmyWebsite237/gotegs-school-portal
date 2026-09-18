@@ -188,8 +188,19 @@ async function initShell() {
   wireNavGroups();
   wireMobileToggle();
   setFooterYear();
+  loadSocialIconsIfNeeded();
 
   await loadNotesScriptsIfNeeded();
+}
+
+async function loadSocialIconsIfNeeded() {
+  if (!document.getElementById("footer-social")) return;
+  try {
+    await loadScript("/assets/js/social-links.js");
+    if (window.__gotegsLoadSocialIcons) window.__gotegsLoadSocialIcons();
+  } catch (err) {
+    console.error("Failed to load social-links.js:", err);
+  }
 }
 
 document.addEventListener("DOMContentLoaded", () => {

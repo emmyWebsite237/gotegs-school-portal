@@ -5,26 +5,29 @@
 @import url('https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap');
 
 :root {
-  /* Brand palette — maroon / gold / cream.
-     NOTE: the --teal* names are kept on purpose. Every page on the site
-     already references them, so changing only the VALUES here restyles
-     the entire site at once without editing 100+ files. */
-  --teal: #7b1418;          /* primary maroon */
-  --teal-dark: #5a0e12;     /* deeper maroon */
-  --teal-light: #fbf3e3;    /* cream tint */
+  /* Brand palette: blue / light blue primary, gold-yellow for hover
+     accents, a light red touch reserved for small highlights/badges.
+     NOTE: names such as teal, maroon, and gold are kept on purpose,
+     the whole site (100+ pages) already references them, so changing
+     only the VALUES here restyles everything at once. */
+  --teal: #1d63c9;          /* primary blue */
+  --teal-dark: #123f80;     /* deep blue */
+  --teal-light: #eaf3fd;    /* light-blue tint */
 
-  /* Semantic aliases — use these in anything new */
-  --maroon: #7b1418;
-  --maroon-dark: #5a0e12;
-  --maroon-deep: #3f0a0d;
-  --gold: #c9a227;
-  --gold-soft: #e3c766;
-  --cream: #fbf3e3;
+  --maroon: #1d63c9;        /* sidebar/hero base — now blue */
+  --maroon-dark: #144e9e;
+  --maroon-deep: #0a2c5c;   /* deep navy for gradients */
 
-  --ink: #1c1614;
-  --slate: #6b5f5a;
+  --gold: #ffc93c;          /* yellow — hover accent on buttons */
+  --gold-soft: #ffe08a;
+
+  --red-touch: #e0503f;     /* small accent only — badges, "Live" tags */
+
+  --ink: #101826;
+  --slate: #5b6b7f;
   --paper: #ffffff;
-  --border: #e8dfcf;
+  --border: #dbe6f2;
+  --cream: #eaf3fd;
 
   /* Type */
   --font-display: 'Sora', sans-serif;
@@ -35,8 +38,8 @@
   --sidebar-width: 244px;
   --max-width: 1120px;
   --radius: 10px;
-  --shadow-sm: 0 1px 2px rgba(28, 22, 20, 0.06);
-  --shadow-md: 0 8px 24px rgba(28, 22, 20, 0.10);
+  --shadow-sm: 0 1px 2px rgba(16, 24, 38, 0.06);
+  --shadow-md: 0 8px 24px rgba(16, 24, 38, 0.10);
 }
 
 /* ---------- Reset ---------- */
@@ -122,7 +125,8 @@ p { color: var(--slate); margin-bottom: 1rem; }
   transition: background 0.15s ease, transform 0.15s ease;
 }
 
-.btn:hover { background: var(--teal-dark); transform: translateY(-1px); }
+.btn:hover { background: var(--gold); color: var(--maroon-deep); transform: translateY(-1px); }
+.btn { background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%); }
 
 .btn-save {
   font-family: var(--font-display);
@@ -405,6 +409,31 @@ p { color: var(--slate); margin-bottom: 1rem; }
 
 .footer-inner ul li { margin-bottom: 0.5rem; }
 .footer-inner a:hover { color: var(--gold-soft); }
+
+.footer-social {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+.footer-social a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #fff;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+.footer-social a:hover {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--maroon-deep);
+  transform: translateY(-2px);
+}
+.footer-social svg { width: 16px; height: 16px; fill: currentColor; }
 
 .footer-bottom {
   max-width: var(--max-width);

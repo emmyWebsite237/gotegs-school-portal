@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/assets/img/logo.png" />
+  <title>FAQ | Go-Tegs International School</title>
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <style>
+    .faq-item { border: 1px solid var(--border); border-radius: var(--radius); margin-top: 0.7rem; overflow: hidden; }
+    .faq-q {
+      width: 100%; display: flex; justify-content: space-between; align-items: center;
+      padding: 1.1rem 1.3rem; background: var(--paper); border: none;
+      font-family: var(--font-display); font-weight: 600; font-size: 0.96rem; color: var(--ink); text-align: left;
+    }
+    .faq-q .chev { transition: transform 0.2s ease; color: var(--teal); }
+    .faq-item.open .faq-q .chev { transform: rotate(180deg); }
+    .faq-a {
+      display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows 0.22s ease, opacity 0.22s ease;
+      background: var(--teal-light);
+    }
+    .faq-item.open .faq-a { grid-template-rows: 1fr; opacity: 1; }
+    .faq-a > div { min-height: 0; overflow: hidden; padding: 0 1.3rem; }
+    .faq-item.open .faq-a > div { padding: 0 1.3rem 1.1rem; }
+    .faq-a p { margin: 0; font-size: 0.9rem; color: var(--slate); line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+
+  <main class="page-container">
+    <nav class="breadcrumb">Home / FAQ</nav>
+    <h1>Frequently Asked Questions</h1>
+    <p>Quick answers to the things parents and students ask us most.</p>
+
+    <div id="faqList">
+      <div class="faq-item">
+        <button class="faq-q"><span>How do I enrol my child at Go-Tegs?</span><span class="chev">&#9662;</span></button>
+        <div class="faq-a"><div><p>Fill out the form on our <a href="/enrolment.html">Enrolment</a> page. We'll review it and reach out to arrange class screening before registration is completed.</p></div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q"><span>How do I check my child's result?</span><span class="chev">&#9662;</span></button>
+        <div class="faq-a"><div><p>Go to the <a href="/student/index.html">Student Portal</a> and select "Check My Result." You'll need your child's Student ID and Access PIN.</p></div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q"><span>How do I get a School Leaving Testimonial?</span><span class="chev">&#9662;</span></button>
+        <div class="faq-a"><div><p>Also available from the Student Portal, under "Check My School Leaving Testimonial."</p></div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q"><span>How do I order books or stationery from the school?</span><span class="chev">&#9662;</span></button>
+        <div class="faq-a"><div><p>Visit our <a href="/store.html">Store</a> page, add items to your order, then follow the payment instructions shown before submitting.</p></div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q"><span>What programmes does Go-Tegs offer?</span><span class="chev">&#9662;</span></button>
+        <div class="faq-a"><div><p>Preparatory, Kindergarten/Pre-K, Nursery, Primary (Grade 1–6), Junior Secondary (7–9), Senior Secondary (10–12), and Extracurricular Activities.</p></div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q"><span>How do I contact the school directly?</span><span class="chev">&#9662;</span></button>
+        <div class="faq-a"><div><p>Call 0806 652 5319 or 0810 695 8638, email gotegs622@gmail.com, or use the form on our <a href="/contact.html">Contact</a> page.</p></div></div>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-placeholder"></div>
+  <script src="/assets/js/main.js"></script>
+  <script>
+    document.querySelectorAll('.faq-q').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        btn.closest('.faq-item').classList.toggle('open');
+      });
+    });
+  </script>
+</body>
+</html>

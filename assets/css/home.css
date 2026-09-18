@@ -54,8 +54,8 @@
   inset: 0;
   z-index: -1;
   background:
-    radial-gradient(120% 90% at 50% 0%, rgba(201, 162, 39, 0.18) 0%, transparent 55%),
-    linear-gradient(180deg, rgba(63, 10, 13, 0.82) 0%, rgba(63, 10, 13, 0.94) 100%);
+    radial-gradient(120% 90% at 50% 0%, rgba(255, 201, 60, 0.16) 0%, transparent 55%),
+    linear-gradient(180deg, rgba(10, 44, 92, 0.82) 0%, rgba(10, 44, 92, 0.94) 100%);
 }
 
 .home-hero__brand {
@@ -135,10 +135,10 @@
   transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
 }
 .home-btn:hover { transform: translateY(-2px); }
-.home-btn--gold { background: var(--gold); color: #3f0a0d; }
+.home-btn--gold { background: var(--gold); color: var(--maroon-deep); }
 .home-btn--gold:hover { background: var(--gold-soft); }
 .home-btn--ghost { border-color: rgba(255, 255, 255, 0.45); color: #fff; }
-.home-btn--ghost:hover { background: rgba(255, 255, 255, 0.12); }
+.home-btn--ghost:hover { background: rgba(255, 201, 60, 0.16); border-color: var(--gold); color: var(--gold-soft); }
 
 /* ---------- Generic section wrapper ---------- */
 .home-section {
@@ -176,9 +176,10 @@
 }
 .home-link-card:hover {
   transform: translateY(-3px);
-  border-color: var(--maroon);
+  border-color: var(--gold);
   box-shadow: var(--shadow-md);
 }
+.home-link-card:hover .home-shield { background: linear-gradient(160deg, var(--red-touch) 0%, var(--maroon-deep) 100%); }
 .home-link-card .home-shield {
   width: 34px;
   height: 40px;
@@ -264,7 +265,20 @@
   align-items: center;
   justify-content: center;
   gap: 1.2rem;
+  cursor: pointer;
   background: linear-gradient(160deg, var(--maroon) 0%, var(--maroon-deep) 100%);
+}
+
+#splash .splash-skip {
+  position: absolute;
+  bottom: 2.2rem;
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  opacity: 0;
+  animation: splash-rise 0.5s ease-out 1.6s both;
 }
 
 html.splash-active #splash { display: flex; }
