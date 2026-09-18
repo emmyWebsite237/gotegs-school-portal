@@ -5,23 +5,93 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Student Portal | Go-Tegs International School</title>
   <link rel="stylesheet" href="/assets/css/style.css" />
+  <style>
+    .login-card {
+      max-width: 420px; margin: 1.5rem auto 0; padding: 1.75rem;
+      border: 1px solid var(--border); border-radius: var(--radius); background: var(--paper);
+    }
+    .login-card label { font-family: var(--font-display); font-weight: 600; font-size: 0.85rem; margin-top: 0.5rem; display: block; }
+    .login-card input {
+      width: 100%; font-family: var(--font-body); font-size: 0.95rem; padding: 0.7rem 0.8rem;
+      margin-top: 0.35rem; border: 1px solid var(--border); border-radius: 8px; box-sizing: border-box;
+    }
+    .login-card .btn { width: 100%; margin-top: 1.2rem; justify-content: center; }
+    #loginMsg { margin-top: 0.9rem; font-size: 0.88rem; font-weight: 600; text-align: center; }
+  </style>
 </head>
 <body>
   <div id="navbar-placeholder"></div>
 
-  <main class="page-container">
+  <main class="page-container" style="max-width: 640px;">
     <nav class="breadcrumb">Home / Student</nav>
-    <h1>Student Portal</h1>
-    <p>Select what you'd like to check.</p>
+    <h1 style="text-align:center;">Student Portal</h1>
+    <p style="text-align:center;">Log in with your Student ID and PIN to access your dashboard.</p>
 
-    <ul class="link-grid">
-      <li><a href="/student/result/index.html">Check My Result</a></li>
-      <li><a href="/student/testimonial/index.html">Check My School Leaving Testimonial</a></li>
-    </ul>
+    <form class="login-card" id="loginForm">
+      <label for="studentId">Student ID</label>
+      <input type="text" id="studentId" placeholder="GT/..." required />
+
+      <label for="pin">PIN</label>
+      <input type="password" id="pin" required />
+
+      <button type="submit" class="btn" id="loginBtn">Log In</button>
+      <p id="loginMsg"></p>
+    </form>
   </main>
 
   <div id="footer-placeholder"></div>
-
   <script src="/assets/js/main.js"></script>
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const studentId = document.getElementById('studentId').value.trim();
+      const pin = document.getElementById('pin').value;
+      const msg = document.getElementById('loginMsg');
+      const btn = document.getElementById('loginBtn');
+
+      if (!studentId || !pin) {
+        msg.style.color = '#d97706';
+        msg.textContent = 'Please fill in both fields.';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Logging in...';
+      msg.style.color = 'var(--slate)';
+      msg.textContent = '';
+
+      try {
+        const res = await fetch(`/api/student-login?student_id=${encodeURIComponent(studentId)}&pin=${encodeURIComponent(pin)}`);
+        const data = await res.json();
+
+        if (res.status !== 200) {
+          msg.style.color = '#dc2626';
+          msg.textContent = data.error || 'Login failed.';
+          btn.disabled = false;
+          btn.textContent = 'Log In';
+          return;
+        }
+
+        // Session lives only for this browser tab session — cleared when
+        // the tab closes, same trust level as the rest of the site's login.
+        sessionStorage.setItem('gotegs_student_session', JSON.stringify({
+          student_id: studentId,
+          pin: pin,
+          full_name: data.full_name,
+          class: data.class,
+          dept: data.dept,
+          year: data.year,
+          section: data.section,
+        }));
+
+        window.location.href = '/student/dashboard.html';
+      } catch (err) {
+        msg.style.color = '#dc2626';
+        msg.textContent = 'Connection error: ' + err.message;
+        btn.disabled = false;
+        btn.textContent = 'Log In';
+      }
+    });
+  </script>
 </body>
 </html>

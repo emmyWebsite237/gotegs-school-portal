@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Dashboard | Go-Tegs International School</title>
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <style>
+    .dash-head {
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+      padding: 1.5rem 1.75rem; border: 1px solid var(--border); border-radius: var(--radius);
+      background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%); color: #fff; margin-top: 1.5rem;
+    }
+    .dash-head h2 { color: #fff; margin: 0 0 0.2rem; }
+    .dash-head p { color: rgba(255,255,255,0.85); margin: 0; font-size: 0.9rem; }
+    .dash-head .logout-btn {
+      background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.4); color: #fff;
+      padding: 0.6rem 1.1rem; border-radius: 8px; font-family: var(--font-display); font-weight: 600; font-size: 0.85rem;
+    }
+    .dash-head .logout-btn:hover { background: rgba(255,255,255,0.25); }
+
+    .dash-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-top: 1.75rem;
+    }
+    .dash-card {
+      display: flex; flex-direction: column; gap: 0.5rem; padding: 1.4rem;
+      border: 1px solid var(--border); border-radius: var(--radius); background: var(--paper);
+      text-align: left; cursor: pointer; transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    }
+    .dash-card:hover:not(.disabled) { transform: translateY(-3px); border-color: var(--teal); box-shadow: var(--shadow-md); }
+    .dash-card h3 { font-size: 1rem; margin: 0; }
+    .dash-card p { font-size: 0.85rem; color: var(--slate); margin: 0; }
+    .dash-card .badge {
+      align-self: flex-start; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+      padding: 0.2rem 0.55rem; border-radius: 99px; background: var(--teal-light); color: var(--teal-dark);
+    }
+    .dash-card.disabled { opacity: 0.55; cursor: default; }
+    .dash-card.disabled .badge { background: #f1f1f1; color: var(--slate); }
+
+    #dashMsg { margin-top: 1rem; font-size: 0.88rem; font-weight: 600; text-align: center; }
+  </style>
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+
+  <main class="page-container">
+    <nav class="breadcrumb">Home / Student / Dashboard</nav>
+
+    <div class="dash-head">
+      <div>
+        <h2 id="dashName">Welcome</h2>
+        <p id="dashClass"></p>
+      </div>
+      <button class="logout-btn" id="logoutBtn">Log Out</button>
+    </div>
+
+    <div class="dash-grid">
+      <div class="dash-card" id="checkResultCard">
+        <span class="badge">Academics</span>
+        <h3>Check My Result</h3>
+        <p>View and download your current term result.</p>
+      </div>
+
+      <div class="dash-card" id="checkTestimonialCard">
+        <span class="badge">Academics</span>
+        <h3>School Leaving Testimonial</h3>
+        <p>Check and download your testimonial, if issued.</p>
+      </div>
+
+      <a class="dash-card" href="/lesson-notes/index.html" style="text-decoration:none; color:inherit;">
+        <span class="badge">Academics</span>
+        <h3>Lesson Notes</h3>
+        <p>Notes for your class, by term and subject.</p>
+      </a>
+
+      <a class="dash-card" href="/quiz.html" style="text-decoration:none; color:inherit;">
+        <span class="badge">Practice</span>
+        <h3>Quiz</h3>
+        <p>Practise questions with instant feedback.</p>
+      </a>
+
+      <div class="dash-card disabled">
+        <span class="badge">Coming Soon</span>
+        <h3>Tournaments</h3>
+        <p>Compete with your classmates for a spot on the leaderboard.</p>
+      </div>
+
+      <div class="dash-card disabled">
+        <span class="badge">Coming Soon</span>
+        <h3>Performance Trend</h3>
+        <p>See how your scores have moved across terms.</p>
+      </div>
+    </div>
+
+    <p id="dashMsg"></p>
+  </main>
+
+  <div id="footer-placeholder"></div>
+  <script src="/assets/js/main.js"></script>
+  <script>
+    const raw = sessionStorage.getItem('gotegs_student_session');
+
+    if (!raw) {
+      window.location.href = '/student/index.html';
+    } else {
+      const session = JSON.parse(raw);
+      document.getElementById('dashName').textContent = 'Welcome, ' + session.full_name;
+      document.getElementById('dashClass').textContent =
+        session.class + (session.dept ? ' (' + session.dept + ')' : '') + ' — ' + (session.year || '');
+    }
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      sessionStorage.removeItem('gotegs_student_session');
+      window.location.href = '/student/index.html';
+    });
+
+    document.getElementById('checkResultCard').addEventListener('click', async () => {
+      const session = JSON.parse(sessionStorage.getItem('gotegs_student_session') || 'null');
+      if (!session) { window.location.href = '/student/index.html'; return; }
+
+      const msg = document.getElementById('dashMsg');
+      msg.style.color = 'var(--slate)';
+      msg.textContent = 'Checking your result...';
+
+      try {
+        const res = await fetch(
+          `/api/verify-result?student_id=${encodeURIComponent(session.student_id)}` +
+          `&year=${encodeURIComponent(session.year || '')}` +
+          `&class=${encodeURIComponent(session.class)}` +
+          `&dept=${encodeURIComponent(session.dept || '')}` +
+          `&pin=${encodeURIComponent(session.pin)}`
+        );
+        const data = await res.json();
+
+        if (res.status !== 200) {
+          msg.style.color = '#dc2626';
+          msg.textContent = data.error || 'Could not fetch your result.';
+          return;
+        }
+
+        sessionStorage.setItem('gotegs_result_data', JSON.stringify({
+          ...data, class: session.class, dept: session.dept, year: session.year, term: data.term
+        }));
+        window.location.href = '/student/result/view.html';
+      } catch (err) {
+        msg.style.color = '#dc2626';
+        msg.textContent = 'Connection error: ' + err.message;
+      }
+    });
+
+    document.getElementById('checkTestimonialCard').addEventListener('click', () => {
+      // Testimonial uses its own PIN (a separate table/credential), so we
+      // still need that form — but we can skip asking for the Student ID
+      // again since we already know it from this session.
+      const session = JSON.parse(sessionStorage.getItem('gotegs_student_session') || 'null');
+      if (session) sessionStorage.setItem('gotegs_prefill_student_id', session.student_id);
+      window.location.href = '/student/testimonial/index.html';
+    });
+  </script>
+</body>
+</html>

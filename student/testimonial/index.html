@@ -43,6 +43,11 @@
 
   <script src="/assets/js/main.js"></script>
   <script>
+    const prefillId = sessionStorage.getItem('gotegs_prefill_student_id');
+    if (prefillId) {
+      document.getElementById('sid').value = prefillId;
+      sessionStorage.removeItem('gotegs_prefill_student_id');
+    }
     document.getElementById('testimonialForm').addEventListener('submit', async (e) => {
       e.preventDefault();
 
