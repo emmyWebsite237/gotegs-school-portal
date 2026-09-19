@@ -20,7 +20,73 @@ if (isAdminPathCheck(window.location.pathname) && sessionStorage.getItem("gotegs
   document.documentElement.style.visibility = "hidden";
 }
 
-const ADMIN_GATE_PASSWORD = "qwer12ty";
+// ==========================================================================
+// Student session guard — protects lesson-notes, quiz, result, and
+// testimonial pages. Unlike the admin gate, this can't use a shared
+// password: it requires a real Student ID + PIN check (done at login,
+// see student/index.html), so an invalid/expired session just redirects
+// to the login page rather than showing an inline prompt.
+//
+// Session lives in localStorage (survives closing the tab) but expires
+// after 5 hours of inactivity — every guarded page view "touches" it
+// and resets the countdown, matching "5 hours of inactivity" rather
+// than "5 hours since login".
+// ==========================================================================
+
+const STUDENT_SESSION_KEY = "gotegs_student_session";
+const STUDENT_SESSION_MAX_AGE_MS = 5 * 60 * 60 * 1000;
+
+const STUDENT_PROTECTED_PREFIXES = [
+  "/lesson-notes/",
+  "/quiz.html",
+  "/student/dashboard.html",
+  "/student/result/",
+  "/student/testimonial/",
+];
+
+function isStudentProtectedPath(pathname) {
+  if (pathname === "/student/index.html" || pathname === "/student/") return false;
+  return STUDENT_PROTECTED_PREFIXES.some((p) => pathname === p || pathname.startsWith(p));
+}
+
+function getValidStudentSession() {
+  const raw = localStorage.getItem(STUDENT_SESSION_KEY);
+  if (!raw) return null;
+
+  try {
+    const session = JSON.parse(raw);
+    if (!session.lastActivity || Date.now() - session.lastActivity > STUDENT_SESSION_MAX_AGE_MS) {
+      localStorage.removeItem(STUDENT_SESSION_KEY);
+      return null;
+    }
+    return session;
+  } catch (e) {
+    localStorage.removeItem(STUDENT_SESSION_KEY);
+    return null;
+  }
+}
+
+function touchStudentSession(session) {
+  session.lastActivity = Date.now();
+  localStorage.setItem(STUDENT_SESSION_KEY, JSON.stringify(session));
+}
+
+// Runs immediately (before paint) — redirects instantly if this page
+// needs a student login and there isn't a valid one.
+(function enforceStudentGate() {
+  const path = window.location.pathname;
+  if (!isStudentProtectedPath(path)) return;
+
+  const session = getValidStudentSession();
+  if (!session) {
+    document.documentElement.style.visibility = "hidden";
+    window.location.href = "/student/index.html";
+  } else {
+    touchStudentSession(session);
+  }
+})();
+
+// ==========================================================================
 
 function isAdminPathCheck(pathname) {
   // Catches "/admin", "/admin/", and everything under "/admin/..." —

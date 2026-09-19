@@ -149,49 +149,9 @@
     });
   }
 
-  // -------------------- PUBLIC: read-only viewer --------------------
-
-  function ensureViewerModal() {
-    if (document.getElementById("noteViewerModal")) return;
-
-    const modal = document.createElement("div");
-    modal.id = "noteViewerModal";
-    modal.style.cssText = `
-      display: none; position: fixed; inset: 0; background: rgba(22,35,31,0.75);
-      z-index: 1000; align-items: center; justify-content: center; padding: 20px;
-    `;
-    modal.innerHTML = `
-      <div style="background:#fff; width:100%; max-width:800px; max-height:85vh; border-radius:10px; overflow:hidden; display:flex; flex-direction:column;">
-        <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 16px; border-bottom:1px solid #e3ece9;">
-          <strong id="noteViewerTitle" style="font-family:'Sora',sans-serif; color:#16231f;"></strong>
-          <button id="closeNoteViewer" style="border:none; background:none; font-size:1.4rem; cursor:pointer; color:#5c6b68;">&times;</button>
-        </div>
-        <div id="noteViewerBody" style="flex:1; overflow-y:auto; padding:20px; line-height:1.6;" oncontextmenu="return false;"></div>
-      </div>
-    `;
-    document.body.appendChild(modal);
-
-    document.getElementById("closeNoteViewer").addEventListener("click", closeNoteViewer);
-    modal.addEventListener("click", (e) => {
-      if (e.target === modal) closeNoteViewer();
-    });
-  }
-
-  function openNoteViewer(html, title) {
-    ensureViewerModal();
-    const modal = document.getElementById("noteViewerModal");
-    document.getElementById("noteViewerTitle").textContent = title;
-    document.getElementById("noteViewerBody").innerHTML = html;
-    modal.style.display = "flex";
-  }
-
-  function closeNoteViewer() {
-    const modal = document.getElementById("noteViewerModal");
-    if (modal) {
-      modal.style.display = "none";
-      document.getElementById("noteViewerBody").innerHTML = "";
-    }
-  }
+  // -------------------- PUBLIC: link to the dedicated note page --------------------
+  // Each note now opens on its own real page (bookmarkable, back-button
+  // friendly) instead of a JS popup.
 
   function wirePublicNoteCells() {
     const cells = document.querySelectorAll(".note-file[data-subject]");
@@ -208,13 +168,15 @@
         const { data } = await buildNoteQuery("lesson_notes", className, term, subject, dept).select("*");
 
         if (data && data.length > 0 && data[0].content) {
-          const btn = document.createElement("button");
-          btn.className = "btn-save";
-          btn.type = "button";
-          btn.textContent = "View Note";
-          btn.addEventListener("click", () => openNoteViewer(data[0].content, `${subject} — ${className} — ${term}`));
+          const url = new URLSearchParams({ class: className, term, subject });
+          if (dept) url.set("dept", dept);
+
+          const link = document.createElement("a");
+          link.className = "btn-save";
+          link.href = `/lesson-notes/view-note.html?${url.toString()}`;
+          link.textContent = "View Note";
           cell.innerHTML = "";
-          cell.appendChild(btn);
+          cell.appendChild(link);
         }
       } catch (err) {
         console.error("Failed to check note:", err);

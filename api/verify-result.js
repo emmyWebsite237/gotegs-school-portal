@@ -34,6 +34,14 @@ export default async function handler(req, res) {
       return res.status(404).json({ error: "No record found. Please verify ID, PIN, and Class/Dept." });
     }
 
+    // Payment gate: if is_paid is not explicitly true, the result is not
+    // shown at all — not even a watermarked "unofficial copy" — and this
+    // check does NOT consume one of the 3 result-check attempts, since
+    // the student never actually got to see anything.
+    if (student.is_paid !== true) {
+      return res.status(403).json({ error: "Result not available yet. Please contact the school administration." });
+    }
+
     // Security: Check attempt counts
     if (student.check_count >= 3) {
       return res.status(403).json({ error: "Trial attempts exhausted (3/3). Please contact Go-Tegs Admin." });

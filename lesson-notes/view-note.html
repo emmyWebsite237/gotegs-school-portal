@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson Note | Go-Tegs International School</title>
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <style>
+    .note-body {
+      background: var(--paper); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 1.75rem; margin-top: 1.5rem; line-height: 1.7;
+    }
+    .note-body img { max-width: 100%; height: auto; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+
+  <main class="page-container">
+    <nav class="breadcrumb" id="noteBreadcrumb">Home / Lesson Notes</nav>
+    <h1 id="noteTitle">Loading note...</h1>
+    <div class="note-body" id="noteBody" oncontextmenu="return false;">Loading...</div>
+  </main>
+
+  <div id="footer-placeholder"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/assets/js/main.js"></script>
+  <script src="/assets/js/supabase-config.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const className = params.get('class');
+    const term = params.get('term');
+    const subject = params.get('subject');
+    const dept = params.get('dept') || null;
+
+    document.getElementById('noteTitle').textContent = `${subject || 'Note'} — ${className || ''} — ${term || ''}`;
+    document.getElementById('noteBreadcrumb').textContent = `Home / Lesson Notes / ${className || ''} / ${term || ''}`;
+
+    async function loadNote() {
+      const body = document.getElementById('noteBody');
+      if (!className || !term || !subject) {
+        body.textContent = 'Missing note details in the link.';
+        return;
+      }
+
+      try {
+        let query = supabaseClient
+          .from('lesson_notes')
+          .select('content')
+          .eq('class_name', className)
+          .eq('term', term)
+          .eq('subject', subject);
+        query = dept ? query.eq('dept', dept) : query.is('dept', null);
+
+        const { data, error } = await query.maybeSingle();
+
+        if (error) throw error;
+        if (!data || !data.content) {
+          body.innerHTML = '<em>No note has been added for this subject yet.</em>';
+          return;
+        }
+
+        body.innerHTML = data.content;
+      } catch (err) {
+        body.textContent = 'Could not load this note: ' + err.message;
+      }
+    }
+
+    loadNote();
+  </script>
+</body>
+</html>

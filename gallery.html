@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/assets/img/logo.png" />
+  <title>Gallery | Go-Tegs International School</title>
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <style>
+    .gallery-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1rem; margin-top: 1.5rem;
+    }
+    .gallery-item {
+      border-radius: var(--radius); overflow: hidden; background: var(--teal-light);
+      border: 1px solid var(--border); aspect-ratio: 4 / 3;
+    }
+    .gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  </style>
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+
+  <main class="page-container">
+    <nav class="breadcrumb">Home / Gallery</nav>
+    <h1>Gallery</h1>
+    <p>Photos from around Go-Tegs International School — most recent first.</p>
+
+    <div class="gallery-grid" id="galleryGrid">
+      <p class="empty-state">Loading photos...</p>
+    </div>
+  </main>
+
+  <div id="footer-placeholder"></div>
+  <script src="/assets/js/main.js"></script>
+  <script>
+    // ====================== CONFIGURE THIS ======================
+    const GH_OWNER = "YOUR-GITHUB-USERNAME";   // e.g. the account/org that owns the repo
+    const GH_REPO = "gotegs-school-website";
+    const GH_FOLDER = "assets/img/gallery";    // the folder you upload photos into on GitHub
+    const CACHE_KEY = "gotegs_gallery_cache_v1";
+    const CACHE_MAX_AGE_MS = 60 * 60 * 1000;   // 1 hour — avoids hitting GitHub's rate limit on repeat visits
+    const MAX_COMMITS_TO_CHECK = 12;           // caps how many API calls a single visit can make
+    // ==============================================================
+
+    const IMAGE_EXT = /\.(png|jpe?g|gif|webp|avif)$/i;
+
+    async function ghFetch(url) {
+      const res = await fetch(url, { headers: { Accept: "application/vnd.github+json" } });
+      if (!res.ok) throw new Error(`GitHub API error (${res.status})`);
+      return res.json();
+    }
+
+    async function loadGalleryOrdered() {
+      // Serve from cache if it's fresh, so repeat visits don't burn API calls.
+      const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || "null");
+      if (cached && Date.now() - cached.savedAt < CACHE_MAX_AGE_MS) {
+        return cached.urls;
+      }
+
+      const contentsUrl = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_FOLDER}`;
+      const files = await ghFetch(contentsUrl);
+      const images = files.filter(f => f.type === "file" && IMAGE_EXT.test(f.name));
+
+      if (!images.length) return [];
+
+      // Best-effort ordering: check the most recent commits touching this
+      // folder, and use whichever files show up earliest (most recently
+      // changed) to build an order. Any image not seen in that recent
+      // commit sample just falls back to the end of the list, rather than
+      // failing the whole page.
+      let order = [];
+      try {
+        const commitsUrl = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/commits?path=${encodeURIComponent(GH_FOLDER)}&per_page=${MAX_COMMITS_TO_CHECK}`;
+        const commits = await ghFetch(commitsUrl);
+
+        for (const commit of commits) {
+          const detail = await ghFetch(commit.url);
+          for (const file of (detail.files || [])) {
+            const name = file.filename.split("/").pop();
+            if (IMAGE_EXT.test(name) && !order.includes(name)) order.push(name);
+          }
+        }
+      } catch (err) {
+        console.warn("Gallery: could not determine latest-first order, falling back to default order.", err);
+      }
+
+      const orderedNames = [
+        ...order.filter(name => images.some(f => f.name === name)),
+        ...images.map(f => f.name).filter(name => !order.includes(name)),
+      ];
+
+      const urls = orderedNames.map(name => {
+        const match = images.find(f => f.name === name);
+        return match.download_url;
+      });
+
+      localStorage.setItem(CACHE_KEY, JSON.stringify({ urls, savedAt: Date.now() }));
+      return urls;
+    }
+
+    async function renderGallery() {
+      const grid = document.getElementById("galleryGrid");
+      try {
+        const urls = await loadGalleryOrdered();
+        if (!urls.length) {
+          grid.innerHTML = '<p class="empty-state">No photos uploaded yet.</p>';
+          return;
+        }
+        grid.innerHTML = urls.map(u => `<div class="gallery-item"><img src="${u}" alt="Go-Tegs gallery photo" loading="lazy" /></div>`).join("");
+      } catch (err) {
+        grid.innerHTML = `<p class="empty-state">Could not load the gallery right now (${err.message}). Please try again shortly.</p>`;
+      }
+    }
+
+    renderGallery();
+  </script>
+</body>
+</html>

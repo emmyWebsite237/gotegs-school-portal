@@ -67,7 +67,7 @@
         <p>Check and download your testimonial, if issued.</p>
       </div>
 
-      <a class="dash-card" href="/lesson-notes/index.html" style="text-decoration:none; color:inherit;">
+      <a class="dash-card" href="/student/lesson-notes/index.html" style="text-decoration:none; color:inherit;">
         <span class="badge">Academics</span>
         <h3>Lesson Notes</h3>
         <p>Notes for your class, by term and subject.</p>
@@ -98,7 +98,7 @@
   <div id="footer-placeholder"></div>
   <script src="/assets/js/main.js"></script>
   <script>
-    const raw = sessionStorage.getItem('gotegs_student_session');
+    const raw = localStorage.getItem('gotegs_student_session');
 
     if (!raw) {
       window.location.href = '/student/index.html';
@@ -110,12 +110,12 @@
     }
 
     document.getElementById('logoutBtn').addEventListener('click', () => {
-      sessionStorage.removeItem('gotegs_student_session');
+      localStorage.removeItem('gotegs_student_session');
       window.location.href = '/student/index.html';
     });
 
     document.getElementById('checkResultCard').addEventListener('click', async () => {
-      const session = JSON.parse(sessionStorage.getItem('gotegs_student_session') || 'null');
+      const session = JSON.parse(localStorage.getItem('gotegs_student_session') || 'null');
       if (!session) { window.location.href = '/student/index.html'; return; }
 
       const msg = document.getElementById('dashMsg');
@@ -152,7 +152,7 @@
       // Testimonial uses its own PIN (a separate table/credential), so we
       // still need that form — but we can skip asking for the Student ID
       // again since we already know it from this session.
-      const session = JSON.parse(sessionStorage.getItem('gotegs_student_session') || 'null');
+      const session = JSON.parse(localStorage.getItem('gotegs_student_session') || 'null');
       if (session) sessionStorage.setItem('gotegs_prefill_student_id', session.student_id);
       window.location.href = '/student/testimonial/index.html';
     });

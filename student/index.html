@@ -72,9 +72,9 @@
           return;
         }
 
-        // Session lives only for this browser tab session — cleared when
-        // the tab closes, same trust level as the rest of the site's login.
-        sessionStorage.setItem('gotegs_student_session', JSON.stringify({
+        // Session lives in localStorage (survives closing the tab) but
+        // expires after 5 hours of inactivity — see the guard in main.js.
+        localStorage.setItem('gotegs_student_session', JSON.stringify({
           student_id: studentId,
           pin: pin,
           full_name: data.full_name,
@@ -82,6 +82,7 @@
           dept: data.dept,
           year: data.year,
           section: data.section,
+          lastActivity: Date.now(),
         }));
 
         window.location.href = '/student/dashboard.html';

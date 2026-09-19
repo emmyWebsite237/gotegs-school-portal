@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson Notes | Go-Tegs International School</title>
+  <link rel="stylesheet" href="/assets/css/style.css" />
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+
+  <main class="page-container">
+    <nav class="breadcrumb">Home / Student / Lesson Notes</nav>
+    <h1>Lesson Notes</h1>
+    <p id="classLine">Loading your class...</p>
+
+    <ul class="link-grid" id="termList"></ul>
+  </main>
+
+  <div id="footer-placeholder"></div>
+  <script src="/assets/js/main.js"></script>
+  <script>
+    const session = JSON.parse(localStorage.getItem('gotegs_student_session') || 'null');
+
+    if (!session) {
+      window.location.href = '/student/index.html';
+    } else {
+      const sectionFolder = session.section === 'sss_students' ? 'sss' : 'jss';
+      const classFolder = session.class.replace(/\s+/g, '').toLowerCase(); // "JSS 1" -> "jss1"
+
+      document.getElementById('classLine').textContent =
+        `Showing notes for ${session.class}${session.dept ? ' (' + session.dept + ')' : ''}.`;
+
+      const terms = ['Term 1', 'Term 2', 'Term 3'];
+      document.getElementById('termList').innerHTML = terms
+        .map((t, i) => `<li><a href="/lesson-notes/${sectionFolder}/${classFolder}/term${i + 1}.html">${t}</a></li>`)
+        .join('');
+    }
+  </script>
+</body>
+</html>
