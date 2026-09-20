@@ -39,6 +39,7 @@ const STUDENT_SESSION_MAX_AGE_MS = 5 * 60 * 60 * 1000;
 const STUDENT_PROTECTED_PREFIXES = [
   "/lesson-notes/",
   "/quiz.html",
+  "/quiz-code.html",
   "/student/dashboard.html",
   "/student/result/",
   "/student/testimonial/",

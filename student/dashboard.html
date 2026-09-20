@@ -6,36 +6,70 @@
   <title>My Dashboard | Go-Tegs International School</title>
   <link rel="stylesheet" href="/assets/css/style.css" />
   <style>
-    .dash-head {
-      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
-      padding: 1.5rem 1.75rem; border: 1px solid var(--border); border-radius: var(--radius);
-      background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%); color: #fff; margin-top: 1.5rem;
+    /* ---------- Hero banner ---------- */
+    .dash-hero {
+      position: relative; overflow: hidden; margin-top: 1.5rem; border-radius: 20px;
+      padding: 2rem 1.9rem; color: #fff;
+      background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 60%, var(--maroon-deep) 130%);
     }
-    .dash-head h2 { color: #fff; margin: 0 0 0.2rem; }
-    .dash-head p { color: rgba(255,255,255,0.85); margin: 0; font-size: 0.9rem; }
-    .dash-head .logout-btn {
-      background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.4); color: #fff;
+    .dash-hero .floaty {
+      position: absolute; font-size: 2.2rem; opacity: 0.18; pointer-events: none;
+      animation: floaty 6s ease-in-out infinite;
+    }
+    .dash-hero .f1 { top: 10%; left: 6%; animation-delay: 0s; }
+    .dash-hero .f2 { top: 60%; left: 14%; font-size: 1.6rem; animation-delay: 1.2s; }
+    .dash-hero .f3 { top: 15%; right: 10%; animation-delay: 0.6s; }
+    .dash-hero .f4 { bottom: 8%; right: 18%; font-size: 1.8rem; animation-delay: 2s; }
+    @keyframes floaty { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-14px) rotate(8deg); } }
+
+    .dash-hero-inner { position: relative; z-index: 1; display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap; }
+    .dash-avatar {
+      width: 64px; height: 64px; border-radius: 50%; background: rgba(255,255,255,0.18);
+      border: 2px solid rgba(255,255,255,0.5); display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem; flex-shrink: 0;
+    }
+    .dash-hero h2 { color: #fff; margin: 0 0 0.15rem; font-size: 1.5rem; }
+    .dash-hero p { color: rgba(255,255,255,0.85); margin: 0; font-size: 0.92rem; }
+    .logout-btn {
+      margin-left: auto; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.4); color: #fff;
       padding: 0.6rem 1.1rem; border-radius: 8px; font-family: var(--font-display); font-weight: 600; font-size: 0.85rem;
     }
-    .dash-head .logout-btn:hover { background: rgba(255,255,255,0.25); }
+    .logout-btn:hover { background: rgba(255,255,255,0.25); }
 
-    .dash-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-top: 1.75rem;
+    /* ---------- Quiz stats strip (mirrors quiz.html's pills) ---------- */
+    .mini-stats { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1.4rem; position: relative; z-index: 1; }
+    .mini-pill {
+      display: flex; align-items: center; gap: 0.4rem; background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.3); border-radius: 999px; padding: 0.4rem 0.85rem;
+      font-family: var(--font-display); font-weight: 700; font-size: 0.82rem; color: #fff;
     }
+
+    /* ---------- Optional welcome video ---------- */
+    .dash-video-wrap { margin-top: 1.5rem; }
+    .dash-video-wrap video { width: 100%; border-radius: var(--radius); display: block; }
+
+    /* ---------- Section labels ---------- */
+    .dash-section-label {
+      font-family: var(--font-display); font-weight: 700; font-size: 0.8rem; text-transform: uppercase;
+      letter-spacing: 0.05em; color: var(--teal-dark); margin: 2rem 0 0.9rem;
+    }
+
+    /* ---------- Cards ---------- */
+    .dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
     .dash-card {
-      display: flex; flex-direction: column; gap: 0.5rem; padding: 1.4rem;
-      border: 1px solid var(--border); border-radius: var(--radius); background: var(--paper);
-      text-align: left; cursor: pointer; transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+      position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 0.5rem;
+      padding: 1.4rem; border: none; border-radius: 16px; color: #fff; text-align: left; cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease; min-height: 128px; justify-content: flex-end;
     }
-    .dash-card:hover:not(.disabled) { transform: translateY(-3px); border-color: var(--teal); box-shadow: var(--shadow-md); }
-    .dash-card h3 { font-size: 1rem; margin: 0; }
-    .dash-card p { font-size: 0.85rem; color: var(--slate); margin: 0; }
+    .dash-card:hover:not(.disabled) { transform: translateY(-4px) scale(1.01); box-shadow: 0 14px 26px rgba(16,24,38,0.2); }
+    .dash-card .card-emoji { position: absolute; top: 0.9rem; right: 1rem; font-size: 2.3rem; opacity: 0.9; filter: drop-shadow(0 3px 5px rgba(0,0,0,0.2)); }
+    .dash-card h3 { color: #fff; font-size: 1rem; margin: 0; position: relative; z-index: 1; }
+    .dash-card p { font-size: 0.83rem; color: rgba(255,255,255,0.85); margin: 0; position: relative; z-index: 1; }
     .dash-card .badge {
-      align-self: flex-start; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
-      padding: 0.2rem 0.55rem; border-radius: 99px; background: var(--teal-light); color: var(--teal-dark);
+      align-self: flex-start; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+      padding: 0.2rem 0.55rem; border-radius: 99px; background: rgba(0,0,0,0.2); color: #fff; position: relative; z-index: 1;
     }
-    .dash-card.disabled { opacity: 0.55; cursor: default; }
-    .dash-card.disabled .badge { background: #f1f1f1; color: var(--slate); }
+    .dash-card.disabled { opacity: 0.5; cursor: default; background: linear-gradient(135deg, #94a3b8, #64748b) !important; }
 
     #dashMsg { margin-top: 1rem; font-size: 0.88rem; font-weight: 600; text-align: center; }
   </style>
@@ -46,49 +80,82 @@
   <main class="page-container">
     <nav class="breadcrumb">Home / Student / Dashboard</nav>
 
-    <div class="dash-head">
-      <div>
-        <h2 id="dashName">Welcome</h2>
-        <p id="dashClass"></p>
+    <div class="dash-hero">
+      <span class="floaty f1">📘</span>
+      <span class="floaty f2">✏️</span>
+      <span class="floaty f3">🎓</span>
+      <span class="floaty f4">⭐</span>
+      <div class="dash-hero-inner">
+        <div class="dash-avatar">🧑‍🎓</div>
+        <div>
+          <h2 id="dashName">Welcome</h2>
+          <p id="dashClass"></p>
+        </div>
+        <button class="logout-btn" id="logoutBtn">🚪 Log Out</button>
       </div>
-      <button class="logout-btn" id="logoutBtn">Log Out</button>
+      <div class="mini-stats" id="miniStats"></div>
     </div>
 
+    <!-- Optional welcome video: drop a file at /assets/video/welcome.mp4 and
+         this section shows itself automatically. No file? Stays hidden. -->
+    <div class="dash-video-wrap" id="dashVideoWrap" style="display:none;">
+      <video id="dashVideo" controls poster="/assets/img/logo.png">
+        <source src="/assets/video/welcome.mp4" type="video/mp4" />
+      </video>
+    </div>
+
+    <div class="dash-section-label">🎓 Academics</div>
     <div class="dash-grid">
-      <div class="dash-card" id="checkResultCard">
-        <span class="badge">Academics</span>
+      <div class="dash-card" id="checkResultCard" style="background:linear-gradient(135deg,#2563eb,#1d4ed8);">
+        <span class="badge">Result</span>
+        <span class="card-emoji">📄</span>
         <h3>Check My Result</h3>
         <p>View and download your current term result.</p>
       </div>
 
-      <div class="dash-card" id="checkTestimonialCard">
-        <span class="badge">Academics</span>
+      <div class="dash-card" id="checkTestimonialCard" style="background:linear-gradient(135deg,#7c3aed,#5b21b6);">
+        <span class="badge">Testimonial</span>
+        <span class="card-emoji">📜</span>
         <h3>School Leaving Testimonial</h3>
         <p>Check and download your testimonial, if issued.</p>
       </div>
 
-      <a class="dash-card" href="/student/lesson-notes/index.html" style="text-decoration:none; color:inherit;">
-        <span class="badge">Academics</span>
+      <a class="dash-card" href="/student/lesson-notes/index.html" style="text-decoration:none; background:linear-gradient(135deg,#16a34a,#15803d);">
+        <span class="badge">Notes</span>
+        <span class="card-emoji">📚</span>
         <h3>Lesson Notes</h3>
         <p>Notes for your class, by term and subject.</p>
       </a>
 
-      <a class="dash-card" href="/quiz.html" style="text-decoration:none; color:inherit;">
+      <div class="dash-card disabled">
+        <span class="badge">Coming Soon</span>
+        <span class="card-emoji">📈</span>
+        <h3>Performance Trend</h3>
+        <p>See how your scores have moved across terms.</p>
+      </div>
+    </div>
+
+    <div class="dash-section-label">🎮 Practice &amp; Play</div>
+    <div class="dash-grid">
+      <a class="dash-card" href="/quiz.html" style="text-decoration:none; background:linear-gradient(135deg,#d97706,#b45309);">
         <span class="badge">Practice</span>
+        <span class="card-emoji">🧠</span>
         <h3>Quiz</h3>
-        <p>Practise questions with instant feedback.</p>
+        <p>Practise questions, earn XP, and level up.</p>
+      </a>
+
+      <a class="dash-card" href="/quiz-code.html" style="text-decoration:none; background:linear-gradient(135deg,#0891b2,#0e7490);">
+        <span class="badge">Quiz Code</span>
+        <span class="card-emoji">🔑</span>
+        <h3>Enter a Quiz Code</h3>
+        <p>Got a code from a teacher? Enter it here.</p>
       </a>
 
       <div class="dash-card disabled">
         <span class="badge">Coming Soon</span>
+        <span class="card-emoji">🏆</span>
         <h3>Tournaments</h3>
         <p>Compete with your classmates for a spot on the leaderboard.</p>
-      </div>
-
-      <div class="dash-card disabled">
-        <span class="badge">Coming Soon</span>
-        <h3>Performance Trend</h3>
-        <p>See how your scores have moved across terms.</p>
       </div>
     </div>
 
@@ -104,10 +171,31 @@
       window.location.href = '/student/index.html';
     } else {
       const session = JSON.parse(raw);
-      document.getElementById('dashName').textContent = 'Welcome, ' + session.full_name;
+      document.getElementById('dashName').textContent = '👋 Welcome, ' + session.full_name;
       document.getElementById('dashClass').textContent =
         session.class + (session.dept ? ' (' + session.dept + ')' : '') + ' — ' + (session.year || '');
+
+      // Show the quiz XP/level/streak strip if the student has played before
+      const quizProfileRaw = localStorage.getItem('gotegs_quiz_profile_' + session.student_id);
+      if (quizProfileRaw) {
+        const qp = JSON.parse(quizProfileRaw);
+        const level = Math.floor(qp.xp / 100) + 1;
+        document.getElementById('miniStats').innerHTML =
+          '<span class="mini-pill">⭐ Level ' + level + '</span>' +
+          '<span class="mini-pill">💎 ' + qp.xp + ' XP</span>' +
+          '<span class="mini-pill">🔥 ' + qp.streak + '-day streak</span>' +
+          '<span class="mini-pill">🏅 ' + qp.badges.length + ' badges</span>';
+      }
     }
+
+    // Show the welcome video only if it actually loads
+    const video = document.getElementById('dashVideo');
+    video.addEventListener('loadedmetadata', () => {
+      document.getElementById('dashVideoWrap').style.display = 'block';
+    });
+    video.addEventListener('error', () => {
+      document.getElementById('dashVideoWrap').style.display = 'none';
+    }, true);
 
     document.getElementById('logoutBtn').addEventListener('click', () => {
       localStorage.removeItem('gotegs_student_session');
@@ -149,9 +237,6 @@
     });
 
     document.getElementById('checkTestimonialCard').addEventListener('click', () => {
-      // Testimonial uses its own PIN (a separate table/credential), so we
-      // still need that form — but we can skip asking for the Student ID
-      // again since we already know it from this session.
       const session = JSON.parse(localStorage.getItem('gotegs_student_session') || 'null');
       if (session) sessionStorage.setItem('gotegs_prefill_student_id', session.student_id);
       window.location.href = '/student/testimonial/index.html';

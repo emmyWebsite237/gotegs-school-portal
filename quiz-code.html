@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiz Code | Go-Tegs International School</title>
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <style>
+    .code-card {
+      max-width: 420px; margin-top: 1.5rem; padding: 1.75rem;
+      border: 1px solid var(--border); border-radius: var(--radius); background: var(--paper);
+    }
+    .code-card input {
+      width: 100%; font-family: var(--font-display); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+      font-size: 1.1rem; text-align: center; padding: 0.8rem; border: 2px solid var(--border); border-radius: 8px; box-sizing: border-box;
+    }
+    .code-card .btn { width: 100%; margin-top: 1rem; justify-content: center; }
+    #codeMsg { margin-top: 0.9rem; font-size: 0.88rem; font-weight: 600; text-align: center; }
+
+    .quiz-card { border: 1px solid var(--border); border-left: 5px solid var(--teal); border-radius: 0 16px 16px 0; background: var(--paper); padding: 1.85rem; margin-top: 1.5rem; display: none; }
+    .quiz-meta { display: flex; justify-content: space-between; align-items: center; font-family: var(--font-display); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--teal-dark); margin-bottom: 0.5rem; }
+    .timer-pill { background: var(--teal-light); color: var(--teal-dark); padding: 0.25rem 0.7rem; border-radius: 999px; }
+    .timer-pill.low { background: #fdeeee; color: #d64545; }
+    .quiz-progress { height: 8px; border-radius: 99px; background: var(--teal-light); overflow: hidden; margin-bottom: 1.5rem; }
+    .quiz-progress span { display: block; height: 100%; background: linear-gradient(90deg, var(--gold), var(--teal)); transition: width 0.3s ease; }
+    .quiz-question { font-family: var(--font-display); font-size: 1.15rem; font-weight: 700; margin-bottom: 1.1rem; }
+    .quiz-options { display: flex; flex-direction: column; gap: 0.6rem; }
+    .quiz-option { display: flex; align-items: center; gap: 0.8rem; width: 100%; padding: 0.9rem 1.05rem; text-align: left; border: 2px solid var(--border); border-radius: 12px; background: var(--paper); font-size: 0.96rem; }
+    .quiz-option.selected { border-color: var(--teal); background: var(--teal-light); }
+    .quiz-option .key { flex-shrink: 0; height: 28px; width: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--teal-light); color: var(--teal-dark); font-family: var(--font-display); font-weight: 700; font-size: 0.8rem; }
+    .quiz-option.selected .key { background: var(--teal); color: #fff; }
+    .quiz-option.correct { border-color: #1f9d55; background: #eafaf1; }
+    .quiz-option.wrong { border-color: #d64545; background: #fdeeee; }
+    .quiz-actions { margin-top: 1.4rem; display: flex; gap: 0.6rem; flex-wrap: wrap; }
+
+    .result-hero { text-align: center; }
+    .score-ring { font-family: var(--font-display); font-size: 2.6rem; font-weight: 800; color: var(--teal); }
+    .breakdown-item { border: 1px solid var(--border); border-radius: 10px; padding: 0.9rem 1rem; margin-top: 0.7rem; }
+    .breakdown-item.wrong { border-left: 4px solid #d64545; }
+    .breakdown-item.right { border-left: 4px solid #1f9d55; }
+  </style>
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+
+  <main class="page-container">
+    <nav class="breadcrumb">Home / Student / Quiz Code</nav>
+    <h1>🔑 Enter a Quiz Code</h1>
+    <p>Got a code from a teacher or admin? Type it in below to start.</p>
+
+    <form class="code-card" id="codeForm">
+      <input type="text" id="codeInput" placeholder="e.g. MATH24A" maxlength="12" required />
+      <button type="submit" class="btn" id="codeBtn">Start Quiz</button>
+      <p id="codeMsg"></p>
+    </form>
+
+    <div class="quiz-card" id="quizCard">
+      <div class="quiz-meta">
+        <span id="quizTitle"></span>
+        <span class="timer-pill" id="timerPill" style="display:none;"></span>
+      </div>
+      <div class="quiz-progress"><span id="quizBar" style="width:0%"></span></div>
+
+      <div id="quizBody">
+        <p class="quiz-question" id="quizQuestion"></p>
+        <div class="quiz-options" id="quizOptions"></div>
+        <div class="quiz-actions">
+          <button class="btn" id="nextBtn">Next ➜</button>
+        </div>
+      </div>
+
+      <div id="quizResult" style="display:none;">
+        <div class="result-hero">
+          <div style="font-size:2.5rem;">🏁</div>
+          <div class="score-ring" id="scoreText"></div>
+          <p id="scoreMessage"></p>
+        </div>
+        <div id="breakdownList"></div>
+        <div class="quiz-actions" style="justify-content:center; margin-top:1.4rem;">
+          <button class="btn-save" id="doneBtn">⬅ Back to Dashboard</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-placeholder"></div>
+  <script src="/assets/js/main.js"></script>
+  <script>
+    const el = (id) => document.getElementById(id);
+    const session = JSON.parse(localStorage.getItem('gotegs_student_session') || 'null');
+
+    let quizState = null; // { quiz_id, questions, index, selections: {} }
+    let timerInterval = null;
+
+    el('codeForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const code = el('codeInput').value.trim();
+      const msg = el('codeMsg');
+      const btn = el('codeBtn');
+
+      btn.disabled = true; btn.textContent = 'Loading...'; msg.textContent = '';
+
+      try {
+        const res = await fetch(`/api/quiz-code-fetch?code=${encodeURIComponent(code)}&student_id=${encodeURIComponent(session.student_id)}&class=${encodeURIComponent(session.class)}`);
+        const data = await res.json();
+
+        if (res.status !== 200) {
+          msg.style.color = '#dc2626';
+          msg.textContent = data.error || 'Could not load that quiz.';
+          btn.disabled = false; btn.textContent = 'Start Quiz';
+          return;
+        }
+
+        quizState = { quiz_id: data.quiz_id, questions: data.questions, index: 0, selections: {}, timeLimitMin: data.time_limit_minutes };
+        el('codeForm').style.display = 'none';
+        el('quizCard').style.display = 'block';
+        el('quizTitle').textContent = data.title;
+
+        if (data.time_limit_minutes) startTimer(data.time_limit_minutes * 60);
+
+        showQuestion();
+      } catch (err) {
+        msg.style.color = '#dc2626';
+        msg.textContent = 'Connection error: ' + err.message;
+        btn.disabled = false; btn.textContent = 'Start Quiz';
+      }
+    });
+
+    function startTimer(totalSeconds) {
+      // NOTE: this timer is a helpful on-screen countdown, not a hard
+      // security boundary — grading itself doesn't depend on it. It's
+      // meant for everyday classwork, not a strictly proctored exam.
+      let remaining = totalSeconds;
+      const pill = el('timerPill');
+      pill.style.display = 'inline-block';
+
+      function tick() {
+        const m = Math.floor(remaining / 60), s = remaining % 60;
+        pill.textContent = '⏱ ' + m + ':' + String(s).padStart(2, '0');
+        pill.classList.toggle('low', remaining <= 30);
+        if (remaining <= 0) {
+          clearInterval(timerInterval);
+          submitQuiz();
+          return;
+        }
+        remaining--;
+      }
+      tick();
+      timerInterval = setInterval(tick, 1000);
+    }
+
+    function showQuestion() {
+      const q = quizState.questions[quizState.index];
+      el('quizBar').style.width = (quizState.index / quizState.questions.length * 100) + '%';
+      el('quizQuestion').textContent = (quizState.index + 1) + '. ' + q.question;
+
+      const options = [
+        ['a', q.option_a], ['b', q.option_b], ['c', q.option_c], ['d', q.option_d]
+      ].filter(([, text]) => text);
+
+      el('quizOptions').innerHTML = options.map(([key, text]) => {
+        const selected = quizState.selections[q.id] === key;
+        return '<button type="button" class="quiz-option' + (selected ? ' selected' : '') + '" data-key="' + key + '">' +
+          '<span class="key">' + key.toUpperCase() + '</span><span>' + text + '</span></button>';
+      }).join('');
+
+      el('quizOptions').querySelectorAll('.quiz-option').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          quizState.selections[q.id] = btn.dataset.key;
+          showQuestion();
+        });
+      });
+
+      el('nextBtn').textContent = quizState.index === quizState.questions.length - 1 ? '🏁 Submit Quiz' : 'Next ➜';
+    }
+
+    el('nextBtn').addEventListener('click', () => {
+      if (quizState.index < quizState.questions.length - 1) {
+        quizState.index++;
+        showQuestion();
+      } else {
+        submitQuiz();
+      }
+    });
+
+    async function submitQuiz() {
+      if (timerInterval) clearInterval(timerInterval);
+      el('nextBtn').disabled = true;
+
+      const answers = quizState.questions.map((q) => ({ question_id: q.id, selected: quizState.selections[q.id] || null }));
+
+      try {
+        const res = await fetch('/api/quiz-code-submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ quiz_id: quizState.quiz_id, student_id: session.student_id, answers }),
+        });
+        const data = await res.json();
+
+        el('quizBar').style.width = '100%';
+        el('quizBody').style.display = 'none';
+        el('quizResult').style.display = 'block';
+        el('timerPill').style.display = 'none';
+
+        if (res.status !== 200) {
+          el('scoreMessage').textContent = data.error || 'Could not submit your quiz.';
+          return;
+        }
+
+        const pct = Math.round((data.score / data.total) * 100);
+        el('scoreText').textContent = data.score + ' / ' + data.total;
+        el('scoreMessage').textContent = pct + '% correct';
+
+        if (data.breakdown) {
+          el('breakdownList').innerHTML = data.breakdown.map((b) =>
+            '<div class="breakdown-item ' + (b.is_correct ? 'right' : 'wrong') + '">' +
+            '<strong>' + (b.is_correct ? '✅' : '❌') + ' ' + b.question + '</strong><br/>' +
+            'Your answer: ' + (b.selected ? b.selected.toUpperCase() : '(none)') +
+            (b.is_correct ? '' : ' — Correct answer: ' + b.correct_option.toUpperCase()) +
+            '</div>'
+          ).join('');
+        }
+      } catch (err) {
+        el('quizBody').style.display = 'none';
+        el('quizResult').style.display = 'block';
+        el('scoreMessage').textContent = 'Connection error: ' + err.message;
+      }
+    }
+
+    el('doneBtn').addEventListener('click', () => { window.location.href = '/student/dashboard.html'; });
+  </script>
+</body>
+</html>

@@ -6,9 +6,24 @@
   <title>Student Portal | Go-Tegs International School</title>
   <link rel="stylesheet" href="/assets/css/style.css" />
   <style>
+    .login-hero {
+      position: relative; overflow: hidden; margin-top: 1.5rem; border-radius: 20px; text-align: center;
+      padding: 2.2rem 1.5rem 1.8rem; color: #fff;
+      background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 60%, var(--maroon-deep) 130%);
+    }
+    .login-hero .floaty { position: absolute; font-size: 2rem; opacity: 0.18; animation: floaty 6s ease-in-out infinite; }
+    .login-hero .f1 { top: 12%; left: 8%; }
+    .login-hero .f2 { top: 60%; left: 16%; font-size: 1.5rem; animation-delay: 1.2s; }
+    .login-hero .f3 { top: 18%; right: 10%; animation-delay: 0.6s; }
+    .login-hero .f4 { bottom: 12%; right: 16%; font-size: 1.6rem; animation-delay: 2s; }
+    @keyframes floaty { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-12px) rotate(8deg); } }
+    .login-hero .crest { font-size: 2.6rem; margin-bottom: 0.4rem; position: relative; z-index: 1; }
+    .login-hero h1 { color: #fff; margin: 0 0 0.3rem; position: relative; z-index: 1; }
+    .login-hero p { color: rgba(255,255,255,0.85); margin: 0; position: relative; z-index: 1; font-size: 0.92rem; }
+
     .login-card {
-      max-width: 420px; margin: 1.5rem auto 0; padding: 1.75rem;
-      border: 1px solid var(--border); border-radius: var(--radius); background: var(--paper);
+      max-width: 420px; margin: -1.5rem auto 0; padding: 1.75rem; position: relative; z-index: 2;
+      border: 1px solid var(--border); border-radius: var(--radius); background: var(--paper); box-shadow: var(--shadow-md);
     }
     .login-card label { font-family: var(--font-display); font-weight: 600; font-size: 0.85rem; margin-top: 0.5rem; display: block; }
     .login-card input {
@@ -24,8 +39,16 @@
 
   <main class="page-container" style="max-width: 640px;">
     <nav class="breadcrumb">Home / Student</nav>
-    <h1 style="text-align:center;">Student Portal</h1>
-    <p style="text-align:center;">Log in with your Student ID and PIN to access your dashboard.</p>
+
+    <div class="login-hero">
+      <span class="floaty f1">📘</span>
+      <span class="floaty f2">✏️</span>
+      <span class="floaty f3">🎓</span>
+      <span class="floaty f4">⭐</span>
+      <div class="crest">🎓</div>
+      <h1>Student Portal</h1>
+      <p>Log in with your Student ID and PIN to access your dashboard.</p>
+    </div>
 
     <form class="login-card" id="loginForm">
       <label for="studentId">Student ID</label>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manage Quiz Codes | Admin | Go-Tegs</title>
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <link rel="stylesheet" href="/assets/css/admin.css" />
+  <style>
+    .qc-form { padding: 1.5rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--paper); margin-top: 1.5rem; }
+    .qc-form label { font-family: var(--font-display); font-weight: 600; font-size: 0.82rem; display: block; margin-top: 0.8rem; }
+    .qc-form input, .qc-form select { width: 100%; font-size: 0.9rem; padding: 0.55rem 0.7rem; border: 1px solid var(--border); border-radius: 8px; margin-top: 0.3rem; box-sizing: border-box; }
+    .qc-settings-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; }
+
+    .qc-question-block { border: 1px solid var(--border); border-radius: var(--radius); padding: 1.1rem; margin-top: 1rem; background: #fafbfc; }
+    .qc-option-row { display: flex; align-items: center; gap: 0.6rem; margin-top: 0.5rem; }
+    .qc-option-row input[type="text"] { flex: 1; margin: 0; }
+    .qc-remove-q { background: none; border: none; color: #dc2626; font-size: 0.8rem; cursor: pointer; margin-top: 0.6rem; }
+
+    .qc-list-item { border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.2rem; margin-top: 0.7rem; background: var(--paper); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.6rem; }
+    .qc-code-tag { font-family: var(--font-display); font-weight: 800; font-size: 1.1rem; background: var(--teal-light); color: var(--teal-dark); padding: 0.3rem 0.7rem; border-radius: 8px; letter-spacing: 0.05em; }
+  </style>
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+
+  <main class="page-container admin-page" style="max-width: 900px;">
+    <nav class="breadcrumb">Admin / Quiz Codes</nav>
+    <h1>Manage Quiz Codes</h1>
+    <p>Create a quiz, get a code, and share it with students. Correct answers are never sent to a student's browser until they submit.</p>
+
+    <form class="qc-form" id="qcForm">
+      <label for="qTitle">Quiz Title</label>
+      <input type="text" id="qTitle" placeholder="e.g. Mid-Term Mathematics Practice" required />
+
+      <div class="qc-settings-grid">
+        <div>
+          <label for="qClass">Restrict to Class (optional)</label>
+          <input type="text" id="qClass" placeholder="e.g. JSS 1 (leave blank for any)" />
+        </div>
+        <div>
+          <label for="qTimeLimit">Time Limit (minutes, optional)</label>
+          <input type="number" id="qTimeLimit" min="1" placeholder="No limit" />
+        </div>
+        <div>
+          <label for="qAttempts">Attempts Allowed</label>
+          <input type="number" id="qAttempts" min="1" value="1" />
+        </div>
+        <div>
+          <label for="qShowAnswers">Show Answers After Submitting?</label>
+          <select id="qShowAnswers">
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+          </select>
+        </div>
+      </div>
+
+      <h3 style="margin-top:1.5rem;">Questions</h3>
+      <div id="questionsContainer"></div>
+      <button type="button" class="btn-save" id="addQuestionBtn" style="margin-top:1rem;">+ Add Question</button>
+
+      <button type="submit" class="btn" id="createBtn" style="margin-top:1.5rem;">Create Quiz &amp; Generate Code</button>
+      <p id="qcMsg" class="upload-status"></p>
+    </form>
+
+    <h2 style="margin-top:2.5rem;">Existing Quiz Codes</h2>
+    <div id="quizList"></div>
+  </main>
+
+  <div id="footer-placeholder"></div>
+  <script src="/assets/js/main.js"></script>
+  <script>
+    let questionCount = 0;
+
+    function addQuestionBlock() {
+      questionCount++;
+      const id = questionCount;
+      const block = document.createElement('div');
+      block.className = 'qc-question-block';
+      block.dataset.id = id;
+      block.innerHTML = `
+        <label>Question ${id}</label>
+        <input type="text" class="q-text" placeholder="Question text" required />
+        <div class="qc-option-row"><input type="radio" name="correct-${id}" value="a" checked /><input type="text" class="q-opt-a" placeholder="Option A" required /></div>
+        <div class="qc-option-row"><input type="radio" name="correct-${id}" value="b" /><input type="text" class="q-opt-b" placeholder="Option B" required /></div>
+        <div class="qc-option-row"><input type="radio" name="correct-${id}" value="c" /><input type="text" class="q-opt-c" placeholder="Option C (optional)" /></div>
+        <div class="qc-option-row"><input type="radio" name="correct-${id}" value="d" /><input type="text" class="q-opt-d" placeholder="Option D (optional)" /></div>
+        <p style="font-size:0.78rem; color:var(--slate); margin-top:0.4rem;">Select the radio button next to the correct answer.</p>
+        <button type="button" class="qc-remove-q">Remove this question</button>
+      `;
+      block.querySelector('.qc-remove-q').addEventListener('click', () => block.remove());
+      document.getElementById('questionsContainer').appendChild(block);
+    }
+
+    document.getElementById('addQuestionBtn').addEventListener('click', addQuestionBlock);
+    addQuestionBlock(); // start with one
+
+    document.getElementById('qcForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const msg = document.getElementById('qcMsg');
+      const btn = document.getElementById('createBtn');
+
+      const questions = [...document.querySelectorAll('.qc-question-block')].map((block) => {
+        const id = block.dataset.id;
+        const correct = block.querySelector(`input[name="correct-${id}"]:checked`);
+        return {
+          question: block.querySelector('.q-text').value.trim(),
+          option_a: block.querySelector('.q-opt-a').value.trim(),
+          option_b: block.querySelector('.q-opt-b').value.trim(),
+          option_c: block.querySelector('.q-opt-c').value.trim() || null,
+          option_d: block.querySelector('.q-opt-d').value.trim() || null,
+          correct_option: correct ? correct.value : null,
+        };
+      });
+
+      if (!questions.length) {
+        msg.style.color = '#dc2626';
+        msg.textContent = 'Add at least one question.';
+        return;
+      }
+
+      btn.disabled = true; btn.textContent = 'Creating...'; msg.textContent = '';
+
+      try {
+        const res = await fetch('/api/create-quiz-code', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: document.getElementById('qTitle').value.trim(),
+            class_restriction: document.getElementById('qClass').value.trim() || null,
+            time_limit_minutes: document.getElementById('qTimeLimit').value ? Number(document.getElementById('qTimeLimit').value) : null,
+            attempts_allowed: Number(document.getElementById('qAttempts').value) || 1,
+            show_answers_after: document.getElementById('qShowAnswers').value === 'true',
+            questions,
+          }),
+        });
+        const data = await res.json();
+
+        if (res.status !== 200) {
+          msg.style.color = '#dc2626';
+          msg.textContent = data.error || 'Failed to create quiz.';
+          return;
+        }
+
+        msg.style.color = '#2c8c87';
+        msg.textContent = `Quiz created! Code: ${data.code}`;
+        document.getElementById('qcForm').reset();
+        document.getElementById('questionsContainer').innerHTML = '';
+        questionCount = 0;
+        addQuestionBlock();
+        loadQuizzes();
+      } catch (err) {
+        msg.style.color = '#dc2626';
+        msg.textContent = 'Connection error: ' + err.message;
+      } finally {
+        btn.disabled = false; btn.textContent = 'Create Quiz & Generate Code';
+      }
+    });
+
+    async function loadQuizzes() {
+      const list = document.getElementById('quizList');
+      list.innerHTML = 'Loading...';
+      try {
+        const res = await fetch('/api/list-quiz-codes');
+        const data = await res.json();
+        if (res.status !== 200) { list.innerHTML = `<p style="color:#dc2626;">${data.error}</p>`; return; }
+        if (!data.quizzes.length) { list.innerHTML = '<p class="empty-state">No quiz codes created yet.</p>'; return; }
+
+        list.innerHTML = data.quizzes.map(q => `
+          <div class="qc-list-item">
+            <div>
+              <span class="qc-code-tag">${q.code}</span>
+              <strong style="margin-left:0.6rem;">${q.title}</strong><br/>
+              <span style="font-size:0.82rem; color:var(--slate);">
+                ${q.class_restriction || 'Any class'} • ${q.attempts_allowed} attempt(s) • ${q.attempt_count} student(s) have taken it
+              </span>
+            </div>
+          </div>
+        `).join('');
+      } catch (err) {
+        list.innerHTML = `<p style="color:#dc2626;">Connection error: ${err.message}</p>`;
+      }
+    }
+
+    loadQuizzes();
+  </script>
+</body>
+</html>
