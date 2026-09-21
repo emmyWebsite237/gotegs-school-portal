@@ -197,6 +197,15 @@
       document.getElementById('dashVideoWrap').style.display = 'none';
     }, true);
 
+    // Fixes the "Checking your result..." message getting stuck when the
+    // browser restores this page from cache (e.g. pressing Back after
+    // viewing a result) — the DOM snapshot includes that leftover text,
+    // so we explicitly clear it whenever the page becomes visible again.
+    window.addEventListener('pageshow', () => {
+      const msg = document.getElementById('dashMsg');
+      if (msg) msg.textContent = '';
+    });
+
     document.getElementById('logoutBtn').addEventListener('click', () => {
       localStorage.removeItem('gotegs_student_session');
       window.location.href = '/student/index.html';
