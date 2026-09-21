@@ -20,16 +20,29 @@
 </head>
 <body>
 
-  <!-- ===== Splash intro ===== -->
+  <!-- ===== Premium splash intro ===== -->
   <div id="splash" aria-hidden="true">
+    <div class="splash-orbit orbit-a"></div>
+    <div class="splash-orbit orbit-b"></div>
+    <div class="splash-orbit orbit-c"></div>
+    <div class="splash-particle particle-a">✦</div>
+    <div class="splash-particle particle-b">•</div>
+    <div class="splash-particle particle-c">✦</div>
+
     <div class="home-shield splash-crest" id="splashCrest">
       <img src="/assets/img/logo.png" alt="" />
     </div>
+
     <div class="splash-name" id="splashName">
       Go-Tegs
       <small>International School</small>
     </div>
-    <p class="splash-skip">Tap to skip</p>
+
+    <div class="splash-tagline">LEARN • LEAD • BECOME</div>
+    <button class="splash-enter" type="button" aria-label="Enter Go-Tegs website">
+      Enter site <span>→</span>
+    </button>
+    <p class="splash-skip">Tap anywhere to enter instantly</p>
   </div>
 
   <div id="navbar-placeholder"></div>
@@ -175,16 +188,13 @@
   <script src="/assets/js/main.js"></script>
 
   <script>
-    /* Splash timeline — total ~3 seconds.
-       0.00–0.95s  crest bounces in            (CSS)
-       0.72–1.32s  name rises in               (CSS)
-       1.32–1.90s  hold
-       1.90–2.75s  crest + name shrink and fly to their hero position (below)
-       2.75–3.00s  overlay clears              */
+    /* Premium splash: tap/click anywhere or press Enter/Escape to skip instantly.
+       Automatic transition is intentionally short, but never blocks visitors who want to move fast. */
     (function () {
       if (!document.documentElement.classList.contains("splash-active")) return;
 
       var splash = document.getElementById("splash");
+      var enter = splash && splash.querySelector(".splash-enter");
       var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       var finished = false;
 
@@ -192,44 +202,25 @@
         if (finished) return;
         finished = true;
         document.documentElement.classList.remove("splash-active");
-        if (splash) splash.remove();
+        if (splash) {
+          splash.classList.add("splash-leave");
+          setTimeout(function () { if (splash) splash.remove(); }, 520);
+        }
       }
 
       if (splash) splash.addEventListener("click", clearSplash);
+      if (enter) enter.addEventListener("click", function (e) {
+        e.stopPropagation();
+        clearSplash();
+      });
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === "Escape" || e.key === " ") clearSplash();
+      }, { once: false });
 
-      if (reduced) { setTimeout(clearSplash, 400); return; }
+      if (reduced) { setTimeout(clearSplash, 250); return; }
 
-      // Move an element from where it is now to where its hero twin sits.
-      function flyTo(fromEl, toEl, delay) {
-        if (!fromEl || !toEl) return;
-        var a = fromEl.getBoundingClientRect();
-        var b = toEl.getBoundingClientRect();
-        if (!a.width || !b.width) return;
-
-        var scale = b.width / a.width;
-        var dx = (b.left + b.width / 2) - (a.left + a.width / 2);
-        var dy = (b.top + b.height / 2) - (a.top + a.height / 2);
-
-        fromEl.animate(
-          [
-            { transform: "translate(0,0) scale(1)" },
-            { transform: "translate(" + dx + "px," + dy + "px) scale(" + scale + ")" }
-          ],
-          { duration: 850, delay: delay, easing: "cubic-bezier(0.65,0,0.35,1)", fill: "forwards" }
-        );
-      }
-
-      setTimeout(function () {
-        flyTo(document.getElementById("splashCrest"), document.getElementById("heroCrest"), 0);
-        flyTo(document.getElementById("splashName"), document.getElementById("heroName"), 0);
-
-        splash.animate(
-          [{ opacity: 1 }, { opacity: 0 }],
-          { duration: 700, delay: 300, easing: "ease-in", fill: "forwards" }
-        );
-
-        setTimeout(clearSplash, 1100);
-      }, 1900);
+      // Give the identity a moment to register, then reveal the homepage automatically.
+      setTimeout(clearSplash, 2800);
     })();
   </script>
 </body>

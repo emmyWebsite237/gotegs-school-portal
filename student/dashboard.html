@@ -72,6 +72,86 @@
     .dash-card.disabled { opacity: 0.5; cursor: default; background: linear-gradient(135deg, #94a3b8, #64748b) !important; }
 
     #dashMsg { margin-top: 1rem; font-size: 0.88rem; font-weight: 600; text-align: center; }
+
+    /* ---------- Premium student command centre ---------- */
+    .portal-command { margin-top: 1.4rem; }
+    .portal-welcome {
+      position: relative; overflow: hidden; min-height: 265px; border-radius: 24px;
+      padding: 2.2rem; color: #fff; display:flex; align-items:center; justify-content:space-between;
+      background:
+        radial-gradient(circle at 82% 25%, rgba(255,255,255,.12), transparent 20%),
+        radial-gradient(circle at 15% 90%, rgba(246,190,54,.14), transparent 25%),
+        linear-gradient(135deg, var(--maroon-deep), var(--teal-dark) 72%, #073238);
+      box-shadow: 0 20px 50px rgba(16,24,38,.16);
+    }
+    .portal-welcome::after {
+      content:""; position:absolute; width:380px; height:380px; right:-150px; top:-170px;
+      border:1px solid rgba(255,255,255,.13); border-radius:50%;
+      box-shadow:0 0 0 55px rgba(255,255,255,.025), 0 0 0 110px rgba(255,255,255,.02);
+    }
+    .portal-kicker, .portal-section-title > div > span, .panel-heading span, .portal-focus > span {
+      font-size:.68rem; letter-spacing:.15em; font-weight:800; color:rgba(255,255,255,.65);
+    }
+    .portal-welcome h1 { color:#fff; margin:.5rem 0 .35rem; font-size:clamp(1.8rem,4vw,2.65rem); }
+    .portal-welcome p { color:rgba(255,255,255,.78); margin:0; max-width:560px; }
+    .portal-actions { display:flex; gap:.7rem; margin-top:1.4rem; flex-wrap:wrap; }
+    .portal-actions a { text-decoration:none; padding:.72rem 1rem; border-radius:10px; font-family:var(--font-display); font-weight:700; font-size:.8rem; }
+    .portal-primary { background:var(--gold); color:#3d2a00; }
+    .portal-secondary { border:1px solid rgba(255,255,255,.25); color:#fff; background:rgba(255,255,255,.07); }
+    .portal-crest { position:relative; z-index:2; width:145px; height:145px; display:grid; place-items:center; border-radius:50%; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.18); }
+    .portal-crest img { width:92px; height:92px; object-fit:contain; }
+    .portal-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:-28px; position:relative; z-index:3; padding:0 1rem; }
+    .portal-stats > div { padding:1rem; background:rgba(255,255,255,.96); border:1px solid var(--border); border-radius:13px; box-shadow:0 10px 25px rgba(16,24,38,.08); }
+    .portal-stats strong,.portal-stats span { display:block; }
+    .portal-stats strong { color:var(--teal-dark); font-family:var(--font-display); font-size:1rem; }
+    .portal-stats span { color:var(--slate); font-size:.72rem; margin-top:.2rem; }
+    .portal-section-title { display:flex; align-items:end; justify-content:space-between; gap:1rem; margin:2.5rem 0 1rem; }
+    .portal-section-title > div > span,.panel-heading span { color:var(--teal-dark); }
+    .portal-section-title h2,.panel-heading h2 { margin:.3rem 0 0; font-size:1.3rem; }
+    .portal-section-title > a { color:var(--teal-dark); font-weight:700; font-size:.8rem; text-decoration:none; }
+    .portal-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+    .portal-card { position:relative; overflow:hidden; min-height:185px; padding:1.35rem; border:0; border-radius:17px; color:#fff; text-align:left; text-decoration:none; display:flex; flex-direction:column; justify-content:flex-end; cursor:pointer; transition:transform .18s ease, box-shadow .18s ease; box-shadow:0 8px 20px rgba(16,24,38,.08); }
+    .portal-card:hover { transform:translateY(-5px); box-shadow:0 18px 34px rgba(16,24,38,.17); }
+    .portal-card::before { content:""; position:absolute; width:150px; height:150px; border:1px solid rgba(255,255,255,.14); border-radius:50%; right:-65px; top:-65px; }
+    .portal-card-icon { position:absolute; top:1rem; right:1rem; width:37px; height:37px; display:grid; place-items:center; border-radius:11px; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.14); font-weight:800; }
+    .portal-card small { font-size:.64rem; letter-spacing:.12em; opacity:.7; font-weight:800; }
+    .portal-card h3 { color:#fff; margin:.45rem 0 .3rem; font-size:1.02rem; }
+    .portal-card p { color:rgba(255,255,255,.78); margin:0; font-size:.76rem; line-height:1.5; max-width:30ch; }
+    .portal-card b { margin-top:1rem; font-size:.72rem; }
+    .card-result { background:linear-gradient(145deg,#174a9a,#2563eb); }
+    .card-notes { background:linear-gradient(145deg,#08766e,#12a79c); }
+    .card-quiz { background:linear-gradient(145deg,#9a5605,#d97706); }
+    .card-code { background:linear-gradient(145deg,#5b3aa8,#7c3aed); }
+    .card-testimonial { background:linear-gradient(145deg,#7b294f,#b43c6b); }
+    .card-updates { background:linear-gradient(145deg,#175b48,#1b8665); }
+    .portal-lower { display:grid; grid-template-columns:1.55fr .85fr; gap:12px; margin-top:12px; }
+    .portal-panel { border:1px solid var(--border); border-radius:17px; background:var(--paper); padding:1.25rem; }
+    .panel-heading h2 { color:var(--ink); }
+    .quick-links { display:grid; grid-template-columns:repeat(2,1fr); gap:7px; margin-top:1rem; }
+    .quick-links a { padding:.85rem; border:1px solid var(--border); border-radius:11px; text-decoration:none; display:grid; grid-template-columns:30px 1fr; column-gap:8px; }
+    .quick-links span { grid-row:span 2; color:var(--gold-dark); font-size:.7rem; font-weight:800; }
+    .quick-links b { color:var(--ink); font-size:.78rem; }
+    .quick-links small { color:var(--slate); font-size:.66rem; margin-top:2px; }
+    .portal-focus { color:#fff; background:linear-gradient(145deg,var(--maroon-deep),var(--maroon)); position:relative; overflow:hidden; }
+    .portal-focus > span { color:rgba(255,255,255,.58); }
+    .focus-mark { position:absolute; right:1rem; top:1rem; width:55px; height:55px; display:grid; place-items:center; border-radius:50%; color:var(--maroon-deep); background:var(--gold); font:800 1.4rem var(--font-display); }
+    .portal-focus h2 { color:#fff; margin:2rem 0 .5rem; font-size:1.25rem; max-width:18ch; }
+    .portal-focus p { color:rgba(255,255,255,.72); font-size:.75rem; line-height:1.55; }
+    .portal-focus a { color:var(--gold-soft); font-size:.75rem; font-weight:800; text-decoration:none; }
+    @media (max-width: 800px) {
+      .portal-welcome { padding:1.5rem; min-height:290px; }
+      .portal-crest { width:95px; height:95px; align-self:flex-start; }
+      .portal-crest img { width:65px; height:65px; }
+      .portal-grid { grid-template-columns:1fr 1fr; }
+      .portal-lower { grid-template-columns:1fr; }
+    }
+    @media (max-width: 560px) {
+      .portal-welcome { min-height:330px; align-items:flex-start; }
+      .portal-crest { position:absolute; right:1rem; bottom:1rem; opacity:.75; }
+      .portal-stats { grid-template-columns:1fr; margin-top:-15px; padding:0 .4rem; }
+      .portal-grid,.quick-links { grid-template-columns:1fr; }
+      .portal-section-title { align-items:flex-start; flex-direction:column; }
+    }
   </style>
 </head>
 <body>
@@ -80,85 +160,114 @@
   <main class="page-container">
     <nav class="breadcrumb">Home / Student / Dashboard</nav>
 
-    <div class="dash-hero">
-      <span class="floaty f1">📘</span>
-      <span class="floaty f2">✏️</span>
-      <span class="floaty f3">🎓</span>
-      <span class="floaty f4">⭐</span>
-      <div class="dash-hero-inner">
-        <div class="dash-avatar">🧑‍🎓</div>
+    <section class="portal-command">
+      <div class="portal-welcome">
         <div>
-          <h2 id="dashName">Welcome</h2>
+          <span class="portal-kicker">STUDENT COMMAND CENTER</span>
+          <h1 id="dashName">Welcome</h1>
           <p id="dashClass"></p>
+          <div class="portal-actions">
+            <a href="/quiz.html" class="portal-primary">Continue learning <span>→</span></a>
+            <a href="/updates.html" class="portal-secondary">School updates</a>
+          </div>
         </div>
-        <button class="logout-btn" id="logoutBtn">🚪 Log Out</button>
+        <div class="portal-crest">
+          <img src="/assets/img/logo.png" alt="Go-Tegs crest">
+        </div>
       </div>
-      <div class="mini-stats" id="miniStats"></div>
-    </div>
 
-    <!-- Optional welcome video: drop a file at /assets/video/welcome.mp4 and
-         this section shows itself automatically. No file? Stays hidden. -->
+      <div class="portal-stats" id="miniStats">
+        <div><strong>Ready</strong><span>Academic workspace</span></div>
+        <div><strong>Live</strong><span>School services</span></div>
+        <div><strong>5h</strong><span>Session protection</span></div>
+      </div>
+    </section>
+
     <div class="dash-video-wrap" id="dashVideoWrap" style="display:none;">
       <video id="dashVideo" controls poster="/assets/img/logo.png">
         <source src="/assets/video/welcome.mp4" type="video/mp4" />
       </video>
     </div>
 
-    <div class="dash-section-label">🎓 Academics</div>
-    <div class="dash-grid">
-      <div class="dash-card" id="checkResultCard" style="background:linear-gradient(135deg,#2563eb,#1d4ed8);">
-        <span class="badge">Result</span>
-        <span class="card-emoji">📄</span>
+    <div class="portal-section-title">
+      <div>
+        <span>ACADEMIC WORKSPACE</span>
+        <h2>Your school, organised around what matters.</h2>
+      </div>
+      <a href="/lesson-notes/index.html">Open lesson notes <span>→</span></a>
+    </div>
+
+    <div class="portal-grid portal-grid-main">
+      <button class="portal-card card-result" id="checkResultCard">
+        <span class="portal-card-icon">↗</span>
+        <small>RESULTS</small>
         <h3>Check My Result</h3>
-        <p>View and download your current term result.</p>
-      </div>
+        <p>Open your current term result securely and view your academic record.</p>
+        <b>View result →</b>
+      </button>
 
-      <div class="dash-card" id="checkTestimonialCard" style="background:linear-gradient(135deg,#7c3aed,#5b21b6);">
-        <span class="badge">Testimonial</span>
-        <span class="card-emoji">📜</span>
-        <h3>School Leaving Testimonial</h3>
-        <p>Check and download your testimonial, if issued.</p>
-      </div>
-
-      <a class="dash-card" href="/student/lesson-notes/index.html" style="text-decoration:none; background:linear-gradient(135deg,#16a34a,#15803d);">
-        <span class="badge">Notes</span>
-        <span class="card-emoji">📚</span>
+      <a class="portal-card card-notes" href="/student/lesson-notes/index.html">
+        <span class="portal-card-icon">▤</span>
+        <small>LEARNING</small>
         <h3>Lesson Notes</h3>
-        <p>Notes for your class, by term and subject.</p>
+        <p>Jump into class notes organised by level, term and subject.</p>
+        <b>Open workspace →</b>
       </a>
 
-      <div class="dash-card disabled">
-        <span class="badge">Coming Soon</span>
-        <span class="card-emoji">📈</span>
-        <h3>Performance Trend</h3>
-        <p>See how your scores have moved across terms.</p>
-      </div>
+      <a class="portal-card card-quiz" href="/quiz.html">
+        <span class="portal-card-icon">✦</span>
+        <small>PRACTICE</small>
+        <h3>Quiz & Practice</h3>
+        <p>Test your knowledge, earn XP and build your learning streak.</p>
+        <b>Start practice →</b>
+      </a>
+
+      <a class="portal-card card-code" href="/quiz-code.html">
+        <span class="portal-card-icon">#</span>
+        <small>TEACHER ACTIVITY</small>
+        <h3>Enter Quiz Code</h3>
+        <p>Use a code supplied by your teacher to join a classroom quiz.</p>
+        <b>Enter code →</b>
+      </a>
+
+      <button class="portal-card card-testimonial" id="checkTestimonialCard">
+        <span class="portal-card-icon">✓</span>
+        <small>DOCUMENTS</small>
+        <h3>School Leaving Testimonial</h3>
+        <p>Check your testimonial when it has been issued by the school.</p>
+        <b>Check testimonial →</b>
+      </button>
+
+      <a class="portal-card card-updates" href="/updates.html">
+        <span class="portal-card-icon">!</span>
+        <small>COMMUNITY</small>
+        <h3>School Updates</h3>
+        <p>Stay current with announcements, events and important notices.</p>
+        <b>See updates →</b>
+      </a>
     </div>
 
-    <div class="dash-section-label">🎮 Practice &amp; Play</div>
-    <div class="dash-grid">
-      <a class="dash-card" href="/quiz.html" style="text-decoration:none; background:linear-gradient(135deg,#d97706,#b45309);">
-        <span class="badge">Practice</span>
-        <span class="card-emoji">🧠</span>
-        <h3>Quiz</h3>
-        <p>Practise questions, earn XP, and level up.</p>
-      </a>
+    <div class="portal-lower">
+      <section class="portal-panel">
+        <div class="panel-heading">
+          <div><span>QUICK ACCESS</span><h2>Everything connected</h2></div>
+        </div>
+        <div class="quick-links">
+          <a href="/about.html"><span>01</span><b>About Go-Tegs</b><small>Our story & mission</small></a>
+          <a href="/enrolment.html"><span>02</span><b>Enrolment</b><small>Admissions & screening</small></a>
+          <a href="/store.html"><span>03</span><b>School Store</b><small>Books & supplies</small></a>
+          <a href="/contact.html"><span>04</span><b>Contact School</b><small>Get in touch</small></a>
+        </div>
+      </section>
 
-      <a class="dash-card" href="/quiz-code.html" style="text-decoration:none; background:linear-gradient(135deg,#0891b2,#0e7490);">
-        <span class="badge">Quiz Code</span>
-        <span class="card-emoji">🔑</span>
-        <h3>Enter a Quiz Code</h3>
-        <p>Got a code from a teacher? Enter it here.</p>
-      </a>
-
-      <div class="dash-card disabled">
-        <span class="badge">Coming Soon</span>
-        <span class="card-emoji">🏆</span>
-        <h3>Tournaments</h3>
-        <p>Compete with your classmates for a spot on the leaderboard.</p>
-      </div>
+      <aside class="portal-panel portal-focus">
+        <span>YOUR NEXT MOVE</span>
+        <div class="focus-mark">G</div>
+        <h2>Learn something. Test yourself. Keep moving.</h2>
+        <p>Your portal keeps the important school services within a few taps.</p>
+        <a href="/quiz.html">Start a practice session <span>→</span></a>
+      </aside>
     </div>
-
     <p id="dashMsg"></p>
   </main>
 
