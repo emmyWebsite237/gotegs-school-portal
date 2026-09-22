@@ -3,46 +3,65 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Gallery of moments from Go-Tegs International School." />
   <link rel="icon" type="image/png" href="/assets/img/logo.png" />
   <title>Gallery | Go-Tegs International School</title>
   <link rel="stylesheet" href="/assets/css/style.css" />
   <style>
-    .gallery-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 1rem; margin-top: 1.5rem;
-    }
-    .gallery-item {
-      border-radius: var(--radius); overflow: hidden; background: var(--teal-light);
-      border: 1px solid var(--border); aspect-ratio: 4 / 3;
-    }
-    .gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .gallery-page { max-width:1220px; }
+    .gallery-hero { padding:1.7rem 1.8rem; border-radius:24px; background:linear-gradient(135deg,#081525,#0b2d48); color:#fff; }
+    .gallery-hero h1 { margin:.35rem 0 .3rem; color:#fff; font-size:clamp(2rem,4vw,3.1rem); letter-spacing:-.05em; }
+    .gallery-hero p { margin:0; color:#b7c9d7; max-width:700px; font-size:.85rem; }
+    .gallery-toolbar { display:flex; align-items:center; justify-content:space-between; gap:1rem; margin:1.25rem 0 .8rem; }
+    .gallery-count { color:#7c8d9e; font-size:.68rem; }
+    .gallery-grid { display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); gap:.8rem; }
+    .gallery-item { position:relative; overflow:hidden; min-height:180px; grid-column:span 4; border-radius:18px; background:#eaf1f6; border:1px solid #dae5ed; cursor:zoom-in; }
+    .gallery-item:nth-child(4n+1){ grid-column:span 6; min-height:260px; }
+    .gallery-item:nth-child(7n){ grid-column:span 8; min-height:280px; }
+    .gallery-item img { width:100%; height:100%; object-fit:cover; display:block; transition:transform .35s ease, filter .35s ease; }
+    .gallery-item:hover img { transform:scale(1.04); filter:saturate(1.05); }
+    .gallery-empty { grid-column:1/-1; padding:3rem 1.2rem; text-align:center; border:1px dashed #c9d8e5; border-radius:20px; background:#fbfdff; }
+    .gallery-empty strong { display:block; color:#213a52; font:800 .9rem var(--font-display); }
+    .gallery-empty span { display:block; margin-top:.25rem; color:#8191a2; font-size:.72rem; }
+    .lightbox { position:fixed; inset:0; z-index:9990; display:grid; place-items:center; padding:1.2rem; background:rgba(5,12,21,.9); opacity:0; visibility:hidden; transition:opacity .2s ease,visibility .2s ease; }
+    .lightbox.open { opacity:1; visibility:visible; }
+    .lightbox img { max-width:min(94vw,1200px); max-height:86vh; width:auto; height:auto; border-radius:14px; box-shadow:0 24px 80px rgba(0,0,0,.45); }
+    .lightbox button { position:absolute; top:1rem; right:1rem; width:42px; height:42px; border-radius:50%; border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.06); color:#fff; font-size:1.4rem; }
+    @media(max-width:900px){ .gallery-item,.gallery-item:nth-child(4n+1),.gallery-item:nth-child(7n){ grid-column:span 6; min-height:220px;} }
+    @media(max-width:560px){ .gallery-item,.gallery-item:nth-child(4n+1),.gallery-item:nth-child(7n){ grid-column:span 12; min-height:220px;} .gallery-hero{padding:1.3rem;} }
   </style>
 </head>
 <body>
   <div id="navbar-placeholder"></div>
+  <main class="page-container gallery-page">
+    <section class="gallery-hero">
+      <span class="eyebrow" style="color:#8fdce4;">Go-Tegs · School life</span>
+      <h1>Moments worth remembering.</h1>
+      <p>Browse recent photographs from around the school. New images can be added to the gallery source without changing this page.</p>
+    </section>
 
-  <main class="page-container">
-    <nav class="breadcrumb">Home / Gallery</nav>
-    <h1>Gallery</h1>
-    <p>Photos from around Go-Tegs International School — most recent first.</p>
-
+    <div class="gallery-toolbar">
+      <span class="eyebrow">Gallery</span>
+      <span class="gallery-count" id="galleryCount">Preparing the gallery…</span>
+    </div>
     <div class="gallery-grid" id="galleryGrid">
-      <p class="empty-state">Loading photos...</p>
+      <div class="gallery-empty"><strong>Loading school moments…</strong><span>Please give the gallery a moment to connect.</span></div>
     </div>
   </main>
+
+  <div class="lightbox" id="galleryLightbox" aria-hidden="true">
+    <button type="button" id="galleryClose" aria-label="Close image">×</button>
+    <img id="galleryLightboxImage" alt="Go-Tegs gallery photo" />
+  </div>
 
   <div id="footer-placeholder"></div>
   <script src="/assets/js/main.js"></script>
   <script>
-    // ====================== CONFIGURE THIS ======================
-    const GH_OWNER = "YOUR-GITHUB-USERNAME";   // e.g. the account/org that owns the repo
+    const GH_OWNER = "YOUR-GITHUB-USERNAME";
     const GH_REPO = "gotegs-school-website";
-    const GH_FOLDER = "assets/img/gallery";    // the folder you upload photos into on GitHub
-    const CACHE_KEY = "gotegs_gallery_cache_v1";
-    const CACHE_MAX_AGE_MS = 60 * 60 * 1000;   // 1 hour — avoids hitting GitHub's rate limit on repeat visits
-    const MAX_COMMITS_TO_CHECK = 12;           // caps how many API calls a single visit can make
-    // ==============================================================
-
+    const GH_FOLDER = "assets/img/gallery";
+    const CACHE_KEY = "gotegs_gallery_cache_v2";
+    const CACHE_MAX_AGE_MS = 60 * 60 * 1000;
     const IMAGE_EXT = /\.(png|jpe?g|gif|webp|avif)$/i;
 
     async function ghFetch(url) {
@@ -52,28 +71,22 @@
     }
 
     async function loadGalleryOrdered() {
-      // Serve from cache if it's fresh, so repeat visits don't burn API calls.
       const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || "null");
-      if (cached && Date.now() - cached.savedAt < CACHE_MAX_AGE_MS) {
-        return cached.urls;
+      if (cached && Date.now() - cached.savedAt < CACHE_MAX_AGE_MS) return cached.urls;
+
+      if (GH_OWNER === "YOUR-GITHUB-USERNAME") {
+        throw new Error("Gallery source is not configured yet.");
       }
 
       const contentsUrl = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_FOLDER}`;
       const files = await ghFetch(contentsUrl);
       const images = files.filter(f => f.type === "file" && IMAGE_EXT.test(f.name));
-
       if (!images.length) return [];
 
-      // Best-effort ordering: check the most recent commits touching this
-      // folder, and use whichever files show up earliest (most recently
-      // changed) to build an order. Any image not seen in that recent
-      // commit sample just falls back to the end of the list, rather than
-      // failing the whole page.
       let order = [];
       try {
-        const commitsUrl = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/commits?path=${encodeURIComponent(GH_FOLDER)}&per_page=${MAX_COMMITS_TO_CHECK}`;
+        const commitsUrl = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/commits?path=${encodeURIComponent(GH_FOLDER)}&per_page=12`;
         const commits = await ghFetch(commitsUrl);
-
         for (const commit of commits) {
           const detail = await ghFetch(commit.url);
           for (const file of (detail.files || [])) {
@@ -81,37 +94,43 @@
             if (IMAGE_EXT.test(name) && !order.includes(name)) order.push(name);
           }
         }
-      } catch (err) {
-        console.warn("Gallery: could not determine latest-first order, falling back to default order.", err);
-      }
+      } catch (_) {}
 
       const orderedNames = [
         ...order.filter(name => images.some(f => f.name === name)),
-        ...images.map(f => f.name).filter(name => !order.includes(name)),
+        ...images.map(f => f.name).filter(name => !order.includes(name))
       ];
-
-      const urls = orderedNames.map(name => {
-        const match = images.find(f => f.name === name);
-        return match.download_url;
-      });
-
+      const urls = orderedNames.map(name => images.find(f => f.name === name).download_url);
       localStorage.setItem(CACHE_KEY, JSON.stringify({ urls, savedAt: Date.now() }));
       return urls;
     }
 
     async function renderGallery() {
-      const grid = document.getElementById("galleryGrid");
+      const grid = document.getElementById('galleryGrid');
+      const count = document.getElementById('galleryCount');
       try {
         const urls = await loadGalleryOrdered();
         if (!urls.length) {
-          grid.innerHTML = '<p class="empty-state">No photos uploaded yet.</p>';
+          count.textContent = 'No photos uploaded yet';
+          grid.innerHTML = '<div class="gallery-empty"><strong>The gallery is ready for school photos.</strong><span>Once images are added to the configured gallery source, they will appear here automatically.</span></div>';
           return;
         }
-        grid.innerHTML = urls.map(u => `<div class="gallery-item"><img src="${u}" alt="Go-Tegs gallery photo" loading="lazy" /></div>`).join("");
+        count.textContent = `${urls.length} photo${urls.length === 1 ? '' : 's'}`;
+        grid.innerHTML = urls.map((u, i) => `<button class="gallery-item" type="button" data-gallery-src="${u.replace(/"/g,'&quot;')}"><img src="${u}" alt="Go-Tegs school gallery photo ${i+1}" loading="lazy" /></button>`).join('');
+        grid.querySelectorAll('[data-gallery-src]').forEach(btn => btn.addEventListener('click', () => openLightbox(btn.dataset.gallerySrc)));
       } catch (err) {
-        grid.innerHTML = `<p class="empty-state">Could not load the gallery right now (${err.message}). Please try again shortly.</p>`;
+        count.textContent = 'Gallery source pending';
+        grid.innerHTML = '<div class="gallery-empty"><strong>The gallery page is in place.</strong><span>Photo storage can be connected by setting the GitHub repository details in this page.</span></div>';
       }
     }
+
+    const lightbox = document.getElementById('galleryLightbox');
+    const lightboxImage = document.getElementById('galleryLightboxImage');
+    function openLightbox(src) { lightboxImage.src = src; lightbox.classList.add('open'); lightbox.setAttribute('aria-hidden','false'); }
+    function closeLightbox() { lightbox.classList.remove('open'); lightbox.setAttribute('aria-hidden','true'); lightboxImage.removeAttribute('src'); }
+    document.getElementById('galleryClose').addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
 
     renderGallery();
   </script>

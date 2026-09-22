@@ -41,9 +41,27 @@ const STUDENT_PROTECTED_PREFIXES = [
   "/quiz.html",
   "/quiz-code.html",
   "/student/dashboard.html",
+  "/student/profile.html",
+  "/student/lesson-notes/",
   "/student/result/",
   "/student/testimonial/",
 ];
+
+// The private portal uses its own shell, so public navigation is never shown
+// inside an authenticated student workspace. This class is added immediately
+// so desktop body padding from the public sidebar cannot flash first.
+if (isStudentProtectedPath(window.location.pathname)) {
+  document.documentElement.classList.add("student-portal-page");
+  document.body && document.body.classList.add("student-shell-page");
+}
+
+function ensurePortalStylesheet() {
+  if (document.querySelector('link[href="/assets/css/portal.css"]')) return;
+  const link = document.createElement("link");
+  link.rel = "stylesheet";
+  link.href = "/assets/css/portal.css";
+  document.head.appendChild(link);
+}
 
 function isStudentProtectedPath(pathname) {
   if (pathname === "/student/index.html" || pathname === "/student/") return false;
@@ -247,15 +265,155 @@ async function loadNotesScriptsIfNeeded() {
   }
 }
 
-async function initShell() {
-  await injectPartial("/partials/navbar.html", "navbar-placeholder");
-  await injectPartial("/partials/footer.html", "footer-placeholder");
+function initStudentPortalShell() {
+  const session = getValidStudentSession();
+  if (!session) return;
 
-  highlightActiveLink();
-  wireNavGroups();
-  wireMobileToggle();
-  setFooterYear();
-  loadSocialIconsIfNeeded();
+  const name = String(session.full_name || "Student");
+  const initials = name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase() || "GT";
+  const classLine = `${session.class || "Student"}${session.dept ? " · " + session.dept : ""}`;
+
+  document.querySelectorAll("[data-portal-name]").forEach((el) => {
+    el.textContent = name;
+  });
+  document.querySelectorAll("[data-portal-class]").forEach((el) => {
+    el.textContent = classLine;
+  });
+  document.querySelectorAll("[data-portal-initials]").forEach((el) => {
+    el.textContent = initials;
+  });
+
+  const path = window.location.pathname;
+  let activeKey = "";
+  if (path === "/student/dashboard.html" || path === "/student/" || path === "/student/index.html") activeKey = "dashboard";
+  else if (path === "/student/profile.html") activeKey = "profile";
+  else if (path.startsWith("/student/lesson-notes/")) activeKey = "notes";
+  else if (path === "/quiz.html") activeKey = "quiz";
+  else if (path === "/quiz-code.html") activeKey = "quiz-code";
+
+  document.querySelectorAll("[data-portal-link]").forEach((link) => {
+    link.classList.toggle("is-active", link.dataset.portalLink === activeKey);
+  });
+
+  function logout() {
+    localStorage.removeItem(STUDENT_SESSION_KEY);
+    window.location.href = "/student/index.html";
+  }
+
+  document.querySelectorAll("#portalLogout, #portalLogoutMobile").forEach((button) => {
+    button.addEventListener("click", logout);
+  });
+
+  const toggle = document.getElementById("portalMobileToggle");
+  const drawer = document.getElementById("portalMobileDrawer");
+  const scrim = document.getElementById("portalMobileScrim");
+  const close = document.getElementById("portalMobileClose");
+  if (toggle && drawer && scrim) {
+    const setOpen = (open) => {
+      drawer.classList.toggle("open", open);
+      scrim.classList.toggle("open", open);
+      toggle.setAttribute("aria-expanded", String(open));
+      document.body.style.overflow = open ? "hidden" : "";
+    };
+    toggle.addEventListener("click", () => setOpen(!drawer.classList.contains("open")));
+    scrim.addEventListener("click", () => setOpen(false));
+    if (close) close.addEventListener("click", () => setOpen(false));
+    drawer.querySelectorAll("a").forEach((a) => a.addEventListener("click", () => setOpen(false)));
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") setOpen(false);
+    });
+  }
+}
+
+function initPortalPointer() {
+  if (window.matchMedia("(pointer: fine)").matches === false) return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if (document.querySelector(".portal-pointer")) return;
+
+  const dot = document.createElement("div");
+  const ring = document.createElement("div");
+  dot.className = "portal-pointer";
+  ring.className = "portal-pointer-ring";
+  document.body.append(dot, ring);
+  document.body.classList.add("portal-pointer-enabled");
+
+  let tx = 0, ty = 0, rx = 0, ry = 0;
+  let raf = 0;
+  const render = () => {
+    rx += (tx - rx) * 0.2;
+    ry += (ty - ry) * 0.2;
+    dot.style.transform = `translate(${tx}px, ${ty}px) translate(-50%, -50%)`;
+    ring.style.transform = `translate(${rx}px, ${ry}px) translate(-50%, -50%)`;
+    raf = requestAnimationFrame(render);
+  };
+  raf = requestAnimationFrame(render);
+
+  document.addEventListener("pointermove", (e) => {
+    tx = e.clientX;
+    ty = e.clientY;
+    dot.classList.add("is-visible");
+    ring.classList.add("is-visible");
+  }, { passive: true });
+  document.addEventListener("pointerleave", () => {
+    dot.classList.remove("is-visible");
+    ring.classList.remove("is-visible");
+  });
+
+  document.addEventListener("pointerover", (e) => {
+    const target = e.target instanceof Element ? e.target.closest("a, button, [data-portal-interactive], .portal-card") : null;
+    if (target) { dot.classList.add("is-active"); ring.classList.add("is-active"); }
+  });
+  document.addEventListener("pointerout", (e) => {
+    const target = e.target instanceof Element ? e.target.closest("a, button, [data-portal-interactive], .portal-card") : null;
+    if (target) { dot.classList.remove("is-active"); ring.classList.remove("is-active"); }
+  });
+
+  window.addEventListener("beforeunload", () => cancelAnimationFrame(raf));
+}
+
+function initPortalTilt() {
+  if (window.matchMedia("(pointer: fine)").matches === false) return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  document.querySelectorAll("[data-tilt-card]").forEach((card) => {
+    card.addEventListener("pointermove", (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width - 0.5;
+      const y = (e.clientY - rect.top) / rect.height - 0.5;
+      card.style.transform = `perspective(900px) rotateX(${(-y * 3).toFixed(2)}deg) rotateY(${(x * 3).toFixed(2)}deg) translateY(-5px)`;
+    });
+    card.addEventListener("pointerleave", () => {
+      card.style.transform = "";
+    });
+  });
+}
+
+async function initShell() {
+  const studentPage = isStudentProtectedPath(window.location.pathname);
+
+  if (studentPage) {
+    ensurePortalStylesheet();
+    document.body.classList.add("student-shell-page");
+    await injectPartial("/partials/student-shell.html", "navbar-placeholder");
+    initStudentPortalShell();
+    initPortalPointer();
+    initPortalTilt();
+  } else {
+    await injectPartial("/partials/navbar.html", "navbar-placeholder");
+    await injectPartial("/partials/footer.html", "footer-placeholder");
+
+    highlightActiveLink();
+    wireNavGroups();
+    wireMobileToggle();
+    setFooterYear();
+    loadSocialIconsIfNeeded();
+  }
 
   await loadNotesScriptsIfNeeded();
 }

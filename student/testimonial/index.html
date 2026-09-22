@@ -3,91 +3,30 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Check My Testimonial | Go-Tegs International School</title>
+  <title>School Leaving Testimonial | Go-Tegs International School</title>
   <link rel="stylesheet" href="/assets/css/style.css" />
+  <link rel="stylesheet" href="/assets/css/portal.css" />
   <style>
-    .result-form {
-      max-width: 420px; margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0.6rem;
-      padding: 1.75rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--paper);
-    }
-    .result-form label { font-family: var(--font-display); font-weight: 600; font-size: 0.85rem; margin-top: 0.4rem; }
-    .result-form input {
-      font-family: var(--font-body); font-size: 0.95rem; padding: 0.7rem 0.8rem;
-      border: 1px solid var(--border); border-radius: 8px;
-    }
-    .result-form .btn { margin-top: 1rem; }
-    #formMsg { margin-top: 0.9rem; font-size: 0.88rem; font-weight: 600; }
+    .testimonial-coming-soon { max-width:860px; min-height:60vh; display:grid; place-items:center; }
+    .testimonial-card { width:min(100%,680px); padding:2rem; text-align:center; border:1px solid #e0e5e9; border-radius:26px; background:#f3f4f5; filter:grayscale(1); box-shadow:none; }
+    .testimonial-mark { width:74px; height:74px; margin:0 auto 1rem; display:grid; place-items:center; border-radius:22px; background:#b7bec5; color:#fff; font:800 1.2rem var(--font-display); }
+    .testimonial-card h1 { margin:0 0 .45rem; color:#737d87; font-size:clamp(1.7rem,4vw,2.6rem); }
+    .testimonial-card p { margin:0 auto; max-width:540px; color:#929aa2; font-size:.82rem; }
+    .testimonial-pill { display:inline-flex; margin-top:1rem; padding:.45rem .7rem; border-radius:999px; background:#e2e5e8; color:#7e8891; font:800 .58rem var(--font-display); letter-spacing:.08em; text-transform:uppercase; }
   </style>
 </head>
-<body>
+<body class="student-shell-page">
   <div id="navbar-placeholder"></div>
-
-  <main class="page-container">
-    <nav class="breadcrumb">Home / Student / Testimonial</nav>
-    <h1>Check My School Leaving Testimonial</h1>
-    <p>Enter your Student ID and PIN to view and download your testimonial.</p>
-
-    <form class="result-form" id="testimonialForm">
-      <label for="sid">Student ID</label>
-      <input type="text" id="sid" placeholder="GT/..." required />
-
-      <label for="pin">Access PIN</label>
-      <input type="password" id="pin" placeholder="Access PIN" required />
-
-      <button type="submit" class="btn" id="checkBtn">Check Testimonial</button>
-      <p id="formMsg"></p>
-    </form>
+  <main class="page-container testimonial-coming-soon">
+    <section class="testimonial-card" aria-labelledby="testimonialTitle">
+      <div class="testimonial-mark">▣</div>
+      <div class="portal-section-label" style="color:#8e979f;">Student service</div>
+      <h1 id="testimonialTitle">School Leaving Testimonial</h1>
+      <p>This student service is not active yet. When the school releases the testimonial feature, this space will become available from your portal.</p>
+      <span class="testimonial-pill">Coming Soon · Inactive</span>
+    </section>
   </main>
-
   <div id="footer-placeholder"></div>
-
   <script src="/assets/js/main.js"></script>
-  <script>
-    const prefillId = sessionStorage.getItem('gotegs_prefill_student_id');
-    if (prefillId) {
-      document.getElementById('sid').value = prefillId;
-      sessionStorage.removeItem('gotegs_prefill_student_id');
-    }
-    document.getElementById('testimonialForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const sid = document.getElementById('sid').value.trim();
-      const pin = document.getElementById('pin').value;
-      const msg = document.getElementById('formMsg');
-      const btn = document.getElementById('checkBtn');
-
-      if (!sid || !pin) {
-        msg.style.color = '#d97706';
-        msg.textContent = 'Please fill all fields.';
-        return;
-      }
-
-      btn.disabled = true;
-      btn.textContent = 'Checking...';
-      msg.style.color = '#5c6b68';
-      msg.textContent = 'Verifying credentials...';
-
-      try {
-        const res = await fetch(`/api/verify-testimonial?student_id=${encodeURIComponent(sid)}&pin=${encodeURIComponent(pin)}`);
-        const data = await res.json();
-
-        if (res.status !== 200) {
-          msg.style.color = '#dc2626';
-          msg.textContent = data.error || 'Something went wrong.';
-          btn.disabled = false;
-          btn.textContent = 'Check Testimonial';
-          return;
-        }
-
-        sessionStorage.setItem('gotegs_testimonial_data', JSON.stringify(data));
-        window.location.href = '/student/testimonial/upload-photo.html';
-      } catch (err) {
-        msg.style.color = '#dc2626';
-        msg.textContent = 'Connection error. Please try again.';
-        btn.disabled = false;
-        btn.textContent = 'Check Testimonial';
-      }
-    });
-  </script>
 </body>
 </html>

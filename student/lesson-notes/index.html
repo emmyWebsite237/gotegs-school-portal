@@ -5,36 +5,54 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Lesson Notes | Go-Tegs International School</title>
   <link rel="stylesheet" href="/assets/css/style.css" />
+  <link rel="stylesheet" href="/assets/css/portal.css" />
+  <style>
+    .notes-panel { max-width:1180px; }
+    .notes-header { display:flex; align-items:end; justify-content:space-between; gap:1rem; padding-bottom:1rem; border-bottom:1px solid #dbe5ee; }
+    .notes-header h1 { margin:0 0 .25rem; }
+    .notes-header p { margin:0; }
+    .term-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; margin-top:1.2rem; }
+    .term-card { position:relative; min-height:170px; display:flex; flex-direction:column; justify-content:flex-end; padding:1.2rem; border:1px solid #dce6ef; border-radius:20px; background:#fff; box-shadow:0 12px 30px rgba(20,41,66,.06); overflow:hidden; transition:transform .18s ease, box-shadow .18s ease; }
+    .term-card::before { content:''; position:absolute; inset:-40% -30% auto auto; width:150px; height:150px; border-radius:50%; background:radial-gradient(circle,rgba(36,198,216,.14),transparent 68%); }
+    .term-card:hover { transform:translateY(-4px); box-shadow:0 18px 40px rgba(20,41,66,.10); }
+    .term-number { position:absolute; top:1rem; left:1rem; color:#8aa0b4; font:800 .62rem var(--font-display); letter-spacing:.1em; text-transform:uppercase; }
+    .term-card h2 { margin:0 0 .3rem; font-size:1.1rem; }
+    .term-card p { margin:0; font-size:.76rem; }
+    .term-arrow { position:absolute; top:1rem; right:1rem; color:#1d63c9; font:800 1rem var(--font-display); }
+    @media(max-width:760px){ .term-grid{grid-template-columns:1fr;} .notes-header{align-items:flex-start;flex-direction:column;} }
+  </style>
 </head>
-<body>
+<body class="student-shell-page">
   <div id="navbar-placeholder"></div>
-
-  <main class="page-container">
-    <nav class="breadcrumb">Home / Student / Lesson Notes</nav>
-    <h1>Lesson Notes</h1>
-    <p id="classLine">Loading your class...</p>
-
-    <ul class="link-grid" id="termList"></ul>
+  <main class="page-container notes-panel">
+    <div class="notes-header">
+      <div>
+        <div class="portal-section-label">Study workspace</div>
+        <h1>Lesson Notes</h1>
+        <p id="classLine">Loading your class...</p>
+      </div>
+    </div>
+    <div class="term-grid" id="termList"></div>
   </main>
-
   <div id="footer-placeholder"></div>
   <script src="/assets/js/main.js"></script>
   <script>
     const session = JSON.parse(localStorage.getItem('gotegs_student_session') || 'null');
-
     if (!session) {
       window.location.href = '/student/index.html';
     } else {
       const sectionFolder = session.section === 'sss_students' ? 'sss' : 'jss';
-      const classFolder = session.class.replace(/\s+/g, '').toLowerCase(); // "JSS 1" -> "jss1"
-
+      const classFolder = (session.class || '').replace(/\s+/g, '').toLowerCase();
       document.getElementById('classLine').textContent =
-        `Showing notes for ${session.class}${session.dept ? ' (' + session.dept + ')' : ''}.`;
-
-      const terms = ['Term 1', 'Term 2', 'Term 3'];
-      document.getElementById('termList').innerHTML = terms
-        .map((t, i) => `<li><a href="/lesson-notes/${sectionFolder}/${classFolder}/term${i + 1}.html">${t}</a></li>`)
-        .join('');
+        `Showing notes for ${session.class || 'your class'}${session.dept ? ' · ' + session.dept : ''}.`;
+      const terms = ['Term 1','Term 2','Term 3'];
+      document.getElementById('termList').innerHTML = terms.map((term, i) => `
+        <a class="term-card" href="/lesson-notes/${sectionFolder}/${classFolder}/term${i + 1}.html" data-portal-interactive data-tilt-card>
+          <span class="term-number">TERM 0${i + 1}</span>
+          <span class="term-arrow">↗</span>
+          <h2>${term}</h2>
+          <p>Open the subjects and notes prepared for this term.</p>
+        </a>`).join('');
     }
   </script>
 </body>

@@ -65,6 +65,19 @@
   <div id="footer-placeholder"></div>
   <script src="/assets/js/main.js"></script>
   <script>
+    (function () {
+      const raw = localStorage.getItem('gotegs_student_session');
+      if (!raw) return;
+      try {
+        const session = JSON.parse(raw);
+        const fresh = session.lastActivity && (Date.now() - session.lastActivity) < (5 * 60 * 60 * 1000);
+        if (fresh) window.location.replace('/student/dashboard.html');
+        else localStorage.removeItem('gotegs_student_session');
+      } catch (_) {
+        localStorage.removeItem('gotegs_student_session');
+      }
+    })();
+
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const studentId = document.getElementById('studentId').value.trim();

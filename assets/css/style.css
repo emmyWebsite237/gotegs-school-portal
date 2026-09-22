@@ -151,6 +151,7 @@ p { color: var(--slate); margin-bottom: 1rem; }
    this sits on <body>, the footer and every page shift together. */
 @media (min-width: 900px) {
   body { padding-left: var(--sidebar-width); }
+  html.student-portal-page body { padding-left: 0 !important; }
 }
 
 /* ---------- Sidebar (desktop) ---------- */
@@ -434,6 +435,7 @@ p { color: var(--slate); margin-bottom: 1rem; }
   transform: translateY(-2px);
 }
 .footer-social svg { width: 16px; height: 16px; fill: currentColor; }
+.footer-social a span { display: none; }
 
 .footer-bottom {
   max-width: var(--max-width);

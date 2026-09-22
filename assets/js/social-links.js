@@ -1,9 +1,4 @@
-// ==========================================================================
-// Go-Tegs — Footer social icons, managed from admin/admin-social
-// Auto-runs after the footer partial injects, on every page. Uses the
-// same Supabase project as updates/store/lesson-notes.
-// ==========================================================================
-
+// Go-Tegs social links. Managed from admin/admin-social when configured.
 (function () {
   const ICONS = {
     facebook: '<svg viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12Z"/></svg>',
@@ -14,41 +9,44 @@
     youtube: '<svg viewBox="0 0 24 24"><path d="M22 12s0-3.2-.4-4.7a3 3 0 0 0-2.1-2.1C18 5 12 5 12 5s-6 0-7.5.2A3 3 0 0 0 2.4 7.3C2 8.8 2 12 2 12s0 3.2.4 4.7a3 3 0 0 0 2.1 2.1C6 19 12 19 12 19s6 0 7.5-.2a3 3 0 0 0 2.1-2.1C22 15.2 22 12 22 12ZM10 15.5v-7l6 3.5-6 3.5Z"/></svg>',
   };
 
-  async function loadSocialIcons() {
-    const container = document.getElementById("footer-social");
-    if (!container) return;
-
-    try {
-      await loadScriptIfNeeded("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2");
-      await loadScriptIfNeeded("/assets/js/supabase-config.js");
-
-      const { data, error } = await supabaseClient
-        .from("social_links")
-        .select("*")
-        .order("display_order", { ascending: true });
-
-      if (error || !data || !data.length) return; // fail quietly — footer looks fine without it
-
-      container.innerHTML = data
-        .map((row) => {
-          const icon = ICONS[row.platform.toLowerCase()] || ICONS.facebook;
-          return `<a href="${row.url}" target="_blank" rel="noopener" aria-label="${row.platform}">${icon}</a>`;
-        })
-        .join("");
-    } catch (err) {
-      console.error("Social icons failed to load:", err);
-    }
-  }
-
   function loadScriptIfNeeded(src) {
     return new Promise((resolve, reject) => {
       if (document.querySelector(`script[src="${src}"]`)) return resolve();
-      const script = document.createElement("script");
+      const script = document.createElement('script');
       script.src = src;
       script.onload = resolve;
       script.onerror = reject;
       document.body.appendChild(script);
     });
+  }
+
+  async function loadSocialIcons() {
+    const footer = document.getElementById('footer-social');
+    const contact = document.getElementById('contactSocials');
+    if (!footer && !contact) return;
+
+    try {
+      await loadScriptIfNeeded('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2');
+      await loadScriptIfNeeded('/assets/js/supabase-config.js');
+      const { data, error } = await supabaseClient
+        .from('social_links')
+        .select('*')
+        .order('display_order', { ascending: true });
+      if (error || !data || !data.length) {
+        if (contact) contact.innerHTML = '<span style="color:#8392a1;font-size:.7rem;">Social links will appear here when they are configured.</span>';
+        return;
+      }
+      const html = data.map(row => {
+        const platform = String(row.platform || '').trim();
+        const icon = ICONS[platform.toLowerCase()] || ICONS.facebook;
+        return `<a href="${row.url}" target="_blank" rel="noopener" aria-label="${platform}">${icon}<span>${platform}</span></a>`;
+      }).join('');
+      if (footer) footer.innerHTML = html;
+      if (contact) contact.innerHTML = html;
+    } catch (err) {
+      console.error('Social links failed to load:', err);
+      if (contact) contact.innerHTML = '<span style="color:#8392a1;font-size:.7rem;">Social links are temporarily unavailable.</span>';
+    }
   }
 
   window.__gotegsLoadSocialIcons = loadSocialIcons;

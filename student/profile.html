@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Profile | Go-Tegs International School</title>
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <link rel="stylesheet" href="/assets/css/portal.css" />
+  <style>
+    .profile-layout { max-width:1180px; }
+    .profile-head {
+      display:grid; grid-template-columns:auto 1fr; gap:1rem; align-items:center;
+      padding:1.2rem; border-radius:22px; background:#fff; border:1px solid #dfe8f0;
+      box-shadow:0 12px 35px rgba(20,41,66,.06);
+    }
+    .profile-avatar-xl { width:76px; height:76px; display:grid; place-items:center; border-radius:22px; background:linear-gradient(135deg,#081525,#24c6d8); color:#fff; font:800 1rem var(--font-display); box-shadow:0 14px 28px rgba(7,17,31,.18); }
+    .profile-head h1 { margin:0 0 .3rem; font-size:clamp(1.65rem,3vw,2.4rem); }
+    .profile-head p { margin:0; }
+    .profile-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem; margin-top:1rem; }
+    .profile-card { padding:1.15rem 1.2rem; border:1px solid #dfe8f0; border-radius:18px; background:#fff; }
+    .profile-card h2 { font-size:.82rem; margin:0 0 .8rem; color:#688098; letter-spacing:.08em; text-transform:uppercase; }
+    .profile-row { display:flex; justify-content:space-between; gap:1rem; padding:.55rem 0; border-bottom:1px solid #eef2f6; }
+    .profile-row:last-child { border-bottom:0; }
+    .profile-row span:first-child { color:#8090a0; font-size:.76rem; }
+    .profile-row span:last-child { color:#1b2f43; text-align:right; font:700 .78rem var(--font-display); }
+    .profile-note { margin-top:1rem; padding:1rem 1.1rem; border-left:4px solid #ffc93c; border-radius:0 14px 14px 0; background:#fbfcfd; }
+    @media (max-width:700px){ .profile-grid{grid-template-columns:1fr;} .profile-head{grid-template-columns:1fr;} .profile-avatar-xl{width:62px;height:62px;} }
+  </style>
+</head>
+<body class="student-shell-page">
+  <div id="navbar-placeholder"></div>
+  <main class="page-container profile-layout">
+    <div class="profile-head">
+      <div class="profile-avatar-xl" data-profile-initials>GT</div>
+      <div>
+        <div class="portal-section-label">Student identity</div>
+        <h1 id="profileName">My Profile</h1>
+        <p id="profileSubtitle">Your current portal account information.</p>
+      </div>
+    </div>
+
+    <div class="profile-grid">
+      <section class="profile-card">
+        <h2>Identity</h2>
+        <div class="profile-row"><span>Student ID</span><span id="profileId">—</span></div>
+        <div class="profile-row"><span>Full name</span><span id="profileFullName">—</span></div>
+        <div class="profile-row"><span>Class</span><span id="profileClass">—</span></div>
+      </section>
+
+      <section class="profile-card">
+        <h2>Academic placement</h2>
+        <div class="profile-row"><span>Department</span><span id="profileDept">—</span></div>
+        <div class="profile-row"><span>Session / Year</span><span id="profileYear">—</span></div>
+        <div class="profile-row"><span>Section</span><span id="profileSection">—</span></div>
+      </section>
+    </div>
+
+    <div class="profile-note">
+      <strong>Portal privacy</strong>
+      <p style="margin:.25rem 0 0; font-size:.78rem;">This profile is shown from the student session used to sign in. It is not an editable public profile.</p>
+    </div>
+  </main>
+  <div id="footer-placeholder"></div>
+  <script src="/assets/js/main.js"></script>
+  <script>
+    (function(){
+      const raw = localStorage.getItem('gotegs_student_session');
+      if (!raw) return;
+      let s; try { s = JSON.parse(raw); } catch { return; }
+      const name = String(s.full_name || 'Student');
+      const initials = name.split(/\s+/).filter(Boolean).slice(0,2).map(v => v[0]).join('').toUpperCase() || 'GT';
+      document.querySelectorAll('[data-profile-initials]').forEach(el => el.textContent = initials);
+      document.getElementById('profileName').textContent = name;
+      document.getElementById('profileSubtitle').textContent = (s.class || 'Student') + (s.dept ? ' · ' + s.dept : '');
+      document.getElementById('profileId').textContent = s.student_id || '—';
+      document.getElementById('profileFullName').textContent = name;
+      document.getElementById('profileClass').textContent = s.class || '—';
+      document.getElementById('profileDept').textContent = s.dept || '—';
+      document.getElementById('profileYear').textContent = s.year || '—';
+      document.getElementById('profileSection').textContent = s.section || '—';
+    })();
+  </script>
+</body>
+</html>

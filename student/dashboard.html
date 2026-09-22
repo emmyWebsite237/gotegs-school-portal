@@ -3,362 +3,165 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Dashboard | Go-Tegs International School</title>
+  <title>Student Dashboard | Go-Tegs International School</title>
   <link rel="stylesheet" href="/assets/css/style.css" />
-  <style>
-    /* ---------- Hero banner ---------- */
-    .dash-hero {
-      position: relative; overflow: hidden; margin-top: 1.5rem; border-radius: 20px;
-      padding: 2rem 1.9rem; color: #fff;
-      background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 60%, var(--maroon-deep) 130%);
-    }
-    .dash-hero .floaty {
-      position: absolute; font-size: 2.2rem; opacity: 0.18; pointer-events: none;
-      animation: floaty 6s ease-in-out infinite;
-    }
-    .dash-hero .f1 { top: 10%; left: 6%; animation-delay: 0s; }
-    .dash-hero .f2 { top: 60%; left: 14%; font-size: 1.6rem; animation-delay: 1.2s; }
-    .dash-hero .f3 { top: 15%; right: 10%; animation-delay: 0.6s; }
-    .dash-hero .f4 { bottom: 8%; right: 18%; font-size: 1.8rem; animation-delay: 2s; }
-    @keyframes floaty { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-14px) rotate(8deg); } }
-
-    .dash-hero-inner { position: relative; z-index: 1; display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap; }
-    .dash-avatar {
-      width: 64px; height: 64px; border-radius: 50%; background: rgba(255,255,255,0.18);
-      border: 2px solid rgba(255,255,255,0.5); display: flex; align-items: center; justify-content: center;
-      font-size: 1.8rem; flex-shrink: 0;
-    }
-    .dash-hero h2 { color: #fff; margin: 0 0 0.15rem; font-size: 1.5rem; }
-    .dash-hero p { color: rgba(255,255,255,0.85); margin: 0; font-size: 0.92rem; }
-    .logout-btn {
-      margin-left: auto; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.4); color: #fff;
-      padding: 0.6rem 1.1rem; border-radius: 8px; font-family: var(--font-display); font-weight: 600; font-size: 0.85rem;
-    }
-    .logout-btn:hover { background: rgba(255,255,255,0.25); }
-
-    /* ---------- Quiz stats strip (mirrors quiz.html's pills) ---------- */
-    .mini-stats { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1.4rem; position: relative; z-index: 1; }
-    .mini-pill {
-      display: flex; align-items: center; gap: 0.4rem; background: rgba(255,255,255,0.14);
-      border: 1px solid rgba(255,255,255,0.3); border-radius: 999px; padding: 0.4rem 0.85rem;
-      font-family: var(--font-display); font-weight: 700; font-size: 0.82rem; color: #fff;
-    }
-
-    /* ---------- Optional welcome video ---------- */
-    .dash-video-wrap { margin-top: 1.5rem; }
-    .dash-video-wrap video { width: 100%; border-radius: var(--radius); display: block; }
-
-    /* ---------- Section labels ---------- */
-    .dash-section-label {
-      font-family: var(--font-display); font-weight: 700; font-size: 0.8rem; text-transform: uppercase;
-      letter-spacing: 0.05em; color: var(--teal-dark); margin: 2rem 0 0.9rem;
-    }
-
-    /* ---------- Cards ---------- */
-    .dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
-    .dash-card {
-      position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 0.5rem;
-      padding: 1.4rem; border: none; border-radius: 16px; color: #fff; text-align: left; cursor: pointer;
-      transition: transform 0.15s ease, box-shadow 0.15s ease; min-height: 128px; justify-content: flex-end;
-    }
-    .dash-card:hover:not(.disabled) { transform: translateY(-4px) scale(1.01); box-shadow: 0 14px 26px rgba(16,24,38,0.2); }
-    .dash-card .card-emoji { position: absolute; top: 0.9rem; right: 1rem; font-size: 2.3rem; opacity: 0.9; filter: drop-shadow(0 3px 5px rgba(0,0,0,0.2)); }
-    .dash-card h3 { color: #fff; font-size: 1rem; margin: 0; position: relative; z-index: 1; }
-    .dash-card p { font-size: 0.83rem; color: rgba(255,255,255,0.85); margin: 0; position: relative; z-index: 1; }
-    .dash-card .badge {
-      align-self: flex-start; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
-      padding: 0.2rem 0.55rem; border-radius: 99px; background: rgba(0,0,0,0.2); color: #fff; position: relative; z-index: 1;
-    }
-    .dash-card.disabled { opacity: 0.5; cursor: default; background: linear-gradient(135deg, #94a3b8, #64748b) !important; }
-
-    #dashMsg { margin-top: 1rem; font-size: 0.88rem; font-weight: 600; text-align: center; }
-
-    /* ---------- Premium student command centre ---------- */
-    .portal-command { margin-top: 1.4rem; }
-    .portal-welcome {
-      position: relative; overflow: hidden; min-height: 265px; border-radius: 24px;
-      padding: 2.2rem; color: #fff; display:flex; align-items:center; justify-content:space-between;
-      background:
-        radial-gradient(circle at 82% 25%, rgba(255,255,255,.12), transparent 20%),
-        radial-gradient(circle at 15% 90%, rgba(246,190,54,.14), transparent 25%),
-        linear-gradient(135deg, var(--maroon-deep), var(--teal-dark) 72%, #073238);
-      box-shadow: 0 20px 50px rgba(16,24,38,.16);
-    }
-    .portal-welcome::after {
-      content:""; position:absolute; width:380px; height:380px; right:-150px; top:-170px;
-      border:1px solid rgba(255,255,255,.13); border-radius:50%;
-      box-shadow:0 0 0 55px rgba(255,255,255,.025), 0 0 0 110px rgba(255,255,255,.02);
-    }
-    .portal-kicker, .portal-section-title > div > span, .panel-heading span, .portal-focus > span {
-      font-size:.68rem; letter-spacing:.15em; font-weight:800; color:rgba(255,255,255,.65);
-    }
-    .portal-welcome h1 { color:#fff; margin:.5rem 0 .35rem; font-size:clamp(1.8rem,4vw,2.65rem); }
-    .portal-welcome p { color:rgba(255,255,255,.78); margin:0; max-width:560px; }
-    .portal-actions { display:flex; gap:.7rem; margin-top:1.4rem; flex-wrap:wrap; }
-    .portal-actions a { text-decoration:none; padding:.72rem 1rem; border-radius:10px; font-family:var(--font-display); font-weight:700; font-size:.8rem; }
-    .portal-primary { background:var(--gold); color:#3d2a00; }
-    .portal-secondary { border:1px solid rgba(255,255,255,.25); color:#fff; background:rgba(255,255,255,.07); }
-    .portal-crest { position:relative; z-index:2; width:145px; height:145px; display:grid; place-items:center; border-radius:50%; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.18); }
-    .portal-crest img { width:92px; height:92px; object-fit:contain; }
-    .portal-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:-28px; position:relative; z-index:3; padding:0 1rem; }
-    .portal-stats > div { padding:1rem; background:rgba(255,255,255,.96); border:1px solid var(--border); border-radius:13px; box-shadow:0 10px 25px rgba(16,24,38,.08); }
-    .portal-stats strong,.portal-stats span { display:block; }
-    .portal-stats strong { color:var(--teal-dark); font-family:var(--font-display); font-size:1rem; }
-    .portal-stats span { color:var(--slate); font-size:.72rem; margin-top:.2rem; }
-    .portal-section-title { display:flex; align-items:end; justify-content:space-between; gap:1rem; margin:2.5rem 0 1rem; }
-    .portal-section-title > div > span,.panel-heading span { color:var(--teal-dark); }
-    .portal-section-title h2,.panel-heading h2 { margin:.3rem 0 0; font-size:1.3rem; }
-    .portal-section-title > a { color:var(--teal-dark); font-weight:700; font-size:.8rem; text-decoration:none; }
-    .portal-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
-    .portal-card { position:relative; overflow:hidden; min-height:185px; padding:1.35rem; border:0; border-radius:17px; color:#fff; text-align:left; text-decoration:none; display:flex; flex-direction:column; justify-content:flex-end; cursor:pointer; transition:transform .18s ease, box-shadow .18s ease; box-shadow:0 8px 20px rgba(16,24,38,.08); }
-    .portal-card:hover { transform:translateY(-5px); box-shadow:0 18px 34px rgba(16,24,38,.17); }
-    .portal-card::before { content:""; position:absolute; width:150px; height:150px; border:1px solid rgba(255,255,255,.14); border-radius:50%; right:-65px; top:-65px; }
-    .portal-card-icon { position:absolute; top:1rem; right:1rem; width:37px; height:37px; display:grid; place-items:center; border-radius:11px; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.14); font-weight:800; }
-    .portal-card small { font-size:.64rem; letter-spacing:.12em; opacity:.7; font-weight:800; }
-    .portal-card h3 { color:#fff; margin:.45rem 0 .3rem; font-size:1.02rem; }
-    .portal-card p { color:rgba(255,255,255,.78); margin:0; font-size:.76rem; line-height:1.5; max-width:30ch; }
-    .portal-card b { margin-top:1rem; font-size:.72rem; }
-    .card-result { background:linear-gradient(145deg,#174a9a,#2563eb); }
-    .card-notes { background:linear-gradient(145deg,#08766e,#12a79c); }
-    .card-quiz { background:linear-gradient(145deg,#9a5605,#d97706); }
-    .card-code { background:linear-gradient(145deg,#5b3aa8,#7c3aed); }
-    .card-testimonial { background:linear-gradient(145deg,#7b294f,#b43c6b); }
-    .card-updates { background:linear-gradient(145deg,#175b48,#1b8665); }
-    .portal-lower { display:grid; grid-template-columns:1.55fr .85fr; gap:12px; margin-top:12px; }
-    .portal-panel { border:1px solid var(--border); border-radius:17px; background:var(--paper); padding:1.25rem; }
-    .panel-heading h2 { color:var(--ink); }
-    .quick-links { display:grid; grid-template-columns:repeat(2,1fr); gap:7px; margin-top:1rem; }
-    .quick-links a { padding:.85rem; border:1px solid var(--border); border-radius:11px; text-decoration:none; display:grid; grid-template-columns:30px 1fr; column-gap:8px; }
-    .quick-links span { grid-row:span 2; color:var(--gold-dark); font-size:.7rem; font-weight:800; }
-    .quick-links b { color:var(--ink); font-size:.78rem; }
-    .quick-links small { color:var(--slate); font-size:.66rem; margin-top:2px; }
-    .portal-focus { color:#fff; background:linear-gradient(145deg,var(--maroon-deep),var(--maroon)); position:relative; overflow:hidden; }
-    .portal-focus > span { color:rgba(255,255,255,.58); }
-    .focus-mark { position:absolute; right:1rem; top:1rem; width:55px; height:55px; display:grid; place-items:center; border-radius:50%; color:var(--maroon-deep); background:var(--gold); font:800 1.4rem var(--font-display); }
-    .portal-focus h2 { color:#fff; margin:2rem 0 .5rem; font-size:1.25rem; max-width:18ch; }
-    .portal-focus p { color:rgba(255,255,255,.72); font-size:.75rem; line-height:1.55; }
-    .portal-focus a { color:var(--gold-soft); font-size:.75rem; font-weight:800; text-decoration:none; }
-    @media (max-width: 800px) {
-      .portal-welcome { padding:1.5rem; min-height:290px; }
-      .portal-crest { width:95px; height:95px; align-self:flex-start; }
-      .portal-crest img { width:65px; height:65px; }
-      .portal-grid { grid-template-columns:1fr 1fr; }
-      .portal-lower { grid-template-columns:1fr; }
-    }
-    @media (max-width: 560px) {
-      .portal-welcome { min-height:330px; align-items:flex-start; }
-      .portal-crest { position:absolute; right:1rem; bottom:1rem; opacity:.75; }
-      .portal-stats { grid-template-columns:1fr; margin-top:-15px; padding:0 .4rem; }
-      .portal-grid,.quick-links { grid-template-columns:1fr; }
-      .portal-section-title { align-items:flex-start; flex-direction:column; }
-    }
-  </style>
+  <link rel="stylesheet" href="/assets/css/portal.css" />
 </head>
-<body>
+<body class="student-shell-page">
   <div id="navbar-placeholder"></div>
 
-  <main class="page-container">
-    <nav class="breadcrumb">Home / Student / Dashboard</nav>
+  <main class="portal-dashboard">
+    <div class="dashboard-topline">
+      <span>Go-Tegs / Student Workspace</span>
+      <span id="portalDate">Today</span>
+    </div>
 
-    <section class="portal-command">
-      <div class="portal-welcome">
-        <div>
-          <span class="portal-kicker">STUDENT COMMAND CENTER</span>
-          <h1 id="dashName">Welcome</h1>
-          <p id="dashClass"></p>
-          <div class="portal-actions">
-            <a href="/quiz.html" class="portal-primary">Continue learning <span>→</span></a>
-            <a href="/updates.html" class="portal-secondary">School updates</a>
-          </div>
-        </div>
-        <div class="portal-crest">
-          <img src="/assets/img/logo.png" alt="Go-Tegs crest">
+    <section class="portal-hero" aria-labelledby="dashboardHeading">
+      <div class="portal-hero-copy">
+        <div class="portal-kicker">Private student command centre</div>
+        <h1 id="dashboardHeading">Welcome back, <span id="dashName">Student</span>.</h1>
+        <p>Your school workspace is focused on the things that belong to you: learning, practice, your profile and the next tools coming online.</p>
+        <div class="portal-identity-row">
+          <span class="portal-identity-chip">⌁ <span id="dashClass">Student profile</span></span>
+          <span class="portal-identity-chip">ID <span id="dashStudentId">—</span></span>
+          <span class="portal-identity-chip">Session <span id="dashYear">—</span></span>
         </div>
       </div>
 
-      <div class="portal-stats" id="miniStats">
-        <div><strong>Ready</strong><span>Academic workspace</span></div>
-        <div><strong>Live</strong><span>School services</span></div>
-        <div><strong>5h</strong><span>Session protection</span></div>
+      <div class="portal-hero-orbit" aria-hidden="true">
+        <span class="portal-orbit-tag a">LEARN</span>
+        <span class="portal-orbit-tag b">LEAD</span>
+        <span class="portal-orbit-tag c">BECOME</span>
+        <div class="portal-orbit-core">
+          <img src="/assets/img/logo.png" alt="" />
+        </div>
       </div>
     </section>
 
-    <div class="dash-video-wrap" id="dashVideoWrap" style="display:none;">
-      <video id="dashVideo" controls poster="/assets/img/logo.png">
-        <source src="/assets/video/welcome.mp4" type="video/mp4" />
-      </video>
-    </div>
-
-    <div class="portal-section-title">
-      <div>
-        <span>ACADEMIC WORKSPACE</span>
-        <h2>Your school, organised around what matters.</h2>
+    <section class="portal-section" aria-labelledby="learningTitle">
+      <div class="portal-section-head">
+        <div>
+          <div class="portal-section-label">Your workspace</div>
+          <h2 class="portal-section-title" id="learningTitle">Learn, track and move</h2>
+        </div>
+        <p class="portal-section-note">Only student tools live here.</p>
       </div>
-      <a href="/lesson-notes/index.html">Open lesson notes <span>→</span></a>
-    </div>
 
-    <div class="portal-grid portal-grid-main">
-      <button class="portal-card card-result" id="checkResultCard">
-        <span class="portal-card-icon">↗</span>
-        <small>RESULTS</small>
-        <h3>Check My Result</h3>
-        <p>Open your current term result securely and view your academic record.</p>
-        <b>View result →</b>
-      </button>
+      <div class="portal-card-grid">
+        <a class="portal-card portal-card--feature span-7" href="/student/profile.html" data-portal-interactive data-tilt-card>
+          <div class="portal-card-top">
+            <span class="portal-icon">◉</span>
+            <span class="portal-badge">Profile</span>
+          </div>
+          <h3>Your Profile</h3>
+          <p>See the student information attached to this portal session.</p>
+          <span class="portal-arrow">↗</span>
+        </a>
 
-      <a class="portal-card card-notes" href="/student/lesson-notes/index.html">
-        <span class="portal-card-icon">▤</span>
-        <small>LEARNING</small>
-        <h3>Lesson Notes</h3>
-        <p>Jump into class notes organised by level, term and subject.</p>
-        <b>Open workspace →</b>
-      </a>
+        <a class="portal-card span-5" href="/student/lesson-notes/index.html" data-portal-interactive data-tilt-card>
+          <div class="portal-card-top">
+            <span class="portal-icon">▤</span>
+            <span class="portal-badge">Study</span>
+          </div>
+          <h3>Lesson Notes</h3>
+          <p>Jump straight into notes for your class, term and subjects.</p>
+          <span class="portal-arrow">↗</span>
+        </a>
+      </div>
+    </section>
 
-      <a class="portal-card card-quiz" href="/quiz.html">
-        <span class="portal-card-icon">✦</span>
-        <small>PRACTICE</small>
-        <h3>Quiz & Practice</h3>
-        <p>Test your knowledge, earn XP and build your learning streak.</p>
-        <b>Start practice →</b>
-      </a>
-
-      <a class="portal-card card-code" href="/quiz-code.html">
-        <span class="portal-card-icon">#</span>
-        <small>TEACHER ACTIVITY</small>
-        <h3>Enter Quiz Code</h3>
-        <p>Use a code supplied by your teacher to join a classroom quiz.</p>
-        <b>Enter code →</b>
-      </a>
-
-      <button class="portal-card card-testimonial" id="checkTestimonialCard">
-        <span class="portal-card-icon">✓</span>
-        <small>DOCUMENTS</small>
-        <h3>School Leaving Testimonial</h3>
-        <p>Check your testimonial when it has been issued by the school.</p>
-        <b>Check testimonial →</b>
-      </button>
-
-      <a class="portal-card card-updates" href="/updates.html">
-        <span class="portal-card-icon">!</span>
-        <small>COMMUNITY</small>
-        <h3>School Updates</h3>
-        <p>Stay current with announcements, events and important notices.</p>
-        <b>See updates →</b>
-      </a>
-    </div>
-
-    <div class="portal-lower">
-      <section class="portal-panel">
-        <div class="panel-heading">
-          <div><span>QUICK ACCESS</span><h2>Everything connected</h2></div>
+    <section class="portal-section" aria-labelledby="practiceTitle">
+      <div class="portal-section-head">
+        <div>
+          <div class="portal-section-label">Practice zone</div>
+          <h2 class="portal-section-title" id="practiceTitle">Think. Play. Challenge yourself.</h2>
         </div>
-        <div class="quick-links">
-          <a href="/about.html"><span>01</span><b>About Go-Tegs</b><small>Our story & mission</small></a>
-          <a href="/enrolment.html"><span>02</span><b>Enrolment</b><small>Admissions & screening</small></a>
-          <a href="/store.html"><span>03</span><b>School Store</b><small>Books & supplies</small></a>
-          <a href="/contact.html"><span>04</span><b>Contact School</b><small>Get in touch</small></a>
-        </div>
-      </section>
+        <p class="portal-section-note">Your interactive learning space.</p>
+      </div>
 
-      <aside class="portal-panel portal-focus">
-        <span>YOUR NEXT MOVE</span>
-        <div class="focus-mark">G</div>
-        <h2>Learn something. Test yourself. Keep moving.</h2>
-        <p>Your portal keeps the important school services within a few taps.</p>
-        <a href="/quiz.html">Start a practice session <span>→</span></a>
-      </aside>
-    </div>
-    <p id="dashMsg"></p>
+      <div class="portal-card-grid">
+        <a class="portal-card portal-card--dark span-6" href="/quiz.html" data-portal-interactive data-tilt-card>
+          <div class="portal-card-top">
+            <span class="portal-icon">✦</span>
+            <span class="portal-badge">Practice</span>
+          </div>
+          <h3>Quiz &amp; Practice</h3>
+          <p>Answer questions, build your quiz profile and keep sharpening your skills.</p>
+          <span class="portal-arrow">↗</span>
+        </a>
+
+        <a class="portal-card span-6" href="/quiz-code.html" data-portal-interactive data-tilt-card>
+          <div class="portal-card-top">
+            <span class="portal-icon">⌘</span>
+            <span class="portal-badge">Teacher code</span>
+          </div>
+          <h3>Quiz Code</h3>
+          <p>Enter a teacher-provided code and unlock the quiz assigned to you.</p>
+          <span class="portal-arrow">↗</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="portal-section" aria-labelledby="futureTitle">
+      <div class="portal-section-head">
+        <div>
+          <div class="portal-section-label">Next up</div>
+          <h2 class="portal-section-title" id="futureTitle">More is being built</h2>
+        </div>
+        <p class="portal-section-note">Inactive until the school opens each feature.</p>
+      </div>
+
+      <div class="portal-card-grid">
+        <div class="portal-card portal-card--disabled span-6" aria-disabled="true">
+          <div class="portal-card-top">
+            <span class="portal-icon">♜</span>
+            <span class="portal-badge">Coming Soon</span>
+          </div>
+          <h3>Tournaments</h3>
+          <p>Competitive school challenges are planned for a future portal release.</p>
+        </div>
+
+        <div class="portal-card portal-card--disabled span-6" aria-disabled="true">
+          <div class="portal-card-top">
+            <span class="portal-icon">▣</span>
+            <span class="portal-badge">Coming Soon</span>
+          </div>
+          <h3>School Leaving Testimonial</h3>
+          <p>This area remains inactive until your testimonial is issued and the school opens it.</p>
+        </div>
+      </div>
+
+      <div class="portal-focus">
+        <div class="portal-focus-mark">→</div>
+        <div>
+          <strong>Your next move</strong>
+          <span>Pick one live module above and keep the portal moving with you. New tools can be switched on without changing this workspace.</span>
+        </div>
+      </div>
+    </section>
   </main>
 
   <div id="footer-placeholder"></div>
   <script src="/assets/js/main.js"></script>
   <script>
-    const raw = localStorage.getItem('gotegs_student_session');
+    (function () {
+      const raw = localStorage.getItem('gotegs_student_session');
+      if (!raw) return;
+      let session;
+      try { session = JSON.parse(raw); } catch { return; }
 
-    if (!raw) {
-      window.location.href = '/student/index.html';
-    } else {
-      const session = JSON.parse(raw);
-      document.getElementById('dashName').textContent = '👋 Welcome, ' + session.full_name;
+      const esc = (value) => String(value ?? '—');
+      document.getElementById('dashName').textContent = esc(session.full_name || 'Student');
       document.getElementById('dashClass').textContent =
-        session.class + (session.dept ? ' (' + session.dept + ')' : '') + ' — ' + (session.year || '');
+        esc(session.class || 'Class') + (session.dept ? ' · ' + esc(session.dept) : '');
+      document.getElementById('dashStudentId').textContent = esc(session.student_id);
+      document.getElementById('dashYear').textContent = esc(session.year || 'Current');
 
-      // Show the quiz XP/level/streak strip if the student has played before
-      const quizProfileRaw = localStorage.getItem('gotegs_quiz_profile_' + session.student_id);
-      if (quizProfileRaw) {
-        const qp = JSON.parse(quizProfileRaw);
-        const level = Math.floor(qp.xp / 100) + 1;
-        document.getElementById('miniStats').innerHTML =
-          '<span class="mini-pill">⭐ Level ' + level + '</span>' +
-          '<span class="mini-pill">💎 ' + qp.xp + ' XP</span>' +
-          '<span class="mini-pill">🔥 ' + qp.streak + '-day streak</span>' +
-          '<span class="mini-pill">🏅 ' + qp.badges.length + ' badges</span>';
-      }
-    }
-
-    // Show the welcome video only if it actually loads
-    const video = document.getElementById('dashVideo');
-    video.addEventListener('loadedmetadata', () => {
-      document.getElementById('dashVideoWrap').style.display = 'block';
-    });
-    video.addEventListener('error', () => {
-      document.getElementById('dashVideoWrap').style.display = 'none';
-    }, true);
-
-    // Fixes the "Checking your result..." message getting stuck when the
-    // browser restores this page from cache (e.g. pressing Back after
-    // viewing a result) — the DOM snapshot includes that leftover text,
-    // so we explicitly clear it whenever the page becomes visible again.
-    window.addEventListener('pageshow', () => {
-      const msg = document.getElementById('dashMsg');
-      if (msg) msg.textContent = '';
-    });
-
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-      localStorage.removeItem('gotegs_student_session');
-      window.location.href = '/student/index.html';
-    });
-
-    document.getElementById('checkResultCard').addEventListener('click', async () => {
-      const session = JSON.parse(localStorage.getItem('gotegs_student_session') || 'null');
-      if (!session) { window.location.href = '/student/index.html'; return; }
-
-      const msg = document.getElementById('dashMsg');
-      msg.style.color = 'var(--slate)';
-      msg.textContent = 'Checking your result...';
-
-      try {
-        const res = await fetch(
-          `/api/verify-result?student_id=${encodeURIComponent(session.student_id)}` +
-          `&year=${encodeURIComponent(session.year || '')}` +
-          `&class=${encodeURIComponent(session.class)}` +
-          `&dept=${encodeURIComponent(session.dept || '')}` +
-          `&pin=${encodeURIComponent(session.pin)}`
-        );
-        const data = await res.json();
-
-        if (res.status !== 200) {
-          msg.style.color = '#dc2626';
-          msg.textContent = data.error || 'Could not fetch your result.';
-          return;
-        }
-
-        sessionStorage.setItem('gotegs_result_data', JSON.stringify({
-          ...data, class: session.class, dept: session.dept, year: session.year, term: data.term
-        }));
-        window.location.href = '/student/result/view.html';
-      } catch (err) {
-        msg.style.color = '#dc2626';
-        msg.textContent = 'Connection error: ' + err.message;
-      }
-    });
-
-    document.getElementById('checkTestimonialCard').addEventListener('click', () => {
-      const session = JSON.parse(localStorage.getItem('gotegs_student_session') || 'null');
-      if (session) sessionStorage.setItem('gotegs_prefill_student_id', session.student_id);
-      window.location.href = '/student/testimonial/index.html';
-    });
+      const now = new Date();
+      document.getElementById('portalDate').textContent = now.toLocaleDateString(undefined, {
+        weekday:'long', month:'short', day:'numeric'
+      });
+    })();
   </script>
 </body>
 </html>
