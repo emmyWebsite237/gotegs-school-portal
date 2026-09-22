@@ -3,7 +3,7 @@ import { createHmac, timingSafeEqual } from 'crypto';
 
 const SUBJECTS = {
   jss_students: ['english','maths','basic_science','basic_tech','bus_stud','agric','social_stud','home_econs','sec_edu','french','music','dic','history','cmp','phe','cca','lit'],
-  sss_students: ['maths','english','civic','physics','chem','bio','fmath','dp','econs','agric','crs','catering_c_p','dic','lit_in_eng']
+  sss_students: ['maths','english','civic','physics','chem','bio','fmath','dp','econs','agric','crs','catering_c_p','digital_tech','dic','lit_in_eng']
 };
 
 function verifyToken(token) {
@@ -39,9 +39,9 @@ function nullableNumber(value) {
 function resultUpdateFrom(incoming, section) {
   const out = {};
   for (const base of (SUBJECTS[section] || [])) {
-    const mtt = `${base}_mtt`, score = `${base}_score`;
+    const mtt = `${base}_mtt`, exam = `${base}_exam`;
     if (mtt in incoming) out[mtt] = nullableNumber(incoming[mtt]);
-    if (score in incoming) out[score] = nullableNumber(incoming[score]);
+    if (exam in incoming) out[exam] = nullableNumber(incoming[exam]);
   }
   if ('opened' in incoming) out.opened = nullableNumber(incoming.opened);
   if ('present' in incoming) out.present = nullableNumber(incoming.present);

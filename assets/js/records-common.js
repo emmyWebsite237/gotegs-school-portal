@@ -27,7 +27,7 @@ const SUBJECT_MAP = {
   },
   sss_students: {
     maths: "MTH", english: "ENG", civic: "CIV", physics: "PHY", chem: "CHM", bio: "BIO",
-    fmath: "FMT", dp: "D.P", econs: "ECO", agric: "AGS", crs: "CRS", catering_c_p: "CAT",
+    fmath: "FMT", dp: "D.P", econs: "ECO", agric: "AGS", crs: "CRS", catering_c_p: "CAT", digital_tech: "D.TEC",
     dic: "DIC", lit_in_eng: "LIT",
   },
 };
@@ -88,7 +88,7 @@ function renderFullSessionTable(students, tableName) {
     html += `<tr><td>${idx + 1}</td><td class="name-cell">${row.full_name}</td>${isSSS ? `<td>${row.dept || "-"}</td>` : ""}`;
     Object.keys(mapping).forEach((base) => {
       const mtt = row[`${base}_mtt`];
-      const exam = row[`${base}_score`];
+      const exam = row[`${base}_exam`];
       if (mtt !== null && mtt !== undefined && exam !== null && exam !== undefined) {
         const subjTotal = Number(mtt) + Number(exam);
         html += `<td>${subjTotal}</td>`;

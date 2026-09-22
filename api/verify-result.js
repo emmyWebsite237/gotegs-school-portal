@@ -46,10 +46,10 @@ export default async function handler(req, res) {
       .map(key => key.replace(/_mtt$/, ''));
 
     const scores = subjectBaseNames
-      .filter(base => student[`${base}_mtt`] !== null && student[`${base}_mtt`] !== undefined && student[`${base}_score`] !== null && student[`${base}_score`] !== undefined)
+      .filter(base => student[`${base}_mtt`] !== null && student[`${base}_mtt`] !== undefined && student[`${base}_exam`] !== null && student[`${base}_exam`] !== undefined)
       .map(base => {
         const mtt = Number(student[`${base}_mtt`]);
-        const exam = Number(student[`${base}_score`]);
+        const exam = Number(student[`${base}_exam`]);
         return { subject: base, mtt, exam, total: mtt + exam };
       });
 
