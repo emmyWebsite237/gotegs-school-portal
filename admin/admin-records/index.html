@@ -41,6 +41,11 @@
       <a class="btn" href="/admin/index.html">Back to Admin</a>
     </div>
 
+    <div class="records-primary-actions" style="display:flex;align-items:center;gap:.65rem;flex-wrap:wrap;margin:.8rem 0 .2rem;padding:.75rem .85rem;border:1px solid #d8e6f1;border-radius:15px;background:linear-gradient(135deg,#fafdff,#eef7ff);box-shadow:0 8px 24px rgba(11,79,156,.06);">
+      <button class="btn" id="addStudentTop" type="button">＋ Add new student</button>
+      <span style="font-size:.72rem;color:#6f8291;font-weight:700;">Create a new profile, then enter the student's result in the same editor.</span>
+    </div>
+
     <div class="records-toolbar">
       <select id="section" aria-label="Section"><option value="all">All sections</option><option value="jss_students">JSS</option><option value="sss_students">SSS</option></select>
       <select id="class" aria-label="Class"><option value="all">All classes</option></select>
@@ -147,7 +152,7 @@
     function setAddSection(sec){$('addSection').value=sec;document.querySelectorAll('[data-add-section]').forEach(b=>b.classList.toggle('is-selected',b.dataset.addSection===sec));setSelectOptions($('addClass'),sec);$('addDeptField').style.display=sec==='sss_students'?'block':'none';}
     async function addStudent(e){e.preventDefault();addMsg.textContent='Creating…';addMsg.style.color='var(--slate)';const sec=$('addSection').value;const student={full_name:$('addFullName').value,student_id:$('addStudentId').value,class:$('addClass').value,dept:$('addDept').value,pin:$('addPin').value,dob:$('addDob').value,is_paid:false};try{const d=await api({action:'create',section:sec,student});all.push(d.student);closeAdd();updateClassFilter();render();msg.textContent='Student created. Open the new record to enter result marks.';msg.style.color='#0f766e';openEditor(d.student.id,sec);}catch(e){addMsg.textContent=e.message;addMsg.style.color='#dc2626';}}
     $('paidBtn').addEventListener('click',()=>setPaid(!paid));$('accessBtn').addEventListener('click',toggleEditorAccess);form.addEventListener('submit',save);$('resetCount').addEventListener('click',resetCount);$('deleteFromEditor').addEventListener('click',()=>current&&deleteStudent(current.id,current.section,current.full_name));$('close').addEventListener('click',closeEditor);$('cancel').addEventListener('click',closeEditor);backdrop.addEventListener('click',e=>{if(e.target===backdrop)closeEditor()});
-    $('addStudent').addEventListener('click',openAdd);$('addClose').addEventListener('click',closeAdd);$('addCancel').addEventListener('click',closeAdd);addBackdrop.addEventListener('click',e=>{if(e.target===addBackdrop)closeAdd()});addForm.addEventListener('submit',addStudent);document.querySelectorAll('[data-add-section]').forEach(b=>b.addEventListener('click',()=>setAddSection(b.dataset.addSection)));
+    $('addStudent').addEventListener('click',openAdd);$('addStudentTop').addEventListener('click',openAdd);$('addClose').addEventListener('click',closeAdd);$('addCancel').addEventListener('click',closeAdd);addBackdrop.addEventListener('click',e=>{if(e.target===addBackdrop)closeAdd()});addForm.addEventListener('submit',addStudent);document.querySelectorAll('[data-add-section]').forEach(b=>b.addEventListener('click',()=>setAddSection(b.dataset.addSection)));
     $('clearSearch').addEventListener('click',()=>{search.value='';render();search.focus();});search.addEventListener('input',render);search.addEventListener('keydown',e=>{if(e.key==='Escape'&&search.value){search.value='';render();e.stopPropagation();}});
     section.addEventListener('change',()=>{updateClassFilter();render()});klass.addEventListener('change',render);
     document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(addBackdrop.classList.contains('open'))closeAdd();else if(backdrop.classList.contains('open'))closeEditor();}if(e.key==='/'&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName)){e.preventDefault();search.focus();}});
