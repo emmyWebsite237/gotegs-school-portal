@@ -2,8 +2,14 @@ import { createClient } from '@supabase/supabase-js';
 import { createHmac, timingSafeEqual } from 'crypto';
 
 const SUBJECTS = {
-  jss_students: ['english','maths','basic_science','basic_tech','bus_stud','agric','social_stud','home_econs','sec_edu','french','music','dic','history','cmp','phe','cca','lit'],
-  sss_students: ['maths','english','civic','physics','chem','bio','fmath','dp','econs','agric','crs','catering_c_p','digital_tech','dic','lit_in_eng']
+  jss_students: [
+    'english','maths','basic_science','basic_tech','bus_stud','agric','social_stud',
+    'home_econs','sec_edu','french','music','dic','history','cmp','phe','cca','lit'
+  ],
+  sss_students: [
+    'maths','english','civic','physics','chem','bio','fmath','dp','econs','agric','crs',
+    'catering_c_p','digital_tech','dic','lit_in_eng'
+  ]
 };
 
 function verifyToken(token) {
@@ -25,21 +31,23 @@ function body(req) {
   if (typeof req.body === 'object') return req.body;
   try { return JSON.parse(req.body); } catch { return {}; }
 }
+
 function tableName(section) {
-  if (section === 'sss_students') return 'sss_students';
-  if (section === 'jss_students') return 'jss_students';
-  return null;
+  return section === 'sss_students' || section === 'jss_students' ? section : null;
 }
 function cleanText(value, max = 160) { return String(value ?? '').trim().slice(0, max); }
 function nullableDate(value) { const t = cleanText(value, 30); return t || null; }
 function nullableNumber(value) {
   if (value === '' || value === null || value === undefined) return null;
-  const n = Number(value); return Number.isFinite(n) ? n : null;
+  const n = Number(value);
+  return Number.isFinite(n) ? n : null;
 }
+
 function resultUpdateFrom(incoming, section) {
   const out = {};
   for (const base of (SUBJECTS[section] || [])) {
-    const mtt = `${base}_mtt`, exam = `${base}_exam`;
+    const mtt = `${base}_mtt`;
+    const exam = `${base}_exam`;
     if (mtt in incoming) out[mtt] = nullableNumber(incoming[mtt]);
     if (exam in incoming) out[exam] = nullableNumber(incoming[exam]);
   }
@@ -49,6 +57,7 @@ function resultUpdateFrom(incoming, section) {
   if ('can_check_result' in incoming) out.can_check_result = Boolean(incoming.can_check_result);
   return out;
 }
+
 function normalizeStudent(input, table) {
   const student = input && typeof input === 'object' ? input : {};
   const update = {
@@ -63,6 +72,10 @@ function normalizeStudent(input, table) {
   return update;
 }
 
+function decorate(row, section) {
+  return { ...row, section, dept: section === 'jss_students' ? null : row.dept ?? null };
+}
+
 export default async function handler(req, res) {
   try {
     if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
@@ -75,6 +88,29 @@ export default async function handler(req, res) {
     const input = body(req);
     const action = input.action || 'list';
 
+    // Admin-only read for the downloadable result archive.
+    // This does not touch check_count and never calls the student result-verification path.
+    if (action === 'export-results') {
+      const [jss, sss, settings] = await Promise.all([
+        supabase.from('jss_students').select('*').order('class', { ascending: true }).order('full_name', { ascending: true }),
+        supabase.from('sss_students').select('*').order('class', { ascending: true }).order('full_name', { ascending: true }),
+        supabase.from('admin_portal').select('year').order('id', { ascending: true }).limit(1).maybeSingle()
+      ]);
+      if (jss.error) throw jss.error;
+      if (sss.error) throw sss.error;
+      if (settings.error) throw settings.error;
+      const students = [
+        ...(jss.data || []).map(row => decorate(row, 'jss_students')),
+        ...(sss.data || []).map(row => decorate(row, 'sss_students'))
+      ].sort((a, b) => `${a.class || ''}|${a.full_name || ''}`.localeCompare(`${b.class || ''}|${b.full_name || ''}`));
+      return res.status(200).json({
+        year: settings.data?.year || '',
+        generated_at: new Date().toISOString(),
+        count: students.length,
+        students
+      });
+    }
+
     if (action === 'list') {
       const [jss, sss] = await Promise.all([
         supabase.from('jss_students').select('*').order('full_name'),
@@ -83,8 +119,8 @@ export default async function handler(req, res) {
       if (jss.error) throw jss.error;
       if (sss.error) throw sss.error;
       return res.status(200).json({ students: [
-        ...(jss.data || []).map(x => ({ ...x, section: 'jss_students', dept: null })),
-        ...(sss.data || []).map(x => ({ ...x, section: 'sss_students' }))
+        ...(jss.data || []).map(row => decorate(row, 'jss_students')),
+        ...(sss.data || []).map(row => decorate(row, 'sss_students'))
       ]});
     }
 
@@ -96,7 +132,6 @@ export default async function handler(req, res) {
       if (!student.full_name || !student.student_id || !student.class || !student.pin) {
         return res.status(400).json({ error: 'Full name, Student ID, Class and PIN are required.' });
       }
-
       const [jssDup, sssDup] = await Promise.all([
         supabase.from('jss_students').select('id').eq('student_id', student.student_id).maybeSingle(),
         supabase.from('sss_students').select('id').eq('student_id', student.student_id).maybeSingle()
@@ -106,7 +141,7 @@ export default async function handler(req, res) {
 
       const { data, error } = await supabase.from(table).insert(student).select('*').single();
       if (error) return res.status(400).json({ error: 'Could not add student: ' + error.message });
-      return res.status(201).json({ success: true, student: { ...data, section: table, dept: table === 'jss_students' ? null : data.dept } });
+      return res.status(201).json({ success: true, student: decorate(data, table) });
     }
 
     if (!table || !input.id) return res.status(400).json({ error: 'Invalid student reference.' });
@@ -115,19 +150,23 @@ export default async function handler(req, res) {
       const { data, error } = await supabase.from(table).select('*').eq('id', input.id).maybeSingle();
       if (error) throw error;
       if (!data) return res.status(404).json({ error: 'Student record not found.' });
-      return res.status(200).json({ student: { ...data, section: table, dept: table === 'jss_students' ? null : data.dept } });
+      return res.status(200).json({ student: decorate(data, table) });
     }
 
     if (action === 'set-access') {
       const allowed = Boolean(input.allowed);
-      const { data, error } = await supabase.from(table).update({ can_check_result: allowed }).eq('id', input.id).select('id,can_check_result').maybeSingle();
+      const { data, error } = await supabase.from(table)
+        .update({ can_check_result: allowed }).eq('id', input.id)
+        .select('id,can_check_result').maybeSingle();
       if (error) return res.status(400).json({ error: 'Could not update result access: ' + error.message });
       if (!data) return res.status(404).json({ error: 'Student record not found.' });
       return res.status(200).json({ success: true, can_check_result: data.can_check_result === true });
     }
 
     if (action === 'reset-count') {
-      const { data, error } = await supabase.from(table).update({ check_count: 0 }).eq('id', input.id).select('id,check_count').maybeSingle();
+      const { data, error } = await supabase.from(table)
+        .update({ check_count: 0 }).eq('id', input.id)
+        .select('id,check_count').maybeSingle();
       if (error) return res.status(400).json({ error: 'Could not reset check count: ' + error.message });
       if (!data) return res.status(404).json({ error: 'Student record not found.' });
       return res.status(200).json({ success: true, check_count: Number(data.check_count || 0) });
@@ -136,18 +175,11 @@ export default async function handler(req, res) {
     if (action === 'update-result') {
       const incoming = input.data && typeof input.data === 'object' ? input.data : {};
       const update = resultUpdateFrom(incoming, table);
-      if (Object.keys(update).length === 0) {
-        return res.status(400).json({ error: 'No result fields were supplied.' });
-      }
-      const { data, error } = await supabase
-        .from(table)
-        .update(update)
-        .eq('id', input.id)
-        .select('*')
-        .maybeSingle();
+      if (Object.keys(update).length === 0) return res.status(400).json({ error: 'No result fields were supplied.' });
+      const { data, error } = await supabase.from(table).update(update).eq('id', input.id).select('*').maybeSingle();
       if (error) return res.status(400).json({ error: 'Could not save result: ' + error.message });
       if (!data) return res.status(404).json({ error: 'Student record not found.' });
-      return res.status(200).json({ success: true, student: { ...data, section: table, dept: table === 'jss_students' ? null : data.dept } });
+      return res.status(200).json({ success: true, student: decorate(data, table) });
     }
 
     if (action === 'save' || action === 'update') {
@@ -160,7 +192,7 @@ export default async function handler(req, res) {
       const { data, error } = await supabase.from(table).update(update).eq('id', input.id).select('*').maybeSingle();
       if (error) return res.status(400).json({ error: 'Could not save student and result: ' + error.message });
       if (!data) return res.status(404).json({ error: 'Student record not found.' });
-      return res.status(200).json({ success: true, student: { ...data, section: table, dept: table === 'jss_students' ? null : data.dept } });
+      return res.status(200).json({ success: true, student: decorate(data, table) });
     }
 
     if (action === 'delete') {
@@ -168,12 +200,9 @@ export default async function handler(req, res) {
       if (existing.error) existing = await supabase.from(table).select('id').eq('id', input.id).maybeSingle();
       if (existing.error) throw existing.error;
       if (!existing.data) return res.status(404).json({ error: 'Student record not found.' });
-
-      const profilePath = existing.data.profile_pic_path;
-      if (profilePath) {
-        try { await supabase.storage.from('student-profile-pics').remove([profilePath]); } catch (_) {}
+      if (existing.data.profile_pic_path) {
+        try { await supabase.storage.from('student-profile-pics').remove([existing.data.profile_pic_path]); } catch (_) {}
       }
-
       const { error } = await supabase.from(table).delete().eq('id', input.id);
       if (error) return res.status(400).json({ error: 'Could not delete student: ' + error.message });
       return res.status(200).json({ success: true, deleted_id: input.id, section: table });

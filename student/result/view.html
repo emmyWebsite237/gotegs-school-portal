@@ -4,13 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Result | Go-Tegs International School</title>
+  <link rel="stylesheet" href="/assets/css/portal.css" />
   <link rel="stylesheet" href="/assets/css/report.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>@media(max-width:899px){.report-wrap{margin-left:0!important;padding:1rem .65rem 2rem!important}.report-card{max-width:100%;overflow:auto}}</style>
 </head>
-<body>
-
-  <div class="report-wrap">
+<body class="student-shell-page">
+  <div id="navbar-placeholder"></div>
+  <div class="report-wrap" style="margin-left:var(--portal-rail-width);padding:1.5rem 1rem 3rem;">
     <div class="report-card" id="pdfArea">
       <div class="unofficial-overlay" id="unofficialOverlay">UNOFFICIAL COPY</div>
 
@@ -84,6 +86,7 @@
     <p id="msg"></p>
   </div>
 
+  <script src="/assets/js/main.js"></script>
   <script>
     const subjectNames = {
       maths: "Mathematics", english: "English Language", physics: "Physics", chem: "Chemistry",
@@ -94,7 +97,7 @@
       bus_stud: "Business Studies", cmp: "Computer Studies", phe: "P.H.E", cca: "C.C.A",
       social_stud: "Social Studies", home_econs: "Home Economics", yoruba: "Yoruba", french: "French",
       sec_edu: "Security Education", lit_in_eng: "Literature in English", music: "Music", dic: "Diction",
-      history: "History", catering_c_p: "Catering and Craft Practice", digital_tech: "Digital Technology",
+      history: "History", catering_c_p: "Catering and Craft Practice",
     };
 
     function getGradeInfo(score) {
@@ -127,7 +130,7 @@
       document.getElementById('dispSession').textContent = `${data.year || 'Current School Year'} Report`;
       document.getElementById('dispName').textContent = data.full_name;
       document.getElementById('dispDob').textContent = data.dob || '---';
-      document.getElementById('dispClass').textContent = data.class + (data.dept ? ` (${data.dept})` : '');
+      document.getElementById('dispClass').textContent = (data.class || '—') + (data.dept ? ` (${data.dept})` : '');
       document.getElementById('dispOpened').textContent = data.opened || '0';
       document.getElementById('dispPresent').textContent = data.present ?? '0';
       document.getElementById('dispAbsent').textContent = (Number(data.opened) || 0) - (Number(data.present) || 0);

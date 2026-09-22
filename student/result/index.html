@@ -3,128 +3,45 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Check My Result | Go-Tegs International School</title>
+  <title>Results | Go-Tegs Student Portal</title>
   <link rel="stylesheet" href="/assets/css/style.css" />
+  <link rel="stylesheet" href="/assets/css/portal.css" />
   <style>
-    .result-form {
-      max-width: 420px;
-      margin-top: 1.5rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.6rem;
-      padding: 1.75rem;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      background: var(--paper);
-    }
-    .result-form label { font-family: var(--font-display); font-weight: 600; font-size: 0.85rem; margin-top: 0.4rem; }
-    .result-form input, .result-form select {
-      font-family: var(--font-body); font-size: 0.95rem; padding: 0.7rem 0.8rem;
-      border: 1px solid var(--border); border-radius: 8px;
-    }
-    .result-form .btn { margin-top: 1rem; }
-    #deptDiv { display: none; }
-    #formMsg { margin-top: 0.9rem; font-size: 0.88rem; font-weight: 600; }
+    .result-app{max-width:1180px;margin:0 auto;padding:1.2rem 0 3rem;}.result-panel{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr);gap:1rem;background:linear-gradient(135deg,#26171c,#4c1d2d 62%,#8a6a32);border-radius:30px;overflow:hidden;box-shadow:0 24px 60px rgba(58,28,35,.16);min-height:420px;}.result-copy{padding:clamp(1.5rem,4vw,3rem);display:flex;flex-direction:column;justify-content:center;color:#fff;}.result-kicker{font:800 .65rem var(--font-display);letter-spacing:.16em;text-transform:uppercase;color:#e9c77b}.result-copy h1{margin:.4rem 0 .65rem;color:#fff;font-size:clamp(2rem,4.2vw,3.4rem);letter-spacing:-.05em}.result-copy p{max-width:590px;color:#eadfe3;font-size:.9rem}.result-identity{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1rem}.result-chip{padding:.42rem .68rem;border:1px solid rgba(255,255,255,.15);border-radius:999px;background:rgba(255,255,255,.05);font:700 .65rem var(--font-display);color:#f4e9df}.result-card{align-self:stretch;margin:1rem;padding:1.15rem;border:1px solid rgba(255,255,255,.12);border-radius:22px;background:rgba(255,255,255,.96);display:flex;flex-direction:column;justify-content:center;box-shadow:0 20px 45px rgba(0,0,0,.12)}.result-card label{display:block;font:800 .75rem var(--font-display);color:#58616a;letter-spacing:.04em;margin-bottom:.4rem}.result-card input{width:100%;box-sizing:border-box;padding:.9rem 1rem;border:1px solid #d7dfe4;border-radius:12px;font-size:1.05rem;letter-spacing:.14em;text-align:center;background:#fbfcfd}.result-card .btn{margin-top:1rem;width:100%;justify-content:center;background:linear-gradient(135deg,#7a2139,#a94b61);color:#fff;border:0}.result-note{margin-top:.85rem;color:#81909a;font-size:.72rem;line-height:1.55}.result-msg{min-height:1.2rem;margin:.7rem 0 0;text-align:center;font-size:.76rem;font-weight:700}.result-meta{margin-top:1rem;padding:.85rem 1rem;border:1px solid #e0e5e8;border-radius:16px;background:#fbfaf8;color:#6e777e;font-size:.75rem}.result-meta strong{color:#2d353b}@media(max-width:850px){.result-panel{grid-template-columns:1fr}.result-card{margin:0 1rem 1rem}.result-copy{padding-bottom:1rem;}}
   </style>
 </head>
-<body>
+<body class="student-shell-page">
   <div id="navbar-placeholder"></div>
-
-  <main class="page-container">
-    <nav class="breadcrumb">Home / Student / Result</nav>
-    <h1>Check My Result</h1>
-    <p>Enter your details below to view and download your result.</p>
-
-    <form class="result-form" id="resultForm">
-      <label for="sid">Student ID</label>
-      <input type="text" id="sid" placeholder="GT/..." required />
-
-      <label>Current School Year</label>
-      <div id="currentYearDisplay" style="padding:.7rem .8rem;border:1px solid var(--border);border-radius:8px;background:#f7f9f9;font-weight:700;">Loading school year…</div>
-
-      <label for="classSelect">Class</label>
-      <select id="classSelect" required>
-        <option value="">Select Class</option>
-        <option value="JSS 1">JSS 1</option>
-        <option value="JSS 2">JSS 2</option>
-        <option value="JSS 3">JSS 3</option>
-        <option value="SSS 1">SSS 1</option>
-        <option value="SSS 2">SSS 2</option>
-        <option value="SSS 3">SSS 3</option>
-      </select>
-
-      <div id="deptDiv">
-        <label for="deptSelect">Department</label>
-        <select id="deptSelect">
-          <option value="">Select Department</option>
-          <option value="Science">Science</option>
-          <option value="Art">Art</option>
-          <option value="Commerce">Commerce</option>
-        </select>
+  <main class="result-app">
+    <section class="result-panel">
+      <div class="result-copy">
+        <span class="result-kicker">Academic record</span>
+        <h1>Check your result.</h1>
+        <p id="welcomeCopy">Your student identity is already connected to this portal. You only need your result PIN to request the released result.</p>
+        <div class="result-identity"><span class="result-chip" id="identityName">Student</span><span class="result-chip" id="identityClass">Class</span><span class="result-chip" id="identityId">ID</span></div>
+        <div class="result-meta"><strong>School session</strong><br><span id="identityYear">Current school year</span></div>
       </div>
-
-      <label for="pin">Access PIN</label>
-      <input type="password" id="pin" placeholder="Access PIN" required />
-
-      <button type="submit" class="btn" id="checkBtn">Check Result</button>
-      <p id="formMsg"></p>
-    </form>
+      <form class="result-card" id="resultForm">
+        <label for="pin">Result PIN</label>
+        <input id="pin" type="password" inputmode="numeric" autocomplete="current-password" placeholder="Enter your PIN" required />
+        <button class="btn" id="checkBtn" type="submit">Check Result</button>
+        <p class="result-msg" id="resultMsg" role="status" aria-live="polite"></p>
+        <p class="result-note">No student ID, class, department or school year entry is required here. Those details are already attached to your signed-in student session.</p>
+      </form>
+    </section>
   </main>
-
-  <div id="footer-placeholder"></div>
-
   <script src="/assets/js/main.js"></script>
   <script>
-    let currentYear = "";
-
-    async function loadCurrentYear() {
-      const display = document.getElementById('currentYearDisplay');
-      try {
-        const res = await fetch('/api/admin-settings');
-        const data = await res.json();
-        if (!res.ok || !data.year) throw new Error('School year not configured');
-        currentYear = data.year;
-        display.textContent = currentYear;
-      } catch (_) {
-        display.textContent = 'Not configured yet';
-      }
-    }
-    loadCurrentYear();
-
-    document.getElementById('classSelect').addEventListener('change', (e) => {
-      document.getElementById('deptDiv').style.display = e.target.value.includes('SSS') ? 'block' : 'none';
-    });
-
-    document.getElementById('resultForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const sid = document.getElementById('sid').value.trim();
-      const cls = document.getElementById('classSelect').value;
-      const dept = document.getElementById('deptSelect').value;
-      const pin = document.getElementById('pin').value;
-      const msg = document.getElementById('formMsg');
-      const btn = document.getElementById('checkBtn');
-
-      if (!sid || !currentYear || !cls || !pin || (cls.includes('SSS') && !dept)) {
-        msg.style.color = '#d97706';
-        msg.textContent = !currentYear ? 'The school year is not configured yet.' : 'Please fill all fields.';
-        return;
-      }
-
-      btn.disabled = true; btn.textContent = 'Checking...'; msg.style.color = '#5c6b68'; msg.textContent = 'Verifying credentials...';
-      try {
-        const res = await fetch(`/api/verify-result?student_id=${encodeURIComponent(sid)}&class=${encodeURIComponent(cls)}&dept=${encodeURIComponent(dept)}&pin=${encodeURIComponent(pin)}`);
-        const data = await res.json();
-        if (!res.ok) {
-          msg.style.color = '#dc2626'; msg.textContent = data.error || 'Something went wrong.';
-          btn.disabled = false; btn.textContent = 'Check Result'; return;
-        }
-        sessionStorage.setItem('gotegs_result_data', JSON.stringify({ ...data, class: cls, dept }));
-        window.location.href = '/student/result/view.html';
-      } catch (err) {
-        msg.style.color = '#dc2626'; msg.textContent = 'Connection error: ' + err.message;
-        btn.disabled = false; btn.textContent = 'Check Result';
-      }
-    });
+    (()=>{
+      const raw=localStorage.getItem('gotegs_student_session'); if(!raw){window.location.href='/student/index.html';return;}
+      let s;try{s=JSON.parse(raw)}catch{window.location.href='/student/index.html';return;}
+      const esc=v=>String(v??'—'); document.getElementById('identityName').textContent=esc(s.full_name||'Student');document.getElementById('identityClass').textContent=esc((s.class||'Class')+(s.dept?' · '+s.dept:''));document.getElementById('identityId').textContent=esc(s.student_id||'ID');document.getElementById('identityYear').textContent=esc(s.year||'Current school year');
+      const form=document.getElementById('resultForm'),pin=document.getElementById('pin'),btn=document.getElementById('checkBtn'),msg=document.getElementById('resultMsg');
+      form.addEventListener('submit',async e=>{e.preventDefault();const value=pin.value.trim();if(!value){msg.style.color='#b76e00';msg.textContent='Enter your result PIN.';pin.focus();return;}btn.disabled=true;btn.textContent='Checking…';msg.textContent='';
+        try{const params=new URLSearchParams({student_id:s.student_id,pin:value});const res=await fetch('/api/verify-result?'+params.toString());const data=await res.json().catch(()=>({}));if(!res.ok)throw new Error(data.error||'Could not check your result.');sessionStorage.setItem('gotegs_result_data',JSON.stringify(data));window.location.href='/student/result/view.html';}
+        catch(err){msg.style.color='#c53030';msg.textContent=err.message||'Could not check your result.';btn.disabled=false;btn.textContent='Check Result';}
+      });
+    })();
   </script>
 </body>
 </html>

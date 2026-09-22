@@ -1,19 +1,9 @@
-Go-Tegs functional alignment patch
+Go-Tegs functional portal patch
 
-REPLACE these files at the same paths:
-- admin/index.html
-- admin/admin-records/index.html
-- api/admin-students.js
-- api/verify-result.js
-- assets/js/records-common.js
-- index.html
-- assets/css/home.css
-- student/result/view.html
+1. Replaces the student PIN-only result check flow.
+2. Adds the admin Result Archive PDF page and read-only export action; it does not change student check_count.
+3. Refreshes the student profile-picture onboarding and profile removal behavior.
+4. Refreshes the private student portal palette/layout and fixes the custom pointer from sticking after clicks.
+5. No new Vercel Serverless Function is added; the export action is consolidated into api/admin-students.js.
 
-RUN IN SUPABASE RESULTS PROJECT, IN ORDER:
-1. supabase/21-results-schema-alignment.sql
-2. supabase/22-ordered-result-views.sql (optional; creates ordered views because PostgreSQL cannot move existing table columns in-place)
-
-The schema migration intentionally clears existing *_mtt and *_exam values, opened/present/teacher_remark, resets check_count to 0, and sets can_check_result=false, matching the earlier requested reset.
-
-The site code now uses `present`, `_mtt`, and `_exam` consistently. SSS also includes Catering C.P. MTT and Digital Technology MTT/Exam.
+Replace files at their exact paths.

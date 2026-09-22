@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Result Archive PDF | Go-Tegs Admin</title>
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <link rel="stylesheet" href="/assets/css/admin.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+  <style>
+    :root{--archive-maroon:#7a2139;--archive-gold:#c49b4e;--archive-cream:#f6efe7;--archive-ink:#20171a;--archive-muted:#6f7b83;}
+    body.admin-shell-page{background:linear-gradient(135deg,#f8f0e8 0%,#edf3f5 58%,#fbfbf8 100%);}
+    .archive-wrap{max-width:1240px;margin:0 auto;padding:2.2rem 1.2rem 4rem;}
+    .archive-head{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
+    .archive-kicker{color:var(--archive-maroon);font:800 .67rem var(--font-display);letter-spacing:.14em;text-transform:uppercase;}
+    .archive-head h1{margin:.25rem 0 .35rem;color:var(--archive-ink);font-size:clamp(1.9rem,4vw,3rem);letter-spacing:-.045em;}
+    .archive-head p{margin:0;max-width:770px;color:var(--archive-muted);font-size:.84rem;}
+    .archive-actions{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;margin-top:1.15rem;}
+    .archive-actions .btn{border:0;background:linear-gradient(135deg,var(--archive-maroon),#a94b61);color:#fff;}
+    .archive-actions .btn:disabled{opacity:.55;cursor:wait;}
+    .archive-status{margin-top:1rem;padding:.9rem 1rem;border:1px solid #dde4e7;border-radius:16px;background:rgba(255,255,255,.76);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;color:#5b6972;font-size:.76rem;}
+    .archive-status strong{color:#2c3339;}.archive-progress{height:8px;overflow:hidden;border-radius:99px;background:#e8ecee;min-width:210px;flex:1;}.archive-progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--archive-maroon),var(--archive-gold));transition:width .2s ease;}
+    .archive-preview{margin-top:1.25rem;display:grid;gap:1.4rem;justify-items:center;}
+    .result-page{width:794px;min-height:1123px;box-sizing:border-box;background:#fff;border:1px solid #e6ded7;box-shadow:0 18px 50px rgba(43,31,30,.10);padding:34px 38px;position:relative;color:#20262b;}
+    .result-page::before{content:'';position:absolute;inset:14px;border:1px solid rgba(196,155,78,.45);pointer-events:none;}
+    .result-page-inner{position:relative;z-index:1;height:100%;display:flex;flex-direction:column;}
+    .school-head{display:grid;grid-template-columns:72px 1fr;gap:14px;align-items:center;border-bottom:3px solid var(--archive-maroon);padding-bottom:14px;}
+    .school-head img{width:68px;height:68px;object-fit:contain;}.school-head h2{margin:0;font:900 23px/1.05 var(--font-display);color:var(--archive-maroon);}.school-head p{margin:5px 0 0;font-size:9.3px;color:#626f76;line-height:1.35;}.school-motto{font:800 9px var(--font-display);letter-spacing:.08em;text-transform:uppercase;color:var(--archive-gold);}
+    .report-title{text-align:center;margin:14px 0 12px;font:900 15px var(--font-display);letter-spacing:.08em;text-transform:uppercase;color:var(--archive-ink);}.report-subtitle{text-align:center;font-size:9px;color:#738087;margin-top:-8px;margin-bottom:12px;}
+    .student-info{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:6px;margin-bottom:12px;}.info-cell{border:1px solid #dce4e7;border-radius:7px;padding:7px 8px;background:#fbfcfc;}.info-cell span{display:block;font-size:7px;text-transform:uppercase;letter-spacing:.08em;color:#7d8a90;margin-bottom:2px;}.info-cell strong{font-size:9px;color:#243038;}
+    .score-table{width:100%;border-collapse:collapse;font-size:7.8px;}.score-table th{background:#f2ebe4;color:#52202e;font:800 7px var(--font-display);text-transform:uppercase;letter-spacing:.04em;padding:6px 4px;border:1px solid #d6dee2;}.score-table td{padding:5px 4px;border:1px solid #dde4e7;text-align:center;}.score-table td:first-child{text-align:left;font-weight:700;}.score-table .total{font-weight:800;background:#fbf5ec;}
+    .bottom-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:10px;margin-top:11px;}.remark-box,.summary-box{border:1px solid #dbe3e6;border-radius:8px;padding:9px;background:#fff;}.box-label{font:800 7.5px var(--font-display);text-transform:uppercase;letter-spacing:.07em;color:#7a2139;}.remark-line{font-size:8.2px;color:#39464e;min-height:44px;margin-top:5px;}.summary-row{display:flex;justify-content:space-between;gap:10px;padding:4px 0;border-bottom:1px solid #eef1f2;font-size:8px;}.summary-row:last-child{border-bottom:0;}.summary-row strong{color:#263039;}.report-foot{margin-top:auto;padding-top:12px;border-top:1px solid #e2e6e8;display:flex;justify-content:space-between;align-items:flex-end;font-size:7.5px;color:#7a858b;}.sig{min-width:140px;text-align:center;}.sig-line{height:1px;background:#6a7378;margin:18px 0 3px;}.unofficial{position:absolute;right:28px;top:72px;transform:rotate(-16deg);font:900 13px var(--font-display);color:rgba(122,33,57,.16);letter-spacing:.12em;}
+    .page-number{position:absolute;right:29px;bottom:24px;font:800 7px var(--font-display);color:#a1a8ad;}
+    .empty-preview{width:min(794px,100%);padding:2rem;border:1px dashed #cfd9de;border-radius:18px;background:rgba(255,255,255,.7);text-align:center;color:#71808a;}
+    @media(max-width:850px){.result-page{width:100%;min-height:0;padding:20px;}.result-page::before{inset:8px}.student-info{grid-template-columns:1fr 1fr}.school-head{grid-template-columns:56px 1fr}.school-head img{width:54px;height:54px;}.school-head h2{font-size:17px;}.score-table{font-size:6px}.score-table th{font-size:5.5px}.score-table td,.score-table th{padding:3px 2px;}.archive-wrap{padding-left:.75rem;padding-right:.75rem;}}
+  </style>
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+  <main class="archive-wrap">
+    <div class="archive-head">
+      <div><span class="archive-kicker">Admin / result archive</span><h1>Every Result, Ready to Print</h1><p>The preview is prepared automatically when this page opens. Each student gets one A4 page in the final PDF. This admin export never calls the student result-checking endpoint and does not change check counts.</p></div>
+      <a class="btn btn-secondary" href="/admin/">Back to Admin</a>
+    </div>
+    <div class="archive-actions"><button class="btn" id="downloadAll" type="button" disabled>Download All Results PDF</button><button class="btn btn-secondary" id="refreshPreview" type="button">Refresh preview</button></div>
+    <div class="archive-status"><div><strong id="archiveCount">0 students</strong> · <span id="archiveReady">Starting preview…</span></div><div class="archive-progress" aria-label="Preview progress"><span id="archiveProgress"></span></div><div><strong id="archiveSize">Calculating size…</strong></div></div>
+    <div class="archive-preview" id="archivePreview"><div class="empty-preview">Loading student result pages…</div></div>
+  </main>
+  <script src="/assets/js/main.js"></script>
+  <script>
+    const subjectNames={maths:'Mathematics',english:'English Language',physics:'Physics',chem:'Chemistry',bio:'Biology',fmath:'Further Mathematics',civic:'Civic Education',govt:'Government',econs:'Economics',dp:'Data Processing',agric:'Agricultural Science',crs:'C.R.S',catering_c_p:'Catering and Craft Practice',digital_tech:'Digital Technology',dic:'Diction',lit_in_eng:'Literature in English',basic_science:'Basic Science',basic_tech:'Basic Technology',bus_stud:'Business Studies',social_stud:'Social Studies',home_econs:'Home Economics',sec_edu:'Security Education',french:'French',music:'Music',history:'History',cmp:'Computer Studies',phe:'P.H.E',cca:'C.C.A',lit:'Literature'};
+    function esc(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
+    function grade(v){const n=Number(v||0);if(n>=75)return'A1';if(n>=70)return'B2';if(n>=65)return'B3';if(n>=60)return'C4';if(n>=55)return'C5';if(n>=50)return'C6';if(n>=45)return'D7';if(n>=40)return'E8';return'F9'}
+    function display(v){return v===null||v===undefined||v===''?'—':esc(v)}
+    let rows=[], pageImages=[];
+    function buildPage(student,index,year){
+      const bases=Object.keys(student).filter(k=>k.endsWith('_mtt')).map(k=>k.slice(0,-4));
+      const seen=new Set(); const subjects=bases.filter(b=>{if(seen.has(b))return false;seen.add(b);return true}).filter(b=>student[`${b}_mtt`]!==undefined||student[`${b}_exam`]!==undefined);
+      let total=0,count=0;
+      const body=subjects.map(base=>{const m=student[`${base}_mtt`],e=student[`${base}_exam`];const has=m!==null&&m!==undefined&&e!==null&&e!==undefined;const t=has?Number(m)+Number(e):null;if(has){total+=t;count++;}return `<tr><td>${esc(subjectNames[base]||base.replace(/_/g,' '))}</td><td>${display(m)}</td><td>${display(e)}</td><td class="total">${t===null?'—':t}</td><td>${t===null?'—':t+'%'}</td><td class="total">${t===null?'—':grade(t)}</td></tr>`}).join('');
+      const mean=count?((total/count).toFixed(1)):'0';
+      return `<section class="result-page" data-page-index="${index}"><div class="result-page-inner"><div class="unofficial">${student.is_paid===true?'':'UNRELEASED'}</div><div class="school-head"><img src="/assets/img/logo.png" alt="Go-Tegs logo"/><div><h2>Go-Tegs International School</h2><div class="school-motto">Training the Leaders of Tomorrow</div><p>15, Ayesanmi Street, GloryLand Estate, Powerline Bus Stop, Isheri Olofin, Alimosho, Lagos · 08066525319 · 08106958638</p></div></div><div class="report-title">${esc(year||'Current School Year')} Student Result</div><div class="report-subtitle">Official administrative archive copy · Page ${index+1}</div><div class="student-info"><div class="info-cell"><span>Student</span><strong>${esc(student.full_name||'—')}</strong></div><div class="info-cell"><span>Student ID</span><strong>${esc(student.student_id||'—')}</strong></div><div class="info-cell"><span>Class</span><strong>${esc(student.class||'—')}</strong></div><div class="info-cell"><span>Department</span><strong>${esc(student.dept||'—')}</strong></div><div class="info-cell"><span>Date of Birth</span><strong>${esc(student.dob||'—')}</strong></div><div class="info-cell"><span>Opened</span><strong>${display(student.opened)}</strong></div><div class="info-cell"><span>Present</span><strong>${display(student.present)}</strong></div><div class="info-cell"><span>Checks</span><strong>${Number(student.check_count||0)} / 3</strong></div></div><table class="score-table"><thead><tr><th>Subject</th><th>MTT</th><th>Examination</th><th>TMB</th><th>%</th><th>Grade</th></tr></thead><tbody>${body||'<tr><td colspan="6">No result marks entered yet.</td></tr>'}</tbody></table><div class="bottom-grid"><div class="remark-box"><div class="box-label">Teacher remark</div><div class="remark-line">${esc(student.teacher_remark||'No comment provided.')}</div><div class="box-label">Principal remark</div><div class="remark-line">${esc(student.principal_remark||'')}</div></div><div class="summary-box"><div class="box-label">Summary</div><div class="summary-row"><span>Total obtainable</span><strong>${count*100}</strong></div><div class="summary-row"><span>Total obtained</span><strong>${total}</strong></div><div class="summary-row"><span>Mean percentage</span><strong>${mean}%</strong></div><div class="summary-row"><span>Overall grade</span><strong>${grade(mean)}</strong></div></div></div><div class="report-foot"><div>Generated for school archive · Does not consume student result checks</div><div class="sig"><div class="sig-line"></div><strong>School Principal</strong></div></div><div class="page-number">${String(index+1).padStart(2,'0')}</div></div></section>`;
+    }
+    async function loadPreview(){
+      const token=sessionStorage.getItem('gotegs_admin_token')||''; const preview=document.getElementById('archivePreview'); const dl=document.getElementById('downloadAll');
+      dl.disabled=true; pageImages=[]; preview.innerHTML='<div class="empty-preview">Loading student result pages…</div>'; document.getElementById('archiveReady').textContent='Fetching records…'; document.getElementById('archiveSize').textContent='Calculating size…'; document.getElementById('archiveProgress').style.width='4%';
+      try{
+        const r=await fetch('/api/admin-students',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({action:'export-results'})});
+        const d=await r.json(); if(!r.ok)throw new Error(d.error||'Could not load result archive.'); rows=d.students||[]; document.getElementById('archiveCount').textContent=`${rows.length} student${rows.length===1?'':'s'}`; preview.innerHTML='';
+        if(!rows.length){preview.innerHTML='<div class="empty-preview">No student records were found.</div>';document.getElementById('archiveReady').textContent='Nothing to export';return;}
+        rows.forEach((s,i)=>{preview.insertAdjacentHTML('beforeend',buildPage(s,i,d.year||''));});
+        const pages=[...preview.querySelectorAll('.result-page')];
+        let totalBytes=0;
+        for(let i=0;i<pages.length;i++){
+          document.getElementById('archiveReady').textContent=`Preparing preview ${i+1} of ${pages.length}…`;
+          try{
+            const canvas=await html2canvas(pages[i],{scale:1.15,useCORS:true,backgroundColor:'#ffffff',logging:false,width:794,height:1123});
+            const dataUrl=canvas.toDataURL('image/jpeg',0.76); pageImages.push(dataUrl); totalBytes+=Math.ceil((dataUrl.length*3)/4); document.getElementById('archiveProgress').style.width=`${Math.round(((i+1)/pages.length)*100)}%`;
+            document.getElementById('archiveSize').textContent=`~${formatBytes(totalBytes)}`;
+          }catch(err){console.error('Preview page error',i,err);pageImages.push(null);}
+          await new Promise(r=>requestAnimationFrame(r));
+        }
+        if(pageImages.every(Boolean)){dl.disabled=false;document.getElementById('archiveReady').textContent=`Preview ready · ${pages.length} PDF pages cached`;}else{document.getElementById('archiveReady').textContent='Some pages could not be cached; refresh preview and try again.';}
+      }catch(err){preview.innerHTML=`<div class="empty-preview">${esc(err.message||'Could not load the archive.')}</div>`;document.getElementById('archiveReady').textContent='Preview failed';document.getElementById('archiveProgress').style.width='0';}
+    }
+    function formatBytes(n){if(!n)return'0 B';if(n<1024)return`${n} B`;if(n<1024*1024)return`${(n/1024).toFixed(1)} KB`;return`${(n/(1024*1024)).toFixed(1)} MB`;}
+    document.getElementById('downloadAll').addEventListener('click',async()=>{const btn=document.getElementById('downloadAll');if(!pageImages.length||pageImages.some(img=>!img))return;btn.disabled=true;btn.textContent='Building PDF…';try{const PDF=window.jspdf?.jsPDF;if(!PDF)throw new Error('PDF engine did not load. Refresh the page and try again.');const pdf=new PDF('p','mm','a4');pageImages.forEach((img,i)=>{if(i)pdf.addPage();pdf.addImage(img,'JPEG',0,0,210,297,`page-${i}`,'FAST');});pdf.save(`Go-Tegs-Results-Archive-${new Date().toISOString().slice(0,10)}.pdf`);}catch(err){alert(err.message||'Could not create the PDF.');}finally{btn.disabled=false;btn.textContent='Download All Results PDF';}});
+    document.getElementById('refreshPreview').addEventListener('click',loadPreview); window.addEventListener('load',loadPreview);
+  </script>
+</body>
+</html>
