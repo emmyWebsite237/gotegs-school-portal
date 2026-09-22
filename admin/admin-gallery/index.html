@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manage Gallery | Admin | Go-Tegs</title>
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <link rel="stylesheet" href="/assets/css/admin.css" />
+  <style>
+    .gallery-admin-page{max-width:1200px}
+    .gallery-admin-hero{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;padding:1.25rem 1.35rem;border:1px solid #dbe7f3;border-radius:18px;background:linear-gradient(135deg,#071d3b,#0a4f9f 55%,#0f79d8);color:#fff;box-shadow:0 18px 48px rgba(8,48,98,.18)}
+    .gallery-admin-hero h1{margin:.2rem 0 .35rem;color:#fff;font-size:clamp(1.6rem,3vw,2.3rem)}
+    .gallery-admin-hero p{margin:0;max-width:760px;color:#dcecff;font-size:.82rem;line-height:1.6}
+    .gallery-admin-card{margin-top:1rem;padding:1.15rem;border:1px solid var(--border);border-radius:16px;background:var(--paper);box-shadow:var(--shadow-sm)}
+    .gallery-admin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.9rem}
+    .gallery-admin-grid label{display:block;font:700 .76rem var(--font-display);color:var(--slate)}
+    .gallery-admin-grid input,.gallery-admin-grid textarea{display:block;width:100%;box-sizing:border-box;margin-top:.35rem;padding:.7rem .75rem;border:1px solid #d5e0ea;border-radius:10px;background:#fff;font:500 .9rem var(--font-body)}
+    .gallery-admin-grid textarea{min-height:78px;resize:vertical}
+    .full{grid-column:1/-1}
+    .cloud-preview{margin-top:.4rem;padding:.65rem .75rem;border-radius:10px;background:#f3f8fd;border:1px dashed #bfd5ea;color:#35516d;font:500 .76rem ui-monospace,SFMono-Regular,Menlo,monospace;word-break:break-all;min-height:1.1rem}
+    .cloud-note{margin:.7rem 0 0;padding:.75rem .85rem;border-radius:10px;background:#eef7ff;color:#47637d;font-size:.75rem;line-height:1.55}
+    .gallery-admin-actions{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;margin-top:1rem}
+    .gallery-status{min-height:1.1rem;font-size:.8rem;font-weight:700}
+    .gallery-list{display:grid;gap:.8rem;margin-top:1rem}
+    .gallery-row{display:grid;grid-template-columns:170px 1fr auto;gap:1rem;align-items:center;padding:.8rem;border:1px solid var(--border);border-radius:14px;background:#fff}
+    .gallery-thumb{width:170px;height:112px;object-fit:cover;border-radius:10px;background:#edf3f8;display:block;-webkit-user-drag:none;user-select:none}
+    .gallery-meta h3{margin:0;font:800 .95rem var(--font-display);color:#17344e}
+    .gallery-meta p{margin:.25rem 0;color:#708398;font-size:.72rem;line-height:1.5;word-break:break-word}
+    .gallery-code{font:500 .7rem ui-monospace,SFMono-Regular,Menlo,monospace;color:#53708a}
+    .gallery-row-actions{display:flex;gap:.45rem;flex-wrap:wrap;justify-content:flex-end}
+    .gallery-row-actions button{border:1px solid #d6e0ea;border-radius:9px;padding:.52rem .7rem;background:#fff;font:800 .72rem var(--font-display);cursor:pointer}
+    .gallery-row-actions .danger{color:#b42318;border-color:#f3b8b1;background:#fff8f7}
+    .gallery-row-actions .publish{color:#0b5eb7;border-color:#b8d5ee;background:#f4f9ff}
+    .gallery-row-actions .published{color:#16794c;border-color:#bfe3cf;background:#f2fbf5}
+    .gallery-empty{padding:2rem;text-align:center;border:1px dashed #cbd9e5;border-radius:14px;color:#74879a;font-size:.82rem}
+    .gallery-editing{outline:2px solid #75aee8;outline-offset:0}
+    @media(max-width:850px){.gallery-admin-grid{grid-template-columns:1fr}.gallery-row{grid-template-columns:1fr}.gallery-thumb{width:100%;height:190px}.gallery-row-actions{justify-content:flex-start}.gallery-admin-hero{flex-direction:column}}
+  </style>
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+
+  <main class="page-container admin-page gallery-admin-page">
+    <nav class="breadcrumb">Admin / Gallery</nav>
+
+    <section class="gallery-admin-hero">
+      <div>
+        <span class="admin-eyebrow" style="color:#a9d6ff;">Cloudinary gallery</span>
+        <h1>Manage School Gallery</h1>
+        <p>Upload the actual image in Cloudinary first. Then enter the Cloudinary cloud name and Public ID here. The site automatically builds the delivery link, stores it, and displays it on the public gallery.</p>
+      </div>
+      <a class="btn" href="https://console.cloudinary.com/" target="_blank" rel="noopener" style="white-space:nowrap;background:#fff;color:#0b4e91;">Open Cloudinary</a>
+    </section>
+
+    <section class="gallery-admin-card">
+      <form id="galleryForm">
+        <input type="hidden" id="editId" />
+        <div class="gallery-admin-grid">
+          <label>Image title
+            <input id="title" type="text" maxlength="160" placeholder="Sports Day 2026" />
+          </label>
+          <label>Alt text
+            <input id="altText" type="text" maxlength="240" placeholder="Go-Tegs students at sports day" />
+          </label>
+          <label>Cloudinary cloud name
+            <input id="cloudName" type="text" maxlength="120" placeholder="your-cloud-name" required />
+          </label>
+          <label>Cloudinary Public ID
+            <input id="publicId" type="text" maxlength="500" placeholder="school/gallery/sports-day-01" required />
+          </label>
+          <label>Display order
+            <input id="displayOrder" type="number" min="0" step="1" value="0" />
+          </label>
+          <label style="display:flex;align-items:end;gap:.55rem;padding-bottom:.1rem;">
+            <span style="display:inline-flex;align-items:center;gap:.55rem;cursor:pointer;">
+              <input id="published" type="checkbox" checked style="width:auto;margin:0;" />
+              Publish this image on the public gallery
+            </span>
+          </label>
+          <label class="full">Automatic Cloudinary link
+            <div id="cloudPreview" class="cloud-preview">https://res.cloudinary.com/…</div>
+          </label>
+        </div>
+        <div class="cloud-note"><strong>How this works:</strong> the admin page does not upload image files. Add the image from Cloudinary's own dashboard/media library, copy its Public ID, enter it above, and the delivery URL is generated automatically. Deleting it here only removes the image from the Go-Tegs gallery; it does not delete the asset from your Cloudinary account.</div>
+        <div class="gallery-admin-actions">
+          <button class="btn" type="submit" id="saveGalleryBtn">Add image</button>
+          <button class="btn" type="button" id="cancelEdit" style="display:none;background:#eef3f7;color:#2f4a61;">Cancel edit</button>
+          <button class="btn" type="button" id="refreshGallery" style="background:#eef3f7;color:#2f4a61;">Refresh</button>
+          <span id="galleryStatus" class="gallery-status" role="status" aria-live="polite"></span>
+        </div>
+      </form>
+    </section>
+
+    <section class="gallery-admin-card">
+      <div style="display:flex;justify-content:space-between;gap:.8rem;align-items:center;flex-wrap:wrap;">
+        <div>
+          <span class="admin-eyebrow">Published assets</span>
+          <h2 style="margin:.15rem 0 0;">Gallery images</h2>
+        </div>
+        <span id="galleryCount" class="gallery-status" style="color:#74879a;"></span>
+      </div>
+      <div id="galleryList" class="gallery-list"><div class="gallery-empty">Loading gallery…</div></div>
+    </section>
+  </main>
+
+  <div id="footer-placeholder"></div>
+  <script src="/assets/js/main.js"></script>
+  <script>
+    const endpoint = '/api/admin-verify?gallery=1';
+    const publicEndpointBase = '/api/admin-verify?gallery=1';
+    const token = () => sessionStorage.getItem('gotegs_admin_token') || '';
+    const $ = (id) => document.getElementById(id);
+    const fields = () => ({
+      title: $('title').value.trim(),
+      alt_text: $('altText').value.trim(),
+      cloud_name: $('cloudName').value.trim(),
+      public_id: $('publicId').value.trim(),
+      display_order: Number($('displayOrder').value || 0),
+      is_published: $('published').checked,
+    });
+
+    function buildUrl() {
+      const cloud = $('cloudName').value.trim().replace(/[^a-zA-Z0-9_-]/g, '');
+      const publicId = $('publicId').value.trim().replace(/^\/+|\/+$/g, '');
+      $('cloudPreview').textContent = cloud && publicId
+        ? `https://res.cloudinary.com/${cloud}/image/upload/f_auto,q_auto/${publicId}`
+        : 'https://res.cloudinary.com/…';
+    }
+    $('cloudName').addEventListener('input', buildUrl);
+    $('publicId').addEventListener('input', buildUrl);
+
+    async function request(url = endpoint, options = {}) {
+      const headers = { ...(options.headers || {}), Authorization: 'Bearer ' + token() };
+      const res = await fetch(url, { ...options, headers });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || `Request failed (${res.status}).`);
+      return data;
+    }
+
+    function resetForm() {
+      $('editId').value = '';
+      $('title').value = '';
+      $('altText').value = '';
+      $('cloudName').value = '';
+      $('publicId').value = '';
+      $('displayOrder').value = '0';
+      $('published').checked = true;
+      $('saveGalleryBtn').textContent = 'Add image';
+      $('cancelEdit').style.display = 'none';
+      $('cloudPreview').textContent = 'https://res.cloudinary.com/…';
+    }
+
+    function startEdit(image) {
+      $('editId').value = image.id;
+      $('title').value = image.title || '';
+      $('altText').value = image.alt_text || '';
+      $('cloudName').value = image.cloud_name || '';
+      $('publicId').value = image.public_id || '';
+      $('displayOrder').value = String(image.display_order ?? 0);
+      $('published').checked = image.is_published !== false;
+      $('saveGalleryBtn').textContent = 'Save changes';
+      $('cancelEdit').style.display = '';
+      buildUrl();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    async function loadGallery() {
+      $('galleryList').innerHTML = '<div class="gallery-empty">Loading gallery…</div>';
+      try {
+        const data = await request();
+        const images = data.images || [];
+        $('galleryCount').textContent = `${images.length} image${images.length === 1 ? '' : 's'}`;
+        if (!images.length) {
+          $('galleryList').innerHTML = '<div class="gallery-empty">No gallery images have been added yet.</div>';
+          return;
+        }
+        $('galleryList').innerHTML = images.map((image) => `
+          <article class="gallery-row" data-id="${String(image.id).replace(/"/g,'&quot;')}">
+            <img class="gallery-thumb" src="${String(image.cloudinary_url).replace(/"/g,'&quot;')}" alt="${String(image.alt_text || '').replace(/"/g,'&quot;')}" draggable="false" />
+            <div class="gallery-meta">
+              <h3>${escapeHtml(image.title || 'Untitled image')}</h3>
+              <p>${escapeHtml(image.is_published ? 'Published' : 'Hidden')} · Order ${Number(image.display_order ?? 0)}</p>
+              <div class="gallery-code">${escapeHtml(image.cloudinary_url || '')}</div>
+            </div>
+            <div class="gallery-row-actions">
+              <button type="button" class="publish ${image.is_published ? 'published' : ''}" data-action="toggle">${image.is_published ? 'TRUE' : 'FALSE'}</button>
+              <button type="button" data-action="edit">Edit</button>
+              <button type="button" class="danger" data-action="delete">Delete</button>
+            </div>
+          </article>
+        `).join('');
+
+        $('galleryList').querySelectorAll('.gallery-row').forEach(row => {
+          const id = row.dataset.id;
+          const image = images.find(x => String(x.id) === id);
+          row.querySelector('[data-action="edit"]').addEventListener('click', () => startEdit(image));
+          row.querySelector('[data-action="toggle"]').addEventListener('click', async (e) => {
+            const btn = e.currentTarget;
+            const oldText = btn.textContent;
+            btn.disabled = true;
+            try {
+              const result = await request(endpoint, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({action:'toggle', id}) });
+              btn.textContent = result.is_published ? 'TRUE' : 'FALSE';
+              btn.classList.toggle('published', !!result.is_published);
+              row.querySelector('.gallery-meta p').textContent = `${result.is_published ? 'Published' : 'Hidden'} · Order ${Number(image.display_order ?? 0)}`;
+            } catch (err) {
+              $('galleryStatus').textContent = err.message;
+              $('galleryStatus').style.color = '#b42318';
+              btn.textContent = oldText;
+            } finally { btn.disabled = false; }
+          });
+          row.querySelector('[data-action="delete"]').addEventListener('click', async (e) => {
+            if (!confirm('Remove this image from the Go-Tegs gallery? The Cloudinary asset itself will remain in Cloudinary.')) return;
+            const btn = e.currentTarget;
+            btn.disabled = true;
+            try {
+              await request(endpoint, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({action:'delete', id}) });
+              row.remove();
+              $('galleryCount').textContent = `${Math.max(0, (Number(($('galleryCount').textContent.match(/\d+/)||[0])[0]) - 1))} images`;
+            } catch (err) {
+              $('galleryStatus').textContent = err.message;
+              $('galleryStatus').style.color = '#b42318';
+              btn.disabled = false;
+            }
+          });
+        });
+      } catch (err) {
+        $('galleryList').innerHTML = `<div class="gallery-empty">${escapeHtml(err.message)}</div>`;
+      }
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '').replace(/[&<>'"]/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+    }
+
+    $('galleryForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = $('editId').value;
+      const button = $('saveGalleryBtn');
+      $('galleryStatus').textContent = id ? 'Saving…' : 'Adding…';
+      $('galleryStatus').style.color = '#4b6279';
+      button.disabled = true;
+      try {
+        const payload = fields();
+        payload.action = id ? 'update' : 'create';
+        if (id) payload.id = id;
+        await request(endpoint, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
+        $('galleryStatus').textContent = id ? 'Gallery image updated.' : 'Gallery image added.';
+        $('galleryStatus').style.color = '#16794c';
+        resetForm();
+        loadGallery();
+      } catch (err) {
+        $('galleryStatus').textContent = err.message;
+        $('galleryStatus').style.color = '#b42318';
+      } finally { button.disabled = false; }
+    });
+
+    $('cancelEdit').addEventListener('click', () => resetForm());
+    $('refreshGallery').addEventListener('click', () => loadGallery());
+
+    loadGallery();
+  </script>
+</body>
+</html>

@@ -470,12 +470,32 @@ function initPortalTilt() {
   });
 }
 
+function initAdminWorkspaceControls() {
+  if (!isAdminPage() || document.getElementById('gotegsAdminLogout')) return;
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.id = 'gotegsAdminLogout';
+  button.textContent = 'Log out';
+  button.setAttribute('aria-label', 'Log out of admin portal');
+  button.style.cssText = 'position:fixed;top:18px;right:18px;z-index:9000;border:1px solid #c8d7e5;border-radius:999px;padding:.62rem 1rem;background:#eef6ff;color:#0c4f8d;font:800 .74rem var(--font-display,system-ui);cursor:pointer;box-shadow:0 8px 24px rgba(7,47,88,.12);';
+  button.addEventListener('mouseenter', () => { button.style.background = '#dfefff'; });
+  button.addEventListener('mouseleave', () => { button.style.background = '#eef6ff'; });
+  button.addEventListener('click', () => {
+    sessionStorage.removeItem(ADMIN_AUTH_KEY);
+    sessionStorage.removeItem(ADMIN_TOKEN_KEY);
+    sessionStorage.removeItem('gotegs_records_authed');
+    window.location.href = '/admin/';
+  });
+  document.body.appendChild(button);
+}
+
 async function initShell() {
   const adminPage = isAdminPage();
   const studentPage = isStudentProtectedPath(window.location.pathname);
 
   if (adminPage) {
     document.body.classList.add("admin-shell-page");
+    initAdminWorkspaceControls();
   } else if (studentPage) {
     ensurePortalStylesheet();
     document.body.classList.add("student-shell-page");

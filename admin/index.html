@@ -24,15 +24,19 @@
   <div id="navbar-placeholder"></div>
 
   <main class="page-container admin-page">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1rem;">
     <nav class="breadcrumb">Admin</nav>
-    <h1>Admin Dashboard</h1>
+    <h1 style="margin:0;">Admin Dashboard</h1>
+    <button id="adminLogout" type="button" class="btn" style="margin-left:auto;background:#eef3f7;color:#1d4568;border:1px solid #c8d7e5;">Log out</button>
+    </div>
     <ul class="link-grid">
-    <li><a href="admin-updates/index.html">Post / Manage Updates</a></li>
-    <li><a href="admin-records/index.html">Manage Students &amp; Results</a></li>
-    <li><a href="admin-notes/index.html">Manage Lesson Notes</a></li>
-    <li><a href="admin-store/index.html">Manage Store Products</a></li>
-    <li><a href="admin-social/index.html">Manage Social Links</a></li>
-    <li><a href="admin-quiz-codes/index.html">Manage Quiz Codes</a></li>
+    <li><a href="/admin/admin-updates/index.html">Post / Manage Updates</a></li>
+    <li><a href="/admin/admin-records/index.html">Manage Students &amp; Results</a></li>
+    <li><a href="/admin/admin-notes/index.html">Manage Lesson Notes</a></li>
+    <li><a href="/admin/admin-store/index.html">Manage Store Products</a></li>
+    <li><a href="/admin/admin-social/index.html">Manage Social Links</a></li>
+    <li><a href="/admin/admin-quiz-codes/index.html">Manage Quiz Codes</a></li>
+    <li><a href="/admin/admin-gallery/index.html">Manage Gallery</a></li>
   </ul>
 
     <section class="admin-settings-panel" aria-labelledby="resultSettingsTitle">
@@ -80,7 +84,7 @@
 
       async function load(){
         try {
-          const res = await fetch('/api/admin-settings');
+          const res = await fetch('/api/admin-verify?settings=1', { headers: { 'Authorization': 'Bearer ' + token() } });
           const data = await res.json();
           if (res.ok) year.value = data.year || '';
         } catch (_) {}
@@ -91,7 +95,7 @@
         msg.textContent = 'Saving…'; msg.style.color = 'var(--slate)';
         const payload = { year: year.value.trim(), new_password: pass.value };
         try {
-          const res = await fetch('/api/admin-settings', {
+          const res = await fetch('/api/admin-verify?settings=1', {
             method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+token()}, body:JSON.stringify(payload)
           });
           const data = await res.json().catch(()=>({}));
@@ -103,6 +107,18 @@
       form.addEventListener('submit', save);
       document.addEventListener('gotegs:admin-authenticated', load, { once:true });
       if (sessionStorage.getItem('gotegs_admin_token')) load();
+    })();
+  </script>
+  <script>
+    (function(){
+      const logout = document.getElementById('adminLogout');
+      if (!logout) return;
+      logout.addEventListener('click', () => {
+        sessionStorage.removeItem('gotegs_admin_authed');
+        sessionStorage.removeItem('gotegs_admin_token');
+        sessionStorage.removeItem('gotegs_records_authed');
+        window.location.href = '/admin/';
+      });
     })();
   </script>
 
