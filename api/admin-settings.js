@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { createHmac, timingSafeEqual, createHash } from 'crypto';
+import { createHmac, timingSafeEqual } from 'crypto';
 
 function secret() {
   return process.env.ADMIN_SESSION_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY || '';
@@ -44,8 +44,8 @@ export default async function handler(req, res) {
 
     const update = { year };
     if (newPassword) {
-      update.admin_password_hash = createHash('sha256').update(newPassword, 'utf8').digest('hex');
-      update.admin_password = null;
+      update.admin_password = newPassword;
+      update.admin_password_hash = null;
     }
 
     const { error } = await supabase.from('admin_portal').update(update).eq('id', row.id);

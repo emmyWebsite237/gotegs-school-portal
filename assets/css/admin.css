@@ -34,3 +34,44 @@
   align-self: flex-start;
   margin-top: 0.75rem;
 }
+
+/* ---------- Private admin workspace ---------- */
+html.admin-page-mode,
+html.admin-page-mode body {
+  min-height: 100%;
+}
+
+@media (min-width: 900px) {
+  html.admin-page-mode body {
+    padding-left: 0 !important;
+  }
+}
+
+.admin-shell-page .page-container {
+  min-height: 100vh;
+  padding-top: 3.25rem;
+}
+
+.admin-page {
+  max-width: 1180px;
+}
+
+.admin-page .link-grid {
+  margin-top: 1.25rem;
+}
+
+.admin-page .link-grid li,
+.admin-page .link-grid a {
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+.admin-page .link-grid a:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(11, 63, 145, .10);
+}
+
+@media (max-width: 720px) {
+  .admin-shell-page .page-container {
+    padding-top: 1.5rem;
+  }
+}

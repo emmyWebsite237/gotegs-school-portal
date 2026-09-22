@@ -15,6 +15,10 @@
 const ADMIN_AUTH_KEY = "gotegs_admin_authed";
 const ADMIN_TOKEN_KEY = "gotegs_admin_token";
 
+if (isAdminPathCheck(window.location.pathname)) {
+  document.documentElement.classList.add("admin-page-mode");
+}
+
 if (isAdminPathCheck(window.location.pathname) && !hasAdminAuthSession()) {
   document.documentElement.style.visibility = "hidden";
 }
@@ -122,16 +126,20 @@ function showAdminGate() {
   const overlay = document.createElement("div");
   overlay.id = "adminGateOverlay";
   overlay.style.cssText = `
-    position: fixed; inset: 0; background: #3f0a0d; z-index: 9999; visibility: visible;
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(circle at 50% 0%, rgba(77, 169, 255, .34) 0%, transparent 38%),
+      linear-gradient(135deg, #0b63ce 0%, #0c479c 48%, #051f4d 100%);
+    z-index: 9999; visibility: visible;
     display: flex; align-items: center; justify-content: center; padding: 1rem; box-sizing: border-box;
   `;
   overlay.innerHTML = `
-    <div style="background:#fff; padding:2rem; border-radius:16px; width:100%; max-width:360px; text-align:center; font-family:sans-serif; box-shadow:0 24px 80px rgba(0,0,0,.3);">
+    <div style="background:rgba(255,255,255,.98); padding:2rem; border-radius:18px; width:100%; max-width:360px; text-align:center; font-family:sans-serif; box-shadow:0 24px 80px rgba(0,0,0,.3);">
       <h2 style="margin:0 0 .6rem; font-size:1.2rem; color:#1c1614;">Admin Access</h2>
       <p style="color:#6b5f5a; font-size:.9rem; margin-bottom:1rem;">Enter the admin password to continue.</p>
       <label for="adminGateInput" style="position:absolute;left:-9999px;">Admin password</label>
       <input type="password" id="adminGateInput" autocomplete="current-password" aria-describedby="adminGateMsg" style="width:100%; padding:.75rem; border:1px solid #e8dfcf; border-radius:9px; margin-bottom:.75rem; box-sizing:border-box;" />
-      <button id="adminGateBtn" type="button" style="width:100%; padding:.75rem; border:none; border-radius:9px; background:#7b1418; color:#fff; font-weight:700; cursor:pointer;">Enter</button>
+      <button id="adminGateBtn" type="button" style="width:100%; padding:.75rem; border:none; border-radius:9px; background:linear-gradient(135deg,#0b63ce,#083b8d); color:#fff; font-weight:700; cursor:pointer;">Enter</button>
       <p id="adminGateMsg" role="status" aria-live="polite" style="color:#dc2626; font-size:.85rem; margin-top:.6rem; min-height:1.1rem;"></p>
     </div>
   `;
@@ -425,16 +433,19 @@ function initPortalTilt() {
 }
 
 async function initShell() {
+  const adminPage = isAdminPage();
   const studentPage = isStudentProtectedPath(window.location.pathname);
 
-  if (studentPage) {
+  if (adminPage) {
+    document.body.classList.add("admin-shell-page");
+  } else if (studentPage) {
     ensurePortalStylesheet();
     document.body.classList.add("student-shell-page");
     await injectPartial("/partials/student-shell.html", "navbar-placeholder");
     initStudentPortalShell();
     initPortalPointer();
     initPortalTilt();
-  } else {
+  } else if (!adminPage) {
     await injectPartial("/partials/navbar.html", "navbar-placeholder");
     await injectPartial("/partials/footer.html", "footer-placeholder");
 
