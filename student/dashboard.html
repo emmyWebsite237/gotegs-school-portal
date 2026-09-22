@@ -9,169 +9,30 @@
 </head>
 <body class="student-shell-page">
   <div id="navbar-placeholder"></div>
-
   <main class="portal-dashboard">
-    <div class="dashboard-topline">
-      <span>Go-Tegs / Student Workspace</span>
-      <span id="portalDate">Today</span>
-    </div>
-
+    <div class="dashboard-topline"><span>Go-Tegs / Student Workspace</span><span id="portalDate">Today</span></div>
     <section class="portal-hero" aria-labelledby="dashboardHeading">
-      <div class="portal-hero-copy">
-        <div class="portal-kicker">Private student command centre</div>
-        <h1 id="dashboardHeading">Welcome back, <span id="dashName">Student</span>.</h1>
-        <p>Your school workspace is focused on the things that belong to you: learning, practice, your profile and the next tools coming online.</p>
-        <div class="portal-identity-row">
-          <span class="portal-identity-chip">⌁ <span id="dashClass">Student profile</span></span>
-          <span class="portal-identity-chip">ID <span id="dashStudentId">—</span></span>
-          <span class="portal-identity-chip">Session <span id="dashYear">—</span></span>
-        </div>
-      </div>
-
-      <div class="portal-hero-orbit" aria-hidden="true">
-        <span class="portal-orbit-tag a">LEARN</span>
-        <span class="portal-orbit-tag b">LEAD</span>
-        <span class="portal-orbit-tag c">BECOME</span>
-        <div class="portal-orbit-core">
-          <img src="/assets/img/logo.png" alt="" />
-        </div>
-      </div>
+      <div class="portal-hero-copy"><div class="portal-kicker">Private student command centre</div><h1 id="dashboardHeading">Welcome back, <span id="dashName">Student</span>.</h1><p>Your school workspace is focused on the things that belong to you: learning, practice, your profile and the next tools coming online.</p><div class="portal-identity-row"><span class="portal-identity-chip">⌁ <span id="dashClass">Student profile</span></span><span class="portal-identity-chip">ID <span id="dashStudentId">—</span></span><span class="portal-identity-chip">Session <span id="dashYear">—</span></span></div></div>
+      <div class="portal-hero-orbit" aria-hidden="true"><span class="portal-orbit-tag a">LEARN</span><span class="portal-orbit-tag b">LEAD</span><span class="portal-orbit-tag c">BECOME</span><div class="portal-orbit-core"><img src="/assets/img/logo.png" data-portal-profile-image alt="Student profile photo" /></div></div>
     </section>
-
-    <section class="portal-section" aria-labelledby="learningTitle">
-      <div class="portal-section-head">
-        <div>
-          <div class="portal-section-label">Your workspace</div>
-          <h2 class="portal-section-title" id="learningTitle">Learn, track and move</h2>
-        </div>
-        <p class="portal-section-note">Only student tools live here.</p>
-      </div>
-
-      <div class="portal-card-grid">
-        <a class="portal-card portal-card--feature span-7" href="/student/profile.html" data-portal-interactive data-tilt-card>
-          <div class="portal-card-top">
-            <span class="portal-icon">◉</span>
-            <span class="portal-badge">Profile</span>
-          </div>
-          <h3>Your Profile</h3>
-          <p>See the student information attached to this portal session.</p>
-          <span class="portal-arrow">↗</span>
-        </a>
-
-        <a class="portal-card span-5" href="/student/lesson-notes/index.html" data-portal-interactive data-tilt-card>
-          <div class="portal-card-top">
-            <span class="portal-icon">▤</span>
-            <span class="portal-badge">Study</span>
-          </div>
-          <h3>Lesson Notes</h3>
-          <p>Jump straight into notes for your class, term and subjects.</p>
-          <span class="portal-arrow">↗</span>
-        </a>
-
-        <a class="portal-card span-5" href="/student/result/index.html" data-portal-interactive data-tilt-card>
-          <div class="portal-card-top">
-            <span class="portal-icon">▥</span>
-            <span class="portal-badge">Academic</span>
-          </div>
-          <h3>Results</h3>
-          <p>Check your released result when the school has enabled access for your account.</p>
-          <span class="portal-arrow">↗</span>
-        </a>
-      </div>
-    </section>
-
-    <section class="portal-section" aria-labelledby="practiceTitle">
-      <div class="portal-section-head">
-        <div>
-          <div class="portal-section-label">Practice zone</div>
-          <h2 class="portal-section-title" id="practiceTitle">Think. Play. Challenge yourself.</h2>
-        </div>
-        <p class="portal-section-note">Your interactive learning space.</p>
-      </div>
-
-      <div class="portal-card-grid">
-        <a class="portal-card portal-card--dark span-6" href="/quiz.html" data-portal-interactive data-tilt-card>
-          <div class="portal-card-top">
-            <span class="portal-icon">✦</span>
-            <span class="portal-badge">Practice</span>
-          </div>
-          <h3>Quiz &amp; Practice</h3>
-          <p>Answer questions, build your quiz profile and keep sharpening your skills.</p>
-          <span class="portal-arrow">↗</span>
-        </a>
-
-        <a class="portal-card span-6" href="/quiz-code.html" data-portal-interactive data-tilt-card>
-          <div class="portal-card-top">
-            <span class="portal-icon">⌘</span>
-            <span class="portal-badge">Teacher code</span>
-          </div>
-          <h3>Quiz Code</h3>
-          <p>Enter a teacher-provided code and unlock the quiz assigned to you.</p>
-          <span class="portal-arrow">↗</span>
-        </a>
-      </div>
-    </section>
-
-    <section class="portal-section" aria-labelledby="futureTitle">
-      <div class="portal-section-head">
-        <div>
-          <div class="portal-section-label">Next up</div>
-          <h2 class="portal-section-title" id="futureTitle">More is being built</h2>
-        </div>
-        <p class="portal-section-note">Inactive until the school opens each feature.</p>
-      </div>
-
-      <div class="portal-card-grid">
-        <div class="portal-card portal-card--disabled span-6" aria-disabled="true">
-          <div class="portal-card-top">
-            <span class="portal-icon">♜</span>
-            <span class="portal-badge">Coming Soon</span>
-          </div>
-          <h3>Tournaments</h3>
-          <p>Competitive school challenges are planned for a future portal release.</p>
-        </div>
-
-        <div class="portal-card portal-card--disabled span-6" aria-disabled="true">
-          <div class="portal-card-top">
-            <span class="portal-icon">▣</span>
-            <span class="portal-badge">Coming Soon</span>
-          </div>
-          <h3>School Leaving Testimonial</h3>
-          <p>This area remains inactive until your testimonial is issued and the school opens it.</p>
-        </div>
-      </div>
-
-      <div class="portal-focus">
-        <div class="portal-focus-mark">→</div>
-        <div>
-          <strong>Your next move</strong>
-          <span>Pick one live module above and keep the portal moving with you. New tools can be switched on without changing this workspace.</span>
-        </div>
-      </div>
-    </section>
+    <section class="portal-section" aria-labelledby="learningTitle"><div class="portal-section-head"><div><div class="portal-section-label">Your workspace</div><h2 class="portal-section-title" id="learningTitle">Learn, track and move</h2></div><p class="portal-section-note">Only student tools live here.</p></div><div class="portal-card-grid">
+      <a class="portal-card portal-card--feature span-7" href="/student/profile.html" data-portal-interactive data-tilt-card><div class="portal-card-top"><span class="portal-icon portal-icon--profile"><span class="portal-card-avatar"><img src="/assets/img/logo.png" data-portal-profile-image alt="" /></span></span><span class="portal-badge">Profile</span></div><h3>Your Profile</h3><p>See the student information attached to this portal session.</p><span class="portal-arrow">↗</span></a>
+      <a class="portal-card span-5" href="/student/lesson-notes/index.html" data-portal-interactive data-tilt-card><div class="portal-card-top"><span class="portal-icon">▤</span><span class="portal-badge">Study</span></div><h3>Lesson Notes</h3><p>Jump straight into notes for your class, term and subjects.</p><span class="portal-arrow">↗</span></a>
+      <a class="portal-card span-5" href="/student/result/index.html" data-portal-interactive data-tilt-card><div class="portal-card-top"><span class="portal-icon">▥</span><span class="portal-badge">Academic</span></div><h3>Results</h3><p>Check your released result when the school has enabled access for your account.</p><span class="portal-arrow">↗</span></a>
+    </div></section>
+    <section class="portal-section" aria-labelledby="practiceTitle"><div class="portal-section-head"><div><div class="portal-section-label">Practice zone</div><h2 class="portal-section-title" id="practiceTitle">Think. Play. Challenge yourself.</h2></div><p class="portal-section-note">Your interactive learning space.</p></div><div class="portal-card-grid">
+      <a class="portal-card portal-card--dark span-6" href="/quiz.html" data-portal-interactive data-tilt-card><div class="portal-card-top"><span class="portal-icon">✦</span><span class="portal-badge">Practice</span></div><h3>Quiz &amp; Practice</h3><p>Answer questions, build your quiz profile and keep sharpening your skills.</p><span class="portal-arrow">↗</span></a>
+      <a class="portal-card span-6" href="/quiz-code.html" data-portal-interactive data-tilt-card><div class="portal-card-top"><span class="portal-icon">⌘</span><span class="portal-badge">Teacher code</span></div><h3>Quiz Code</h3><p>Enter a teacher-provided code and unlock the quiz assigned to you.</p><span class="portal-arrow">↗</span></a>
+    </div></section>
+    <section class="portal-section" aria-labelledby="futureTitle"><div class="portal-section-head"><div><div class="portal-section-label">Next up</div><h2 class="portal-section-title" id="futureTitle">More is being built</h2></div><p class="portal-section-note">Inactive until the school opens each feature.</p></div><div class="portal-card-grid">
+      <div class="portal-card portal-card--disabled span-6" aria-disabled="true"><div class="portal-card-top"><span class="portal-icon">♜</span><span class="portal-badge">Coming Soon</span></div><h3>Tournaments</h3><p>Competitive school challenges are planned for a future portal release.</p></div>
+      <div class="portal-card portal-card--disabled span-6" aria-disabled="true"><div class="portal-card-top"><span class="portal-icon">▣</span><span class="portal-badge">Coming Soon</span></div><h3>School Leaving Testimonial</h3><p>This area remains inactive until your testimonial is issued and the school opens it.</p></div>
+    </div><div class="portal-focus"><div class="portal-focus-mark">→</div><div><strong>Your next move</strong><span>Pick one live module above and keep the portal moving with you. New tools can be switched on without changing this workspace.</span></div></div></section>
   </main>
-
   <div id="footer-placeholder"></div>
   <script src="/assets/js/main.js"></script>
   <script>
-    (function () {
-      const raw = localStorage.getItem('gotegs_student_session');
-      if (!raw) return;
-      let session;
-      try { session = JSON.parse(raw); } catch { return; }
-
-      const esc = (value) => String(value ?? '—');
-      document.getElementById('dashName').textContent = esc(session.full_name || 'Student');
-      document.getElementById('dashClass').textContent =
-        esc(session.class || 'Class') + (session.dept ? ' · ' + esc(session.dept) : '');
-      document.getElementById('dashStudentId').textContent = esc(session.student_id);
-      document.getElementById('dashYear').textContent = esc(session.year || 'Current');
-
-      const now = new Date();
-      document.getElementById('portalDate').textContent = now.toLocaleDateString(undefined, {
-        weekday:'long', month:'short', day:'numeric'
-      });
-    })();
+    (function(){const raw=localStorage.getItem('gotegs_student_session');if(!raw)return;let session;try{session=JSON.parse(raw)}catch{return}const esc=v=>String(v??'—');document.getElementById('dashName').textContent=esc(session.full_name||'Student');document.getElementById('dashClass').textContent=esc(session.class||'Class')+(session.dept?' · '+esc(session.dept):'');document.getElementById('dashStudentId').textContent=esc(session.student_id);document.getElementById('dashYear').textContent=esc(session.year||'Current');document.getElementById('portalDate').textContent=new Date().toLocaleDateString(undefined,{weekday:'long',month:'short',day:'numeric'});})();
   </script>
 </body>
 </html>

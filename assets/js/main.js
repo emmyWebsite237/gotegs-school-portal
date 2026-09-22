@@ -307,23 +307,16 @@ function initStudentPortalShell() {
   if (!session) return;
 
   const name = String(session.full_name || "Student");
-  const initials = name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0])
-    .join("")
-    .toUpperCase() || "GT";
+  const initials = name.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]).join("").toUpperCase() || "GT";
   const classLine = `${session.class || "Student"}${session.dept ? " · " + session.dept : ""}`;
+  const fallbackLogo = "/assets/img/logo.png";
 
-  document.querySelectorAll("[data-portal-name]").forEach((el) => {
-    el.textContent = name;
-  });
-  document.querySelectorAll("[data-portal-class]").forEach((el) => {
-    el.textContent = classLine;
-  });
-  document.querySelectorAll("[data-portal-initials]").forEach((el) => {
-    el.textContent = initials;
+  document.querySelectorAll("[data-portal-name]").forEach((el) => { el.textContent = name; });
+  document.querySelectorAll("[data-portal-class]").forEach((el) => { el.textContent = classLine; });
+  document.querySelectorAll("[data-portal-initials]").forEach((el) => { el.textContent = initials; });
+  document.querySelectorAll("[data-portal-profile-image], [data-profile-image]").forEach((img) => {
+    img.src = session.profile_pic_url || fallbackLogo;
+    img.alt = session.profile_pic_url ? `${name} profile picture` : "Go-Tegs logo";
   });
 
   const path = window.location.pathname;
@@ -363,9 +356,7 @@ function initStudentPortalShell() {
     scrim.addEventListener("click", () => setOpen(false));
     if (close) close.addEventListener("click", () => setOpen(false));
     drawer.querySelectorAll("a").forEach((a) => a.addEventListener("click", () => setOpen(false)));
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") setOpen(false);
-    });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") setOpen(false); });
   }
 }
 
