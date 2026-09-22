@@ -6,43 +6,56 @@
   <title>Manage Student Records | Admin | Go-Tegs</title>
   <link rel="stylesheet" href="/assets/css/style.css" />
   <link rel="stylesheet" href="/assets/css/admin.css" />
-    <style>
-    #authCard {
-      max-width: 380px; margin-top: 1.5rem; padding: 1.75rem;
-      border: 1px solid var(--border); border-radius: var(--radius); background: var(--paper);
-    }
-    #authMsg { font-size:.85rem; font-weight:600; min-height:1.2rem; }
+  <style>
+    .records-head{display:flex;justify-content:space-between;gap:1rem;align-items:flex-end;margin-bottom:1rem}.records-head h1{margin-bottom:.25rem}.records-head p{margin:0;max-width:780px;color:var(--slate);font-size:.84rem}.records-toolbar{display:flex;gap:.65rem;flex-wrap:wrap;align-items:center;margin:1rem 0}.records-toolbar select,.records-toolbar input{padding:.62rem .72rem;border:1px solid #d7e0e7;border-radius:10px;background:#fff;font:600 .76rem var(--font-display);color:#263e52}.records-count{margin-left:auto;color:#7c8c99;font-size:.75rem;font-weight:800}.student-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}.student-card{position:relative;overflow:hidden;border:1px solid #dce5ed;border-radius:20px;background:linear-gradient(160deg,#fff,#f6fbff);box-shadow:0 14px 34px rgba(12,48,79,.07);padding:1rem}.student-top{display:flex;gap:.8rem;align-items:center}.avatar{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,#0b4f9c,#19a7c7);color:#fff;font:900 .78rem var(--font-display)}.student-name{font:900 .9rem var(--font-display);color:#173149}.student-sub{margin-top:.14rem;color:#83929f;font-size:.68rem}.facts{display:grid;grid-template-columns:1fr 1fr;gap:.55rem;margin:1rem 0}.fact{padding:.55rem .62rem;border-radius:12px;background:#f1f6fa}.fact small{display:block;color:#8b9aa7;font-size:.59rem;text-transform:uppercase;letter-spacing:.08em}.fact strong{display:block;margin-top:.12rem;color:#2a4053;font-size:.72rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.card-actions{display:flex;gap:.5rem}.card-actions .btn{flex:1;text-align:center}.modal-backdrop{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:1rem;background:rgba(6,22,39,.68);backdrop-filter:blur(8px);z-index:10000}.modal-backdrop.open{display:flex}.edit-modal{width:min(760px,100%);max-height:90vh;overflow:auto;background:#fff;border:1px solid #dbe5ed;border-radius:24px;box-shadow:0 32px 90px rgba(0,0,0,.30);padding:1.2rem}.modal-head{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start;border-bottom:1px solid #e8eef3;padding-bottom:.9rem;margin-bottom:1rem}.modal-head h2{margin:0;font-size:1.1rem}.modal-head p{margin:.25rem 0 0;font-size:.73rem;color:#7f8f9c}.close{width:38px;height:38px;border-radius:12px;border:1px solid #dce5ed;background:#f7fafc;color:#466177;font-size:1.1rem;cursor:pointer}.edit-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.8rem}.field label{display:block;margin-bottom:.34rem;color:#778897;font:800 .63rem var(--font-display);letter-spacing:.08em;text-transform:uppercase}.field input,.field select{width:100%;box-sizing:border-box;padding:.68rem .72rem;border:1px solid #d5e0e8;border-radius:10px;background:#fbfdff;font:600 .78rem var(--font-body);color:#22394d}.truth{display:inline-flex;align-items:center;gap:.5rem}.truth-btn{min-width:76px;border:0;border-radius:999px;padding:.48rem .68rem;font:900 .65rem var(--font-display);letter-spacing:.07em;cursor:pointer}.truth-btn.true{background:#ddf8ed;color:#087a60}.truth-btn.false{background:#edf0f3;color:#65747d}.truth-note{font-size:.69rem;color:#7f8e9b}.modal-actions{display:flex;align-items:center;gap:.6rem;border-top:1px solid #e8eef3;margin-top:1rem;padding-top:1rem}.status{margin-right:auto;min-height:1.1rem;font-size:.75rem;font-weight:800}@media(max-width:980px){.student-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:650px){.records-head{align-items:flex-start;flex-direction:column}.records-count{margin-left:0}.student-grid{grid-template-columns:1fr}.edit-grid{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
-  <div id="navbar-placeholder"></div>
-
-  <main class="page-container admin-page" style="max-width: 1100px;">
+  <main class="page-container admin-page" style="max-width:1200px;">
     <nav class="breadcrumb">Admin / Records</nav>
-    <h1>Manage Student Records</h1>
-    <p>Use your authenticated admin session to view Mid-Term Test and Full Session records, broken down by section and class.</p>
-
-    <div id="authCard" style="max-width:620px; margin-top:1.5rem; padding:1.5rem; border:1px solid var(--border); border-radius:var(--radius); background:var(--paper);">
-      <strong>Admin session verified.</strong>
-      <p style="margin:.45rem 0 1rem; font-size:.84rem; color:var(--slate);">Choose a records section to continue. The same admin password protects this area; there is no second student-style login here.</p>
-      <div class="link-grid" id="sectionChoice">
-        <a href="jss/index.html">Junior Section (JSS) Records</a>
-        <a href="sss/index.html">Senior Section (SSS) Records</a>
-      </div>
-    </div>
+    <div class="records-head"><div><h1>Student Records</h1><p>Use the graphical editor below to update student identity and account details. Academic marks remain in the Results workspace.</p></div><a class="btn" href="/admin/index.html">Back to Admin</a></div>
+    <div class="records-toolbar"><select id="section"><option value="all">All sections</option><option value="jss_students">JSS</option><option value="sss_students">SSS</option></select><select id="class"><option value="all">All classes</option></select><input id="search" type="search" placeholder="Search name or ID…" aria-label="Search students"><span class="records-count" id="count">Loading…</span></div>
+    <p id="message" role="status" aria-live="polite"></p>
+    <section class="student-grid" id="grid"></section>
   </main>
 
-  <div id="footer-placeholder"></div>
+  <div class="modal-backdrop" id="backdrop" aria-hidden="true">
+    <section class="edit-modal" role="dialog" aria-modal="true" aria-labelledby="editTitle">
+      <div class="modal-head"><div><h2 id="editTitle">Edit student</h2><p id="editSubtitle">Student account details</p></div><button class="close" id="close" type="button" aria-label="Close">×</button></div>
+      <form id="form">
+        <div class="edit-grid">
+          <div class="field"><label for="fullName">Full name</label><input id="fullName" required></div>
+          <div class="field"><label for="studentId">Student ID</label><input id="studentId" required></div>
+          <div class="field"><label for="studentClass">Class</label><select id="studentClass" required></select></div>
+          <div class="field" id="deptField"><label for="dept">Department</label><input id="dept"></div>
+          <div class="field"><label for="pin">PIN</label><input id="pin" required></div>
+          <div class="field"><label for="dob">Date of birth</label><input id="dob" type="date"></div>
+          <div class="field"><label for="admission">Admission date</label><input id="admission" type="date"></div>
+          <div class="field"><label>Paid / released</label><div class="truth"><button id="paidBtn" class="truth-btn false" type="button" aria-pressed="false">FALSE</button><span class="truth-note" id="paidNote">Not marked as paid.</span></div></div>
+        </div>
+        <div class="modal-actions"><span class="status" id="editMsg" role="status" aria-live="polite"></span><button class="btn" type="button" id="cancel">Cancel</button><button class="btn" type="submit" id="save">Save changes</button></div>
+      </form>
+    </section>
+  </div>
 
   <script src="/assets/js/main.js"></script>
   <script>
-    (function(){
-      const openRecords = () => {
-        if (sessionStorage.getItem('gotegs_admin_token')) sessionStorage.setItem('gotegs_records_authed','true');
-      };
-      document.addEventListener('gotegs:admin-authenticated', openRecords, {once:true});
-      openRecords();
-    })();
+  (()=>{
+    const grid=document.getElementById('grid'),msg=document.getElementById('message'),count=document.getElementById('count'),section=document.getElementById('section'),klass=document.getElementById('class'),search=document.getElementById('search'),backdrop=document.getElementById('backdrop'),form=document.getElementById('form'),editMsg=document.getElementById('editMsg'),studentClass=document.getElementById('studentClass'),deptField=document.getElementById('deptField');
+    const token=()=>sessionStorage.getItem('gotegs_admin_token')||''; const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); const initials=n=>String(n||'Student').split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase()||'GT';
+    let all=[],current=null,paid=false;
+    const api=p=>fetch('/api/admin-students',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token()},body:JSON.stringify(p)}).then(async r=>{const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||'Request failed.');return d;});
+    const classesFor=s=>s==='jss_students'?['JSS 1','JSS 2','JSS 3']:s==='sss_students'?['SSS 1','SSS 2','SSS 3']:['JSS 1','JSS 2','JSS 3','SSS 1','SSS 2','SSS 3'];
+    function updateClassFilter(){const values=classesFor(section.value);klass.innerHTML='<option value="all">All classes</option>'+values.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join('');}
+    function render(){const q=search.value.trim().toLowerCase(),s=section.value,c=klass.value;const list=all.filter(st=>(s==='all'||st.section===s)&&(c==='all'||st.class===c)&&(!q||String(st.full_name||'').toLowerCase().includes(q)||String(st.student_id||'').toLowerCase().includes(q)));count.textContent=`${list.length} student${list.length===1?'':'s'}`;if(!list.length){grid.innerHTML='<div style="grid-column:1/-1;padding:2rem;text-align:center;color:#7b8a98;">No matching students.</div>';return;}grid.innerHTML=list.map(st=>`<article class="student-card"><div class="student-top"><div class="avatar">${esc(initials(st.full_name))}</div><div><div class="student-name">${esc(st.full_name)}</div><div class="student-sub">${esc(st.student_id)} · ${esc(st.class)}${st.section==='sss_students'&&st.dept?' · '+esc(st.dept):''}</div></div></div><div class="facts"><div class="fact"><small>PIN</small><strong>${esc(st.pin)}</strong></div><div class="fact"><small>Paid</small><strong>${st.is_paid===true?'TRUE':'FALSE'}</strong></div><div class="fact"><small>Result access</small><strong>${st.can_check_result===true?'TRUE':'FALSE'}</strong></div><div class="fact"><small>Checks</small><strong>${Number(st.check_count||0)} / 3</strong></div></div><div class="card-actions"><button class="btn" type="button" data-edit="${esc(st.id)}" data-section="${esc(st.section)}">Edit details</button></div></article>`).join('');grid.querySelectorAll('[data-edit]').forEach(b=>b.addEventListener('click',()=>openEditor(b.dataset.edit,b.dataset.section)));}
+    async function load(){msg.textContent='Loading students…';msg.style.color='var(--slate)';try{const d=await api({action:'list'});all=d.students||[];updateClassFilter();render();msg.textContent='Student records ready.';msg.style.color='#0f766e';}catch(e){msg.textContent=e.message;msg.style.color='#dc2626';}}
+    function setClassOptions(sec,value){studentClass.innerHTML=classesFor(sec).map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join('');studentClass.value=value||classesFor(sec)[0];}
+    function setPaid(v){paid=!!v;const b=document.getElementById('paidBtn');b.textContent=paid?'TRUE':'FALSE';b.className='truth-btn '+(paid?'true':'false');b.setAttribute('aria-pressed',String(paid));document.getElementById('paidNote').textContent=paid?'Marked as paid/released.':'Not marked as paid.';}
+    async function openEditor(id,sec){backdrop.classList.add('open');backdrop.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';editMsg.textContent='Loading…';try{const d=await api({action:'get',id,section:sec});current=d.student;document.getElementById('editTitle').textContent='Edit '+current.full_name;document.getElementById('editSubtitle').textContent=current.student_id+' · '+current.class;document.getElementById('fullName').value=current.full_name||'';document.getElementById('studentId').value=current.student_id||'';setClassOptions(sec,current.class);deptField.style.display=sec==='sss_students'?'block':'none';document.getElementById('dept').value=current.dept||'';document.getElementById('pin').value=current.pin||'';document.getElementById('dob').value=(current.dob||'').slice(0,10);document.getElementById('admission').value=(current.admission_date||'').slice(0,10);setPaid(current.is_paid===true);editMsg.textContent='';document.getElementById('fullName').focus();}catch(e){editMsg.textContent=e.message;editMsg.style.color='#dc2626';}}
+    async function save(e){e.preventDefault();if(!current)return;editMsg.textContent='Saving…';editMsg.style.color='var(--slate)';try{const d=await api({action:'update',id:current.id,section:current.section,data:{full_name:document.getElementById('fullName').value,student_id:document.getElementById('studentId').value,class:studentClass.value,dept:document.getElementById('dept').value,pin:document.getElementById('pin').value,dob:document.getElementById('dob').value,admission_date:document.getElementById('admission').value,is_paid:paid}});const idx=all.findIndex(st=>st.id===current.id&&st.section===current.section);if(idx>=0)all[idx]=d.student;closeEditor();render();msg.textContent='Student details saved.';msg.style.color='#0f766e';}catch(e){editMsg.textContent=e.message;editMsg.style.color='#dc2626';}}
+    function closeEditor(){backdrop.classList.remove('open');backdrop.setAttribute('aria-hidden','true');document.body.style.overflow='';current=null;}
+    document.getElementById('paidBtn').addEventListener('click',()=>setPaid(!paid));form.addEventListener('submit',save);document.getElementById('close').addEventListener('click',closeEditor);document.getElementById('cancel').addEventListener('click',closeEditor);backdrop.addEventListener('click',e=>{if(e.target===backdrop)closeEditor()});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&backdrop.classList.contains('open'))closeEditor()});section.addEventListener('change',()=>{updateClassFilter();render()});klass.addEventListener('change',render);search.addEventListener('input',render);document.addEventListener('gotegs:admin-authenticated',load,{once:true});if(token())load();
+  })();
   </script>
 </body>
 </html>
