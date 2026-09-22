@@ -1,22 +1,85 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "redirects": [
-    {"source":"/admin-updates","destination":"/admin/admin-updates/index.html","permanent":false},
-    {"source":"/admin-updates/:path*","destination":"/admin/admin-updates/:path*","permanent":false},
-    {"source":"/admin-result","destination":"/admin/admin-result/index.html","permanent":false},
-    {"source":"/admin-result/:path*","destination":"/admin/admin-result/:path*","permanent":false},
-    {"source":"/admin-records","destination":"/admin/admin-records/index.html","permanent":false},
-    {"source":"/admin-records/:path*","destination":"/admin/admin-records/:path*","permanent":false},
-    {"source":"/admin-notes","destination":"/admin/admin-notes/index.html","permanent":false},
-    {"source":"/admin-notes/:path*","destination":"/admin/admin-notes/:path*","permanent":false},
-    {"source":"/admin-store","destination":"/admin/admin-store/index.html","permanent":false},
-    {"source":"/admin-store/:path*","destination":"/admin/admin-store/:path*","permanent":false},
-    {"source":"/admin-social","destination":"/admin/admin-social/index.html","permanent":false},
-    {"source":"/admin-social/:path*","destination":"/admin/admin-social/:path*","permanent":false},
-    {"source":"/admin-quiz-codes","destination":"/admin/admin-quiz-codes/index.html","permanent":false},
-    {"source":"/admin-quiz-codes/:path*","destination":"/admin/admin-quiz-codes/:path*","permanent":false}
+    {
+      "source": "/admin-updates",
+      "destination": "/admin/admin-updates/index.html",
+      "permanent": false
+    },
+    {
+      "source": "/admin-updates/:path*",
+      "destination": "/admin/admin-updates/:path*",
+      "permanent": false
+    },
+    {
+      "source": "/admin-result",
+      "destination": "/admin/admin-records/index.html",
+      "permanent": false
+    },
+    {
+      "source": "/admin-result/:path*",
+      "destination": "/admin/admin-records/:path*",
+      "permanent": false
+    },
+    {
+      "source": "/admin-records",
+      "destination": "/admin/admin-records/index.html",
+      "permanent": false
+    },
+    {
+      "source": "/admin-records/:path*",
+      "destination": "/admin/admin-records/:path*",
+      "permanent": false
+    },
+    {
+      "source": "/admin-notes",
+      "destination": "/admin/admin-notes/index.html",
+      "permanent": false
+    },
+    {
+      "source": "/admin-notes/:path*",
+      "destination": "/admin/admin-notes/:path*",
+      "permanent": false
+    },
+    {
+      "source": "/admin-store",
+      "destination": "/admin/admin-store/index.html",
+      "permanent": false
+    },
+    {
+      "source": "/admin-store/:path*",
+      "destination": "/admin/admin-store/:path*",
+      "permanent": false
+    },
+    {
+      "source": "/admin-social",
+      "destination": "/admin/admin-social/index.html",
+      "permanent": false
+    },
+    {
+      "source": "/admin-social/:path*",
+      "destination": "/admin/admin-social/:path*",
+      "permanent": false
+    },
+    {
+      "source": "/admin-quiz-codes",
+      "destination": "/admin/admin-quiz-codes/index.html",
+      "permanent": false
+    },
+    {
+      "source": "/admin-quiz-codes/:path*",
+      "destination": "/admin/admin-quiz-codes/:path*",
+      "permanent": false
+    }
   ],
   "rewrites": [
-    {"source":"/api/admin-settings","destination":"/api/admin-verify?settings=1"}
+    {
+      "source": "/api/admin-settings",
+      "destination": "/api/admin-verify?settings=1"
+    },
+    {
+      "source": "/api/admin-results",
+      "destination": "/api/admin-students"
+    }
   ]
 }
