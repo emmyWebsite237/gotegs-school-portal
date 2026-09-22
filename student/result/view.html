@@ -24,7 +24,7 @@
         </div>
       </div>
 
-      <div class="report-title" id="dispTerm"></div>
+      <div class="report-title" id="dispSession"></div>
 
       <div class="info-grid">
         <div class="info-item"><span class="info-label">Name:</span> <span id="dispName"></span></div>
@@ -124,13 +124,13 @@
       const data = JSON.parse(raw);
 
       document.getElementById('unofficialOverlay').style.display = data.is_paid ? 'none' : 'block';
-      document.getElementById('dispTerm').textContent = `${data.term || 'Term'} Report`;
+      document.getElementById('dispSession').textContent = `${data.year || 'Current School Year'} Report`;
       document.getElementById('dispName').textContent = data.full_name;
       document.getElementById('dispDob').textContent = data.dob || '---';
       document.getElementById('dispClass').textContent = data.class + (data.dept ? ` (${data.dept})` : '');
       document.getElementById('dispOpened').textContent = data.opened || '0';
-      document.getElementById('dispPresent').textContent = data.present || '0';
-      document.getElementById('dispAbsent').textContent = (data.opened || 0) - (data.present || 0);
+      document.getElementById('dispPresent').textContent = data.is_present ?? data.present ?? '0';
+      document.getElementById('dispAbsent').textContent = (Number(data.opened) || 0) - (Number(data.is_present ?? data.present) || 0);
       document.getElementById('dispTeacher').textContent = data.teacher_remark || '---';
 
       let rows = '';

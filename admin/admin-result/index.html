@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -6,20 +6,88 @@
   <title>Manage Results | Admin | Go-Tegs</title>
   <link rel="stylesheet" href="/assets/css/style.css" />
   <link rel="stylesheet" href="/assets/css/admin.css" />
+  <style>
+    .results-admin-head{display:flex;justify-content:space-between;gap:1rem;align-items:flex-end;margin-bottom:1.2rem}.results-admin-head p{max-width:720px;font-size:.84rem;color:var(--slate);margin:.35rem 0 0}
+    .results-admin-meta{padding:.8rem 1rem;border:1px solid var(--border);border-radius:12px;background:#fbfcfd;font-size:.78rem;white-space:nowrap}.results-admin-meta strong{display:block;color:var(--teal-dark);font-size:1rem;margin-top:.15rem}
+    .result-access-table-wrap{overflow:auto;border:1px solid var(--border);border-radius:14px;background:var(--paper)}
+    .result-access-table{width:100%;border-collapse:collapse;min-width:760px}.result-access-table th,.result-access-table td{padding:.72rem .7rem;border-bottom:1px solid #edf0f1;text-align:left;font-size:.78rem}.result-access-table th{font:800 .68rem var(--font-display);letter-spacing:.08em;text-transform:uppercase;color:var(--slate);background:#f7f9f9}.result-access-table tr:last-child td{border-bottom:0}
+    .access-pill{display:inline-flex;align-items:center;gap:.35rem;padding:.32rem .55rem;border-radius:999px;font-size:.68rem;font-weight:800}.access-pill.on{background:#e7f8f4;color:#0f766e}.access-pill.off{background:#f0f2f3;color:#6d7478}
+    .access-toggle{display:inline-flex;align-items:center;gap:.45rem;cursor:pointer;font-weight:700}.access-toggle input{accent-color:var(--teal);width:17px;height:17px}
+    .mini-btn{padding:.42rem .58rem;border:1px solid var(--border);border-radius:7px;background:#fff;cursor:pointer;font:700 .68rem var(--font-display)}
+    #resultsAdminMsg{min-height:1.3rem;margin:.8rem 0;font-size:.8rem;font-weight:700}.result-filters{display:flex;gap:.65rem;flex-wrap:wrap;margin:1rem 0}.result-filters select{padding:.55rem .65rem;border:1px solid var(--border);border-radius:8px;background:#fff}
+    @media(max-width:720px){.results-admin-head{align-items:flex-start;flex-direction:column}.results-admin-meta{white-space:normal}}
+  </style>
 </head>
 <body>
   <div id="navbar-placeholder"></div>
-
-  <main class="page-container admin-page">
+  <main class="page-container admin-page" style="max-width:1150px;">
     <nav class="breadcrumb">Admin / Results</nav>
-    <h1>Manage Results</h1>
-    <p>Result management goes here.</p>
+    <div class="results-admin-head">
+      <div><h1>Manage Student Results</h1><p>Control which students are permitted to check their result. A denied result-check attempt still increments that student's check count, as configured by the portal logic.</p></div>
+      <div class="results-admin-meta">Current school year<strong id="currentYear">Loading…</strong></div>
+    </div>
+    <div class="result-filters">
+      <select id="sectionFilter"><option value="all">All sections</option><option value="jss_students">JSS</option><option value="sss_students">SSS</option></select>
+      <select id="classFilter"><option value="all">All classes</option></select>
+      <button class="btn" type="button" id="refreshResults">Refresh</button>
+    </div>
+    <p id="resultsAdminMsg" role="status" aria-live="polite"></p>
+    <div class="result-access-table-wrap"><table class="result-access-table"><thead><tr><th>Student</th><th>ID</th><th>Class</th><th>Dept</th><th>Checks</th><th>Paid</th><th>Result access</th><th>Attempts</th></tr></thead><tbody id="resultRows"><tr><td colspan="8">Loading…</td></tr></tbody></table></div>
   </main>
-
   <div id="footer-placeholder"></div>
-
   <script src="/assets/js/main.js"></script>
-  <script src="/assets/js/auth.js"></script>
-  <script src="/assets/js/notes.js"></script>
+  <script>
+    (function(){
+      const rows = document.getElementById('resultRows');
+      const msg = document.getElementById('resultsAdminMsg');
+      const sectionFilter = document.getElementById('sectionFilter');
+      const classFilter = document.getElementById('classFilter');
+      let all = [];
+      const token = () => sessionStorage.getItem('gotegs_admin_token') || '';
+      const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+      async function api(payload){
+        const res = await fetch('/api/admin-results', {method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+token()}, body:JSON.stringify(payload)});
+        const data = await res.json().catch(()=>({}));
+        if (!res.ok) throw new Error(data.error || 'Request failed.');
+        return data;
+      }
+      function rebuildClasses(){
+        const sec = sectionFilter.value;
+        const vals = [...new Set(all.filter(x=>sec==='all'||x.section===sec).map(x=>x.class).filter(Boolean))].sort();
+        classFilter.innerHTML = '<option value="all">All classes</option>' + vals.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join('');
+      }
+      function render(){
+        const sec=sectionFilter.value, cls=classFilter.value;
+        const list=all.filter(x=>(sec==='all'||x.section===sec)&&(cls==='all'||x.class===cls));
+        if(!list.length){rows.innerHTML='<tr><td colspan="8">No students found.</td></tr>';return;}
+        rows.innerHTML=list.map(s=>`<tr>
+          <td><strong>${esc(s.full_name)}</strong></td><td>${esc(s.student_id)}</td><td>${esc(s.class)}</td><td>${esc(s.dept||'—')}</td>
+          <td>${Number(s.check_count||0)}/3</td><td>${s.is_paid===true?'Yes':'No'}</td>
+          <td><label class="access-toggle"><input type="checkbox" data-access-id="${esc(s.id)}" data-section="${esc(s.section)}" ${s.can_check_result===true?'checked':''}><span class="access-pill ${s.can_check_result===true?'on':'off'}">${s.can_check_result===true?'Allowed':'Blocked'}</span></label></td>
+          <td><button class="mini-btn" type="button" data-reset-id="${esc(s.id)}" data-reset-section="${esc(s.section)}">Reset to 0</button></td>
+        </tr>`).join('');
+        rows.querySelectorAll('[data-access-id]').forEach(input=>input.addEventListener('change',async()=>{
+          try{await api({action:'set-access',id:input.dataset.accessId,section:input.dataset.section,allowed:input.checked}); const s=all.find(x=>x.id===input.dataset.accessId&&x.section===input.dataset.section); if(s)s.can_check_result=input.checked; render(); msg.textContent='Result access updated.'; msg.style.color='#0f766e';}
+          catch(e){input.checked=!input.checked; msg.textContent=e.message; msg.style.color='#dc2626';}
+        }));
+        rows.querySelectorAll('[data-reset-id]').forEach(btn=>btn.addEventListener('click',async()=>{
+          try{await api({action:'reset-count',id:btn.dataset.resetId,section:btn.dataset.resetSection}); const s=all.find(x=>x.id===btn.dataset.resetId&&x.section===btn.dataset.resetSection); if(s)s.check_count=0; render(); msg.textContent='Check count reset to 0.'; msg.style.color='#0f766e';}
+          catch(e){msg.textContent=e.message; msg.style.color='#dc2626';}
+        }));
+      }
+      async function load(){
+        msg.textContent='Loading…'; msg.style.color='var(--slate)';
+        try{
+          const [settings,data]=await Promise.all([fetch('/api/admin-settings').then(r=>r.json()),api({action:'list'})]);
+          document.getElementById('currentYear').textContent=settings.year||'Not set';
+          all=data.students||[]; rebuildClasses(); render(); msg.textContent=`${all.length} students loaded.`;
+        }catch(e){rows.innerHTML='<tr><td colspan="8">Could not load student records.</td></tr>';msg.textContent=e.message;msg.style.color='#dc2626';}
+      }
+      sectionFilter.addEventListener('change',()=>{rebuildClasses();render()}); classFilter.addEventListener('change',render); document.getElementById('refreshResults').addEventListener('click',load);
+      document.addEventListener('gotegs:admin-authenticated',load,{once:true});
+      if(token()) load();
+    })();
+  </script>
 </body>
 </html>

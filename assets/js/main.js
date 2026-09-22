@@ -7,17 +7,20 @@
 // ==========================================================================
 
 // ==========================================================================
-// Admin password gate — deterrent only, not real security (the password
-// lives in this file, visible to anyone who inspects the page source).
-// Blocks casual visitors from opening /admin/ pages without a password;
-// stays unlocked for the rest of the browser session once entered.
+// Admin authentication
+// The admin password is verified server-side against the admin_portal table.
+// The browser stores only a short-lived signed session token.
 // ==========================================================================
 
-// Hide the page immediately (before it renders) if this is an admin page
-// and the gate hasn't been passed yet this session — avoids a flash of
-// real content before the password prompt appears.
-if (isAdminPathCheck(window.location.pathname) && sessionStorage.getItem("gotegs_admin_authed") !== "true") {
+const ADMIN_AUTH_KEY = "gotegs_admin_authed";
+const ADMIN_TOKEN_KEY = "gotegs_admin_token";
+
+if (isAdminPathCheck(window.location.pathname) && !hasAdminAuthSession()) {
   document.documentElement.style.visibility = "hidden";
+}
+
+function hasAdminAuthSession() {
+  return sessionStorage.getItem(ADMIN_AUTH_KEY) === "true" && !!sessionStorage.getItem(ADMIN_TOKEN_KEY);
 }
 
 // ==========================================================================
@@ -108,8 +111,6 @@ function touchStudentSession(session) {
 // ==========================================================================
 
 function isAdminPathCheck(pathname) {
-  // Catches "/admin", "/admin/", and everything under "/admin/..." —
-  // the bare "/admin" (no trailing slash) was previously slipping through.
   return pathname === "/admin" || pathname.startsWith("/admin/");
 }
 
@@ -122,47 +123,75 @@ function showAdminGate() {
   overlay.id = "adminGateOverlay";
   overlay.style.cssText = `
     position: fixed; inset: 0; background: #3f0a0d; z-index: 9999; visibility: visible;
-    display: flex; align-items: center; justify-content: center;
+    display: flex; align-items: center; justify-content: center; padding: 1rem; box-sizing: border-box;
   `;
   overlay.innerHTML = `
-    <div style="background:#fff; padding:2rem; border-radius:12px; width:100%; max-width:340px; text-align:center; font-family: sans-serif;">
-      <h2 style="margin:0 0 0.75rem; font-size:1.2rem; color:#1c1614;">Admin Access</h2>
-      <p style="color:#6b5f5a; font-size:0.9rem; margin-bottom:1rem;">Enter the password to continue.</p>
-      <input type="password" id="adminGateInput" style="width:100%; padding:0.7rem; border:1px solid #e8dfcf; border-radius:8px; margin-bottom:0.75rem; box-sizing:border-box;" />
-      <button id="adminGateBtn" style="width:100%; padding:0.7rem; border:none; border-radius:8px; background:#7b1418; color:#fff; font-weight:600; cursor:pointer;">Enter</button>
-      <p id="adminGateMsg" style="color:#dc2626; font-size:0.85rem; margin-top:0.6rem; min-height:1.1rem;"></p>
+    <div style="background:#fff; padding:2rem; border-radius:16px; width:100%; max-width:360px; text-align:center; font-family:sans-serif; box-shadow:0 24px 80px rgba(0,0,0,.3);">
+      <h2 style="margin:0 0 .6rem; font-size:1.2rem; color:#1c1614;">Admin Access</h2>
+      <p style="color:#6b5f5a; font-size:.9rem; margin-bottom:1rem;">Enter the admin password to continue.</p>
+      <label for="adminGateInput" style="position:absolute;left:-9999px;">Admin password</label>
+      <input type="password" id="adminGateInput" autocomplete="current-password" aria-describedby="adminGateMsg" style="width:100%; padding:.75rem; border:1px solid #e8dfcf; border-radius:9px; margin-bottom:.75rem; box-sizing:border-box;" />
+      <button id="adminGateBtn" type="button" style="width:100%; padding:.75rem; border:none; border-radius:9px; background:#7b1418; color:#fff; font-weight:700; cursor:pointer;">Enter</button>
+      <p id="adminGateMsg" role="status" aria-live="polite" style="color:#dc2626; font-size:.85rem; margin-top:.6rem; min-height:1.1rem;"></p>
     </div>
   `;
   document.body.appendChild(overlay);
 
   const input = document.getElementById("adminGateInput");
+  const button = document.getElementById("adminGateBtn");
   const msg = document.getElementById("adminGateMsg");
 
-  function attempt() {
-    if (input.value === ADMIN_GATE_PASSWORD) {
-      sessionStorage.setItem("gotegs_admin_authed", "true");
+  async function attempt() {
+    const password = input.value;
+    if (!password) {
+      msg.textContent = "Enter the admin password.";
+      input.focus();
+      return;
+    }
+
+    button.disabled = true;
+    button.textContent = "Checking…";
+    msg.textContent = "";
+
+    try {
+      const res = await fetch("/api/admin-verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password })
+      });
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok || !data.token) {
+        msg.textContent = data.error || "Incorrect password.";
+        input.value = "";
+        button.disabled = false;
+        button.textContent = "Enter";
+        input.focus();
+        return;
+      }
+
+      sessionStorage.setItem(ADMIN_AUTH_KEY, "true");
+      sessionStorage.setItem(ADMIN_TOKEN_KEY, data.token);
       overlay.remove();
-      document.documentElement.style.visibility = "visible"; // reveal the real page now
+      document.documentElement.style.visibility = "visible";
+      document.dispatchEvent(new CustomEvent("gotegs:admin-authenticated"));
       initShell();
-    } else {
-      msg.textContent = "Incorrect password.";
-      input.value = "";
+    } catch (err) {
+      msg.textContent = "Connection error. Please try again.";
+      button.disabled = false;
+      button.textContent = "Enter";
     }
   }
 
-  document.getElementById("adminGateBtn").addEventListener("click", attempt);
-  input.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") attempt();
-  });
+  button.addEventListener("click", attempt);
+  input.addEventListener("keydown", (e) => { if (e.key === "Enter") attempt(); });
   input.focus();
 }
 
 function adminGatePassedOrNotNeeded() {
   if (!isAdminPage()) return true;
-  return sessionStorage.getItem("gotegs_admin_authed") === "true";
+  return hasAdminAuthSession();
 }
-
-// ==========================================================================
 
 async function injectPartial(url, targetId) {
   const target = document.getElementById(targetId);
@@ -432,6 +461,7 @@ async function loadSocialIconsIfNeeded() {
 document.addEventListener("DOMContentLoaded", () => {
   if (adminGatePassedOrNotNeeded()) {
     initShell();
+    if (isAdminPage()) document.dispatchEvent(new CustomEvent("gotegs:admin-authenticated"));
   } else {
     showAdminGate();
   }
@@ -463,6 +493,7 @@ function setupAdminInactivityTimeout() {
 
     if (elapsed >= TIMEOUT_MS) {
       sessionStorage.removeItem("gotegs_admin_authed");
+      sessionStorage.removeItem("gotegs_admin_token");
       sessionStorage.removeItem("gotegs_records_authed");
       window.location.reload();
     }

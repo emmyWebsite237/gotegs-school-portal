@@ -6,18 +6,12 @@
   <title>Manage Student Records | Admin | Go-Tegs</title>
   <link rel="stylesheet" href="/assets/css/style.css" />
   <link rel="stylesheet" href="/assets/css/admin.css" />
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
+    <style>
     #authCard {
       max-width: 380px; margin-top: 1.5rem; padding: 1.75rem;
       border: 1px solid var(--border); border-radius: var(--radius); background: var(--paper);
     }
-    #authCard label { font-family: var(--font-display); font-weight: 600; font-size: 0.85rem; }
-    #authCard input {
-      width: 100%; font-family: var(--font-body); font-size: 0.95rem; padding: 0.7rem 0.8rem;
-      margin: 0.4rem 0 0.9rem; border: 1px solid var(--border); border-radius: 8px; box-sizing: border-box;
-    }
-    #authMsg { font-size: 0.85rem; font-weight: 600; color: #dc2626; min-height: 1.2rem; }
+    #authMsg { font-size:.85rem; font-weight:600; min-height:1.2rem; }
   </style>
 </head>
 <body>
@@ -26,17 +20,15 @@
   <main class="page-container admin-page" style="max-width: 1100px;">
     <nav class="breadcrumb">Admin / Records</nav>
     <h1>Manage Student Records</h1>
-    <p>Login to view Mid-Term Test and Full Session records, broken down by section and class.</p>
+    <p>Use your authenticated admin session to view Mid-Term Test and Full Session records, broken down by section and class.</p>
 
-    <div id="authCard">
-      <label for="adminName">Admin Username</label>
-      <input type="text" id="adminName" />
-
-      <label for="adminPin">Security PIN</label>
-      <input type="password" id="adminPin" />
-
-      <button class="btn" id="loginBtn">Open Records</button>
-      <p id="authMsg"></p>
+    <div id="authCard" style="max-width:620px; margin-top:1.5rem; padding:1.5rem; border:1px solid var(--border); border-radius:var(--radius); background:var(--paper);">
+      <strong>Admin session verified.</strong>
+      <p style="margin:.45rem 0 1rem; font-size:.84rem; color:var(--slate);">Choose a records section to continue. The same admin password protects this area; there is no second student-style login here.</p>
+      <div class="link-grid" id="sectionChoice">
+        <a href="jss/index.html">Junior Section (JSS) Records</a>
+        <a href="sss/index.html">Senior Section (SSS) Records</a>
+      </div>
     </div>
   </main>
 
@@ -44,50 +36,13 @@
 
   <script src="/assets/js/main.js"></script>
   <script>
-    const RESULTS_SB_URL = "https://lsyegaciprnerysmyesy.supabase.co";
-    const RESULTS_SB_KEY = "sb_publishable_sM0x3SdV4iy8GwYb5S5HUg_S9qLZLeJ";
-    const resultsClient = supabase.createClient(RESULTS_SB_URL, RESULTS_SB_KEY);
-
-    document.getElementById('loginBtn').addEventListener('click', async () => {
-      const name = document.getElementById('adminName').value.trim();
-      const pin = document.getElementById('adminPin').value;
-      const msg = document.getElementById('authMsg');
-
-      if (!name || !pin) { msg.textContent = 'Enter username and PIN.'; return; }
-
-      msg.style.color = 'var(--slate)';
-      msg.textContent = 'Checking...';
-
-      try {
-        const { data } = await resultsClient
-          .from('admin_portal')
-          .select('*')
-          .eq('admin_name', name)
-          .eq('admin_pin', pin)
-          .single();
-
-        if (!data) {
-          msg.style.color = '#dc2626';
-          msg.textContent = 'Access denied.';
-          return;
-        }
-
-        sessionStorage.setItem('gotegs_records_authed', 'true');
-
-        // Section choice, shown inline after successful login
-        document.getElementById('authCard').outerHTML = `
-          <div id="sectionChoice" style="max-width:420px; margin-top:1.5rem;">
-            <ul class="link-grid">
-              <li><a href="jss/index.html">Junior Section (JSS) Records</a></li>
-              <li><a href="sss/index.html">Senior Section (SSS) Records</a></li>
-            </ul>
-          </div>
-        `;
-      } catch (err) {
-        msg.style.color = '#dc2626';
-        msg.textContent = 'Access denied.';
-      }
-    });
+    (function(){
+      const openRecords = () => {
+        if (sessionStorage.getItem('gotegs_admin_token')) sessionStorage.setItem('gotegs_records_authed','true');
+      };
+      document.addEventListener('gotegs:admin-authenticated', openRecords, {once:true});
+      openRecords();
+    })();
   </script>
 </body>
 </html>

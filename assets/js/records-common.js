@@ -12,9 +12,11 @@ const resultsClient = supabase.createClient(RESULTS_SB_URL, RESULTS_SB_KEY);
 const RECORDS_AUTH_KEY = "gotegs_records_authed";
 
 function guardRecordsAuth() {
-  if (sessionStorage.getItem(RECORDS_AUTH_KEY) !== "true") {
+  const adminSession = sessionStorage.getItem("gotegs_admin_token");
+  if (sessionStorage.getItem(RECORDS_AUTH_KEY) !== "true" && !adminSession) {
     window.location.href = "/admin/admin-records/index.html";
   }
+  if (adminSession) sessionStorage.setItem(RECORDS_AUTH_KEY, "true");
 }
 
 const SUBJECT_MAP = {

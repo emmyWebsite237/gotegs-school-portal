@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Check My Result | Go-Tegs International School</title>
   <link rel="stylesheet" href="/assets/css/style.css" />
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     .result-form {
       max-width: 420px;
@@ -40,10 +39,8 @@
       <label for="sid">Student ID</label>
       <input type="text" id="sid" placeholder="GT/..." required />
 
-      <label for="yearSelect">Session</label>
-      <select id="yearSelect" required>
-        <option value="">Loading session...</option>
-      </select>
+      <label>Current School Year</label>
+      <div id="currentYearDisplay" style="padding:.7rem .8rem;border:1px solid var(--border);border-radius:8px;background:#f7f9f9;font-weight:700;">Loading school year…</div>
 
       <label for="classSelect">Class</label>
       <select id="classSelect" required>
@@ -78,33 +75,21 @@
 
   <script src="/assets/js/main.js"></script>
   <script>
-    // Read the school's current Year/Term directly from the admin_portal
-    // table — so when the admin updates it in Supabase, this page (and the
-    // result it generates) reflect the new term automatically.
-    const RESULTS_SB_URL = "https://lsyegaciprnerysmyesy.supabase.co";
-    const RESULTS_SB_KEY = "sb_publishable_sM0x3SdV4iy8GwYb5S5HUg_S9qLZLeJ";
-    const resultsClient = supabase.createClient(RESULTS_SB_URL, RESULTS_SB_KEY);
-
     let currentYear = "";
-    let currentTerm = "";
 
-    async function loadCurrentYearTerm() {
-      const yearSelect = document.getElementById('yearSelect');
+    async function loadCurrentYear() {
+      const display = document.getElementById('currentYearDisplay');
       try {
-        const { data, error } = await resultsClient.from('admin_portal').select('year, term').limit(1).single();
-        if (error || !data) throw error || new Error("No settings row found");
-
+        const res = await fetch('/api/admin-settings');
+        const data = await res.json();
+        if (!res.ok || !data.year) throw new Error('School year not configured');
         currentYear = data.year;
-        currentTerm = data.term;
-
-        yearSelect.innerHTML = `<option value="${currentYear}">${currentYear}</option>`;
-        yearSelect.value = currentYear;
-      } catch (err) {
-        yearSelect.innerHTML = `<option value="">Could not load session</option>`;
+        display.textContent = currentYear;
+      } catch (_) {
+        display.textContent = 'Not configured yet';
       }
     }
-
-    loadCurrentYearTerm();
+    loadCurrentYear();
 
     document.getElementById('classSelect').addEventListener('change', (e) => {
       document.getElementById('deptDiv').style.display = e.target.value.includes('SSS') ? 'block' : 'none';
@@ -112,45 +97,32 @@
 
     document.getElementById('resultForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-
       const sid = document.getElementById('sid').value.trim();
-      const yr = document.getElementById('yearSelect').value;
       const cls = document.getElementById('classSelect').value;
       const dept = document.getElementById('deptSelect').value;
       const pin = document.getElementById('pin').value;
       const msg = document.getElementById('formMsg');
       const btn = document.getElementById('checkBtn');
 
-      if (!sid || !yr || !cls || !pin || (cls.includes('SSS') && !dept)) {
+      if (!sid || !currentYear || !cls || !pin || (cls.includes('SSS') && !dept)) {
         msg.style.color = '#d97706';
-        msg.textContent = 'Please fill all fields.';
+        msg.textContent = !currentYear ? 'The school year is not configured yet.' : 'Please fill all fields.';
         return;
       }
 
-      btn.disabled = true;
-      btn.textContent = 'Checking...';
-      msg.style.color = '#5c6b68';
-      msg.textContent = 'Verifying credentials...';
-
+      btn.disabled = true; btn.textContent = 'Checking...'; msg.style.color = '#5c6b68'; msg.textContent = 'Verifying credentials...';
       try {
-        const res = await fetch(`/api/verify-result?student_id=${encodeURIComponent(sid)}&year=${encodeURIComponent(yr)}&class=${encodeURIComponent(cls)}&dept=${encodeURIComponent(dept)}&pin=${encodeURIComponent(pin)}`);
+        const res = await fetch(`/api/verify-result?student_id=${encodeURIComponent(sid)}&class=${encodeURIComponent(cls)}&dept=${encodeURIComponent(dept)}&pin=${encodeURIComponent(pin)}`);
         const data = await res.json();
-
-        if (res.status !== 200) {
-          msg.style.color = '#dc2626';
-          msg.textContent = data.error || 'Something went wrong.';
-          btn.disabled = false;
-          btn.textContent = 'Check Result';
-          return;
+        if (!res.ok) {
+          msg.style.color = '#dc2626'; msg.textContent = data.error || 'Something went wrong.';
+          btn.disabled = false; btn.textContent = 'Check Result'; return;
         }
-
-        sessionStorage.setItem('gotegs_result_data', JSON.stringify({ ...data, class: cls, dept, year: currentYear, term: currentTerm }));
+        sessionStorage.setItem('gotegs_result_data', JSON.stringify({ ...data, class: cls, dept }));
         window.location.href = '/student/result/view.html';
       } catch (err) {
-        msg.style.color = '#dc2626';
-        msg.textContent = 'Connection error: ' + err.message;
-        btn.disabled = false;
-        btn.textContent = 'Check Result';
+        msg.style.color = '#dc2626'; msg.textContent = 'Connection error: ' + err.message;
+        btn.disabled = false; btn.textContent = 'Check Result';
       }
     });
   </script>

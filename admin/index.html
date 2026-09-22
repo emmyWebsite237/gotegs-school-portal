@@ -6,6 +6,19 @@
   <title>Admin Dashboard | Admin | Go-Tegs</title>
   <link rel="stylesheet" href="/assets/css/style.css" />
   <link rel="stylesheet" href="/assets/css/admin.css" />
+<style>
+    .admin-settings-panel{margin-top:2rem;padding:1.4rem;border:1px solid var(--border);border-radius:var(--radius);background:var(--paper);box-shadow:var(--shadow-sm)}
+    .admin-settings-head{display:flex;gap:1rem;justify-content:space-between;align-items:flex-start;margin-bottom:1rem}
+    .admin-eyebrow{display:block;font:800 .68rem var(--font-display);letter-spacing:.12em;text-transform:uppercase;color:var(--teal)}
+    .admin-settings-head h2{margin:.2rem 0 .3rem}.admin-settings-head p{margin:0;max-width:700px;font-size:.83rem;color:var(--slate)}
+    .admin-settings-badge{padding:.45rem .65rem;border-radius:999px;background:#f2f4f5;color:#6d7478;font-size:.7rem;white-space:nowrap}
+    .admin-settings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+    .admin-settings-grid label{font:700 .78rem var(--font-display);color:var(--slate)}
+    .admin-settings-grid label span{font-weight:500;color:#9aa5aa}
+    .admin-settings-grid input{display:block;width:100%;box-sizing:border-box;margin-top:.35rem;padding:.75rem;border:1px solid var(--border);border-radius:9px;font:500 .9rem var(--font-body)}
+    .admin-settings-actions{display:flex;align-items:center;gap:.9rem;margin-top:1rem}.admin-settings-actions span{font-size:.82rem;font-weight:700}
+    @media(max-width:720px){.admin-settings-head{flex-direction:column}.admin-settings-grid{grid-template-columns:1fr}}
+  </style>
 </head>
 <body>
   <div id="navbar-placeholder"></div>
@@ -22,6 +35,33 @@
     <li><a href="admin-social/index.html">Manage Social Links</a></li>
     <li><a href="admin-quiz-codes/index.html">Manage Quiz Codes</a></li>
   </ul>
+
+    <section class="admin-settings-panel" aria-labelledby="resultSettingsTitle">
+      <div class="admin-settings-head">
+        <div>
+          <span class="admin-eyebrow">Result control</span>
+          <h2 id="resultSettingsTitle">Current school year</h2>
+          <p>Students do not enter a session year. Set the current year here; it is shown automatically on their result and profile.</p>
+        </div>
+        <span class="admin-settings-badge">Term is not stored</span>
+      </div>
+
+      <form id="adminSettingsForm">
+        <div class="admin-settings-grid">
+          <label>School year/session
+            <input id="adminYear" name="year" type="text" placeholder="2026/2027" maxlength="32" required />
+          </label>
+          <label>New admin password <span>(optional)</span>
+            <input id="adminNewPassword" name="new_password" type="password" autocomplete="new-password" placeholder="Leave blank to keep current password" />
+          </label>
+        </div>
+        <div class="admin-settings-actions">
+          <button class="btn" type="submit" id="saveAdminSettings">Save settings</button>
+          <span id="adminSettingsMsg" role="status" aria-live="polite"></span>
+        </div>
+      </form>
+    </section>
+
   </main>
 
   <div id="footer-placeholder"></div>
@@ -29,5 +69,43 @@
   <script src="/assets/js/main.js"></script>
   <script src="/assets/js/auth.js"></script>
   <script src="/assets/js/notes.js"></script>
+
+  <script>
+    (function(){
+      const form = document.getElementById('adminSettingsForm');
+      if (!form) return;
+      const year = document.getElementById('adminYear');
+      const pass = document.getElementById('adminNewPassword');
+      const msg = document.getElementById('adminSettingsMsg');
+      const token = () => sessionStorage.getItem('gotegs_admin_token') || '';
+
+      async function load(){
+        try {
+          const res = await fetch('/api/admin-settings');
+          const data = await res.json();
+          if (res.ok) year.value = data.year || '';
+        } catch (_) {}
+      }
+
+      async function save(e){
+        e.preventDefault();
+        msg.textContent = 'Saving…'; msg.style.color = 'var(--slate)';
+        const payload = { year: year.value.trim(), new_password: pass.value };
+        try {
+          const res = await fetch('/api/admin-settings', {
+            method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+token()}, body:JSON.stringify(payload)
+          });
+          const data = await res.json().catch(()=>({}));
+          if (!res.ok) throw new Error(data.error || 'Could not save settings.');
+          pass.value = '';
+          msg.textContent = 'Saved.'; msg.style.color = '#0f766e';
+        } catch (err) { msg.textContent = err.message; msg.style.color = '#dc2626'; }
+      }
+      form.addEventListener('submit', save);
+      document.addEventListener('gotegs:admin-authenticated', load, { once:true });
+      if (sessionStorage.getItem('gotegs_admin_token')) load();
+    })();
+  </script>
+
 </body>
 </html>

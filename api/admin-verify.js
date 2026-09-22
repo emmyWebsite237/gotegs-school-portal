@@ -1,73 +1,79 @@
 import { createClient } from '@supabase/supabase-js';
+import { createHash, createHmac, timingSafeEqual } from 'crypto';
 
-function sendJson(res, status, payload) {
-  return res.status(status).json(payload);
+function jsonBody(req) {
+  if (!req.body) return {};
+  if (typeof req.body === 'object') return req.body;
+  try { return JSON.parse(req.body); } catch { return {}; }
+}
+
+function hashPassword(password) {
+  return createHash('sha256').update(String(password), 'utf8').digest('hex');
+}
+
+function secureEqual(a, b) {
+  const aa = Buffer.from(String(a || ''));
+  const bb = Buffer.from(String(b || ''));
+  return aa.length === bb.length && timingSafeEqual(aa, bb);
+}
+
+function sessionSecret() {
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) throw new Error('SUPABASE_SERVICE_ROLE_KEY is missing');
+  return process.env.ADMIN_SESSION_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY;
+}
+
+function signToken() {
+  const payload = { sub: 'gotegs-admin', iat: Math.floor(Date.now() / 1000), exp: Math.floor(Date.now() / 1000) + (8 * 60 * 60) };
+  const raw = Buffer.from(JSON.stringify(payload)).toString('base64url');
+  const sig = createHmac('sha256', sessionSecret()).update(raw).digest('base64url');
+  return `${raw}.${sig}`;
+}
+
+function verifyPasswordRow(row, password) {
+  const input = String(password || '');
+  if (!input) return false;
+  if (row?.admin_password_hash && secureEqual(row.admin_password_hash, hashPassword(input))) return true;
+  if (row?.admin_password && secureEqual(row.admin_password, input)) return true; // one-time compatibility for older table versions
+  if (process.env.ADMIN_GATE_PASSWORD && secureEqual(process.env.ADMIN_GATE_PASSWORD, input)) return true;
+  return false;
 }
 
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return sendJson(res, 405, { error: 'Method not allowed.' });
-  }
-
-  const body = typeof req.body === 'string'
-    ? JSON.parse(req.body || '{}')
-    : (req.body || {});
-  const name = typeof body.name === 'string' ? body.name.trim() : '';
-  const pin = typeof body.pin === 'string' ? body.pin : String(body.pin ?? '');
-
-  if (!pin) {
-    return sendJson(res, 400, { error: 'Missing admin password or PIN.' });
-  }
-
-  // Optional compatibility path: if the deployment already stores a single
-  // admin gate password as ADMIN_GATE_PASSWORD, it remains server-side and
-  // can authenticate without placing the secret in GitHub/static JavaScript.
-  if (process.env.ADMIN_GATE_PASSWORD && pin === process.env.ADMIN_GATE_PASSWORD) {
-    return sendJson(res, 200, { success: true });
-  }
-
-  const supabaseUrl = process.env.SUPABASE_URL;
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-  if (!supabaseUrl || !serviceRoleKey) {
-    return sendJson(res, 500, {
-      error: 'Admin authentication is not configured. Check the deployment environment variables.'
-    });
-  }
-
   try {
-    const supabase = createClient(supabaseUrl, serviceRoleKey, {
-      auth: { persistSession: false, autoRefreshToken: false }
-    });
+    if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      return res.status(500).json({ error: 'Server misconfigured: SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY is missing.' });
+    }
 
-    let query = supabase
+    const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
+    const body = jsonBody(req);
+    let password = body.password;
+
+    // Legacy records-page compatibility: name + pin still works during migration.
+    if (!password && req.query?.name && req.query?.pin) {
+      const { data, error } = await supabase.from('admin_portal').select('id,admin_name,admin_pin,admin_password_hash,admin_password').ilike('admin_name', req.query.name).eq('admin_pin', req.query.pin).limit(1).maybeSingle();
+      if (error || !data) return res.status(401).json({ error: 'Unauthorized' });
+      const token = signToken();
+      return res.status(200).json({ success: true, token });
+    }
+
+    const { data: row, error } = await supabase
       .from('admin_portal')
-      .select('admin_name')
-      .eq('admin_pin', pin)
-      .limit(2);
+      .select('id, admin_password_hash, admin_password, admin_pin')
+      .order('id', { ascending: true })
+      .limit(1)
+      .maybeSingle();
 
-    // The main gate only needs the saved PIN/password. A name can also be
-    // supplied by future clients without changing this endpoint again.
-    if (name) query = query.ilike('admin_name', name);
+    if (error) return res.status(500).json({ error: 'Could not read admin settings.' });
+    if (!verifyPasswordRow(row, password)) return res.status(401).json({ error: 'Incorrect password.' });
 
-    const { data, error } = await query;
-
-    if (error) {
-      console.error('admin-verify Supabase error:', error.message);
-      return sendJson(res, 500, {
-        error: 'Admin database verification failed. Check the Supabase project and admin_portal table configuration.'
-      });
+    // Upgrade a legacy plaintext admin_password to a hash as soon as it is used.
+    if (row?.admin_password && !row?.admin_password_hash && row?.id) {
+      await supabase.from('admin_portal').update({ admin_password_hash: hashPassword(password), admin_password: null }).eq('id', row.id);
     }
 
-    // Require one unambiguous admin match. Duplicate PINs should not silently
-    // authenticate the wrong account.
-    if (!Array.isArray(data) || data.length !== 1) {
-      return sendJson(res, 401, { error: 'Access denied.' });
-    }
-
-    return sendJson(res, 200, { success: true });
-  } catch (error) {
-    console.error('admin-verify error:', error);
-    return sendJson(res, 400, { error: 'Invalid authentication request.' });
+    return res.status(200).json({ success: true, token: signToken() });
+  } catch (err) {
+    console.error('admin-verify error:', err);
+    return res.status(500).json({ error: 'Server error: ' + err.message });
   }
 }
