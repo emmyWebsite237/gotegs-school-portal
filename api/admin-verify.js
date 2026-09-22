@@ -27,7 +27,7 @@ function sessionSecret() {
 
 function signToken() {
   const now = Math.floor(Date.now() / 1000);
-  const payload = { sub: 'gotegs-admin', iat: now, exp: now + (8 * 60 * 60) };
+  const payload = { sub: 'gotegs-admin', iat: now, exp: now + (30 * 60) };
   const raw = Buffer.from(JSON.stringify(payload)).toString('base64url');
   const sig = createHmac('sha256', sessionSecret()).update(raw).digest('base64url');
   return `${raw}.${sig}`;

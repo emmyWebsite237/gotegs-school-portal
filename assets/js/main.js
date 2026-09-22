@@ -14,6 +14,7 @@
 
 const ADMIN_AUTH_KEY = "gotegs_admin_authed";
 const ADMIN_TOKEN_KEY = "gotegs_admin_token";
+const ADMIN_SESSION_MAX_AGE_MS = 30 * 60 * 1000;
 
 if (isAdminPathCheck(window.location.pathname)) {
   document.documentElement.classList.add("admin-page-mode");
@@ -23,8 +24,44 @@ if (isAdminPathCheck(window.location.pathname) && !hasAdminAuthSession()) {
   document.documentElement.style.visibility = "hidden";
 }
 
+function getAdminTokenPayload(token) {
+  try {
+    const raw = String(token || "").split(".")[0];
+    if (!raw) return null;
+    return JSON.parse(atob(raw.replace(/-/g, "+").replace(/_/g, "/") + "===".slice((raw.length + 3) % 4)));
+  } catch {
+    return null;
+  }
+}
+
 function hasAdminAuthSession() {
-  return sessionStorage.getItem(ADMIN_AUTH_KEY) === "true" && !!sessionStorage.getItem(ADMIN_TOKEN_KEY);
+  if (sessionStorage.getItem(ADMIN_AUTH_KEY) !== "true") return false;
+  const token = sessionStorage.getItem(ADMIN_TOKEN_KEY);
+  if (!token) return false;
+  const payload = getAdminTokenPayload(token);
+  const expiresAt = Number(payload?.exp || 0) * 1000;
+  if (!expiresAt || Date.now() >= expiresAt) {
+    sessionStorage.removeItem(ADMIN_AUTH_KEY);
+    sessionStorage.removeItem(ADMIN_TOKEN_KEY);
+    sessionStorage.removeItem("gotegs_records_authed");
+    return false;
+  }
+  return true;
+}
+
+function scheduleAdminExpiry() {
+  if (!isAdminPage()) return;
+  const token = sessionStorage.getItem(ADMIN_TOKEN_KEY);
+  const payload = getAdminTokenPayload(token);
+  const expiresAt = Number(payload?.exp || 0) * 1000;
+  if (!expiresAt) return;
+  const delay = Math.max(0, expiresAt - Date.now());
+  window.setTimeout(() => {
+    sessionStorage.removeItem(ADMIN_AUTH_KEY);
+    sessionStorage.removeItem(ADMIN_TOKEN_KEY);
+    sessionStorage.removeItem("gotegs_records_authed");
+    window.location.reload();
+  }, delay);
 }
 
 // ==========================================================================
@@ -180,6 +217,7 @@ function showAdminGate() {
 
       sessionStorage.setItem(ADMIN_AUTH_KEY, "true");
       sessionStorage.setItem(ADMIN_TOKEN_KEY, data.token);
+      scheduleAdminExpiry();
       overlay.remove();
       document.documentElement.style.visibility = "visible";
       document.dispatchEvent(new CustomEvent("gotegs:admin-authenticated"));
@@ -307,16 +345,23 @@ function initStudentPortalShell() {
   if (!session) return;
 
   const name = String(session.full_name || "Student");
-  const initials = name.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]).join("").toUpperCase() || "GT";
+  const initials = name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase() || "GT";
   const classLine = `${session.class || "Student"}${session.dept ? " · " + session.dept : ""}`;
-  const fallbackLogo = "/assets/img/logo.png";
 
-  document.querySelectorAll("[data-portal-name]").forEach((el) => { el.textContent = name; });
-  document.querySelectorAll("[data-portal-class]").forEach((el) => { el.textContent = classLine; });
-  document.querySelectorAll("[data-portal-initials]").forEach((el) => { el.textContent = initials; });
-  document.querySelectorAll("[data-portal-profile-image], [data-profile-image]").forEach((img) => {
-    img.src = session.profile_pic_url || fallbackLogo;
-    img.alt = session.profile_pic_url ? `${name} profile picture` : "Go-Tegs logo";
+  document.querySelectorAll("[data-portal-name]").forEach((el) => {
+    el.textContent = name;
+  });
+  document.querySelectorAll("[data-portal-class]").forEach((el) => {
+    el.textContent = classLine;
+  });
+  document.querySelectorAll("[data-portal-initials]").forEach((el) => {
+    el.textContent = initials;
   });
 
   const path = window.location.pathname;
@@ -356,7 +401,9 @@ function initStudentPortalShell() {
     scrim.addEventListener("click", () => setOpen(false));
     if (close) close.addEventListener("click", () => setOpen(false));
     drawer.querySelectorAll("a").forEach((a) => a.addEventListener("click", () => setOpen(false)));
-    document.addEventListener("keydown", (e) => { if (e.key === "Escape") setOpen(false); });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") setOpen(false);
+    });
   }
 }
 
@@ -462,6 +509,7 @@ async function loadSocialIconsIfNeeded() {
 
 document.addEventListener("DOMContentLoaded", () => {
   if (adminGatePassedOrNotNeeded()) {
+    if (isAdminPage()) scheduleAdminExpiry();
     initShell();
     if (isAdminPage()) document.dispatchEvent(new CustomEvent("gotegs:admin-authenticated"));
   } else {
@@ -472,16 +520,16 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ==========================================================================
-// Admin inactivity timeout — 3 minutes. Clock starts the moment the tab
+// Admin inactivity timeout — 30 minutes. Clock starts the moment the tab
 // loses focus (switched away, minimized, or another window/app takes
-// focus); if more than 3 minutes pass before returning, both the site-wide
+// focus); if more than 30 minutes pass before returning, both the site-wide
 // admin gate and the admin-records login are cleared, forcing re-entry.
 // ==========================================================================
 
 function setupAdminInactivityTimeout() {
   if (!isAdminPage()) return;
 
-  const TIMEOUT_MS = 3 * 60 * 1000;
+  const TIMEOUT_MS = 30 * 60 * 1000;
   let hiddenAt = null;
 
   function markHidden() {
