@@ -15,5 +15,8 @@
     {"source":"/admin-social/:path*","destination":"/admin/admin-social/:path*","permanent":false},
     {"source":"/admin-quiz-codes","destination":"/admin/admin-quiz-codes/index.html","permanent":false},
     {"source":"/admin-quiz-codes/:path*","destination":"/admin/admin-quiz-codes/:path*","permanent":false}
+  ],
+  "rewrites": [
+    {"source":"/api/admin-settings","destination":"/api/admin-verify?settings=1"}
   ]
 }
