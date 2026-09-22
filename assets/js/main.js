@@ -7,10 +7,11 @@
 // ==========================================================================
 
 // ==========================================================================
-// Admin password gate — deterrent only, not real security (the password
-// lives in this file, visible to anyone who inspects the page source).
-// Blocks casual visitors from opening /admin/ pages without a password;
-// stays unlocked for the rest of the browser session once entered.
+// Admin access gate
+// --------------------------------------------------------------------------
+// Admin credentials are verified server-side through /api/admin-verify.
+// No admin password or service-role credential is embedded in the browser.
+// The API uses the Supabase project configured in the deployment environment.
 // ==========================================================================
 
 // Hide the page immediately (before it renders) if this is an admin page
@@ -120,41 +121,105 @@ function isAdminPage() {
 function showAdminGate() {
   const overlay = document.createElement("div");
   overlay.id = "adminGateOverlay";
+  overlay.setAttribute("role", "dialog");
+  overlay.setAttribute("aria-modal", "true");
+  overlay.setAttribute("aria-labelledby", "adminGateTitle");
+  overlay.setAttribute("aria-describedby", "adminGateDescription");
   overlay.style.cssText = `
-    position: fixed; inset: 0; background: #3f0a0d; z-index: 9999; visibility: visible;
-    display: flex; align-items: center; justify-content: center;
+    position: fixed; inset: 0; background: radial-gradient(circle at 50% 0%, #65181b 0%, #3f0a0d 42%, #210507 100%);
+    z-index: 9999; visibility: visible; display: flex; align-items: center; justify-content: center;
+    padding: 1.25rem; box-sizing: border-box;
   `;
   overlay.innerHTML = `
-    <div style="background:#fff; padding:2rem; border-radius:12px; width:100%; max-width:340px; text-align:center; font-family: sans-serif;">
-      <h2 style="margin:0 0 0.75rem; font-size:1.2rem; color:#1c1614;">Admin Access</h2>
-      <p style="color:#6b5f5a; font-size:0.9rem; margin-bottom:1rem;">Enter the password to continue.</p>
-      <input type="password" id="adminGateInput" style="width:100%; padding:0.7rem; border:1px solid #e8dfcf; border-radius:8px; margin-bottom:0.75rem; box-sizing:border-box;" />
-      <button id="adminGateBtn" style="width:100%; padding:0.7rem; border:none; border-radius:8px; background:#7b1418; color:#fff; font-weight:600; cursor:pointer;">Enter</button>
-      <p id="adminGateMsg" style="color:#dc2626; font-size:0.85rem; margin-top:0.6rem; min-height:1.1rem;"></p>
+    <div style="width:100%; max-width:400px; background:#fff; border:1px solid rgba(255,255,255,.2); border-radius:18px; padding:1.75rem; box-sizing:border-box; box-shadow:0 24px 80px rgba(0,0,0,.35); font-family:sans-serif;">
+      <div style="display:flex; align-items:center; gap:.8rem; margin-bottom:1rem;">
+        <div style="width:44px; height:44px; border-radius:13px; background:linear-gradient(145deg,#7b1418,#3f0a0d); color:#fff; display:grid; place-items:center; font-size:1.1rem; font-weight:800;">GT</div>
+        <div>
+          <h2 id="adminGateTitle" style="margin:0; font-size:1.2rem; color:#1c1614;">Admin Access</h2>
+          <p id="adminGateDescription" style="margin:.2rem 0 0; color:#6b5f5a; font-size:.88rem;">Use your saved admin password or PIN.</p>
+        </div>
+      </div>
+      <form id="adminGateForm" novalidate>
+        <label for="adminGateInput" style="display:block; color:#3d3430; font-size:.84rem; font-weight:700; margin-bottom:.4rem;">Password / PIN</label>
+        <div style="position:relative;">
+          <input type="password" id="adminGateInput" autocomplete="current-password" inputmode="text" aria-describedby="adminGateMsg" required
+            style="width:100%; padding:.78rem 3.4rem .78rem .8rem; border:1px solid #d9d0c8; border-radius:10px; box-sizing:border-box; font-size:.96rem; outline:none;" />
+          <button type="button" id="adminGateToggle" aria-label="Show password" aria-pressed="false"
+            style="position:absolute; right:.4rem; top:50%; transform:translateY(-50%); border:0; background:transparent; color:#6b5f5a; padding:.45rem; cursor:pointer; font-weight:700;">Show</button>
+        </div>
+        <button type="submit" id="adminGateBtn"
+          style="width:100%; margin-top:.9rem; padding:.78rem; border:0; border-radius:10px; background:#7b1418; color:#fff; font-weight:700; cursor:pointer;">Enter Admin</button>
+        <p id="adminGateMsg" role="status" aria-live="polite" style="color:#dc2626; font-size:.84rem; margin:.65rem 0 0; min-height:1.15rem;"></p>
+      </form>
     </div>
   `;
   document.body.appendChild(overlay);
 
+  const form = document.getElementById("adminGateForm");
   const input = document.getElementById("adminGateInput");
+  const toggle = document.getElementById("adminGateToggle");
+  const button = document.getElementById("adminGateBtn");
   const msg = document.getElementById("adminGateMsg");
 
-  function attempt() {
-    if (input.value === ADMIN_GATE_PASSWORD) {
+  let submitting = false;
+
+  toggle.addEventListener("click", () => {
+    const showing = input.type === "text";
+    input.type = showing ? "password" : "text";
+    toggle.textContent = showing ? "Show" : "Hide";
+    toggle.setAttribute("aria-label", showing ? "Show password" : "Hide password");
+    toggle.setAttribute("aria-pressed", String(!showing));
+  });
+
+  async function attempt(event) {
+    event.preventDefault();
+    if (submitting) return;
+
+    const pin = input.value;
+    if (!pin) {
+      msg.textContent = "Enter your password or PIN.";
+      input.focus();
+      return;
+    }
+
+    submitting = true;
+    button.disabled = true;
+    button.textContent = "Checking…";
+    msg.textContent = "";
+
+    try {
+      const res = await fetch("/api/admin-verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify({ pin })
+      });
+
+      let data = {};
+      try { data = await res.json(); } catch (_) {}
+
+      if (!res.ok || data.success !== true) {
+        msg.textContent = data.error || "Access denied.";
+        input.value = "";
+        input.focus();
+        return;
+      }
+
       sessionStorage.setItem("gotegs_admin_authed", "true");
       overlay.remove();
-      document.documentElement.style.visibility = "visible"; // reveal the real page now
+      document.documentElement.style.visibility = "visible";
       initShell();
-    } else {
-      msg.textContent = "Incorrect password.";
-      input.value = "";
+    } catch (error) {
+      console.error("Admin authentication error:", error);
+      msg.textContent = "Admin authentication is unavailable right now.";
+    } finally {
+      submitting = false;
+      button.disabled = false;
+      button.textContent = "Enter Admin";
     }
   }
 
-  document.getElementById("adminGateBtn").addEventListener("click", attempt);
-  input.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") attempt();
-  });
-  input.focus();
+  form.addEventListener("submit", attempt);
+  requestAnimationFrame(() => input.focus());
 }
 
 function adminGatePassedOrNotNeeded() {
