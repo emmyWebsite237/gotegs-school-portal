@@ -58,8 +58,10 @@ export default async function handler(req, res) {
     return res.status(200).json({
       quiz_id: quiz.id,
       title: quiz.title,
+      class_restriction: quiz.class_restriction,
       time_limit_minutes: quiz.time_limit_minutes,
       attempts_remaining: quiz.attempts_allowed - count,
+      expires_at: quiz.expires_at,
       questions,
     });
   } catch (err) {
