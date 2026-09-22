@@ -53,14 +53,13 @@ export default async function handler(req, res) {
         return { subject: base, mtt, exam, total: mtt + exam };
       });
 
-    const present = student.is_present ?? 0;
+    const present = student.present ?? 0;
     return res.status(200).json({
       full_name: student.full_name,
       dob: student.dob,
       year: currentYear,
       is_paid: student.is_paid,
       opened: student.opened ?? 0,
-      is_present: present,
       present,
       teacher_remark: student.teacher_remark || "No comment provided.",
       scores,

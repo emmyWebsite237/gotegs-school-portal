@@ -129,8 +129,8 @@
       document.getElementById('dispDob').textContent = data.dob || '---';
       document.getElementById('dispClass').textContent = data.class + (data.dept ? ` (${data.dept})` : '');
       document.getElementById('dispOpened').textContent = data.opened || '0';
-      document.getElementById('dispPresent').textContent = data.is_present ?? data.present ?? '0';
-      document.getElementById('dispAbsent').textContent = (Number(data.opened) || 0) - (Number(data.is_present ?? data.present) || 0);
+      document.getElementById('dispPresent').textContent = data.present ?? '0';
+      document.getElementById('dispAbsent').textContent = (Number(data.opened) || 0) - (Number(data.present) || 0);
       document.getElementById('dispTeacher').textContent = data.teacher_remark || '---';
 
       let rows = '';

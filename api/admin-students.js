@@ -44,7 +44,7 @@ function resultUpdateFrom(incoming, section) {
     if (score in incoming) out[score] = nullableNumber(incoming[score]);
   }
   if ('opened' in incoming) out.opened = nullableNumber(incoming.opened);
-  if ('is_present' in incoming) out.is_present = nullableNumber(incoming.is_present);
+  if ('present' in incoming) out.present = nullableNumber(incoming.present);
   if ('teacher_remark' in incoming) out.teacher_remark = cleanText(incoming.teacher_remark, 1000) || null;
   if ('can_check_result' in incoming) out.can_check_result = Boolean(incoming.can_check_result);
   return out;
