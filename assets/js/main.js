@@ -46,28 +46,30 @@ function showAdminGate(){
 }
 function adminGatePassedOrNotNeeded(){return !isAdminPage()||hasAdminAuthSession();}
 
-function ensureStudentPortalStyles(){
-  if(!isStudentProtectedPath(window.location.pathname)) return Promise.resolve();
-  const existing=document.querySelector('link[data-gotegs-portal-style="1"]');
-  if(existing) return Promise.resolve();
-  return new Promise(resolve=>{
-    const link=document.createElement('link');
-    link.rel='stylesheet';
-    link.href='/assets/css/portal.css?v=20260923';
-    link.dataset.gotegsPortalStyle='1';
-    link.onload=()=>resolve();
-    link.onerror=()=>resolve();
-    document.head.appendChild(link);
-  });
-}
-
 async function injectPartial(url,targetId){const target=document.getElementById(targetId);if(!target)return;try{const r=await fetch(url);if(!r.ok)throw new Error(`Failed to load ${url}`);target.innerHTML=await r.text();}catch(err){console.error('Partial load error:',err);}}
 function highlightActiveLink(){const path=window.location.pathname;document.querySelectorAll('.nav-links a').forEach(link=>{const href=link.getAttribute('href');if(!href)return;const home=href==='/index.html'&&(path==='/'||path==='/index.html');const section=href!=='/index.html'&&path.startsWith(href.replace('index.html',''));if(home||section)link.classList.add('active');});}
 function wireMobileToggle(){const toggle=document.getElementById('nav-toggle'),links=document.getElementById('nav-links');if(!toggle||!links)return;toggle.addEventListener('click',()=>{const open=links.classList.toggle('open');toggle.setAttribute('aria-expanded',String(open));});}
 function wireNavGroups(){document.querySelectorAll('.nav-group').forEach(group=>{const btn=group.querySelector('.nav-group-toggle');if(!btn)return;if(group.querySelector('a.active')){group.classList.add('open');btn.setAttribute('aria-expanded','true');}btn.addEventListener('click',()=>{const open=group.classList.toggle('open');btn.setAttribute('aria-expanded',String(open));});});}
 function setFooterYear(){const el=document.getElementById('footer-year');if(el)el.textContent=new Date().getFullYear();}
 function loadScript(src){return new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=src;s.onload=resolve;s.onerror=reject;document.body.appendChild(s);});}
-async function loadNotesScriptsIfNeeded(){if(!document.querySelector('.note-file')&&!document.querySelector('.admin-notes-table'))return;try{await loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2');await loadScript('/assets/js/supabase-config.js');await loadScript('/assets/js/notes.js');}catch(err){console.error('Failed to load lesson notes scripts:',err);}}
+function ensurePortalStyles(){
+  if(document.getElementById('gotegsPortalStyles')) return;
+  const link=document.createElement('link');
+  link.id='gotegsPortalStyles';
+  link.rel='stylesheet';
+  link.href='/assets/css/portal.css';
+  document.head.appendChild(link);
+}
+
+async function loadNotesScriptsIfNeeded(){
+  const needsNotes=!!document.querySelector('.note-file,.admin-notes-table,#export-all-notes');
+  if(!needsNotes)return;
+  try{
+    if(!window.supabase) await loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2');
+    if(typeof supabaseClient==='undefined') await loadScript('/assets/js/supabase-config.js');
+    if(!window.__gotegsNotesLoaded) await loadScript('/assets/js/notes.js');
+  }catch(err){console.error('Failed to load lesson notes scripts:',err);}
+}
 
 function studentInitials(name){return String(name||'Student').split(/\s+/).filter(Boolean).slice(0,2).map(p=>p[0]).join('').toUpperCase()||'GT';}
 function setPortalAvatar(img, initialsEl, session){const fallbackLogo='/assets/img/logo.png';if(img){if(session.profile_pic_url){img.src=session.profile_pic_url;img.alt=`${session.full_name||'Student'} profile picture`;}else{img.src=fallbackLogo;img.alt='Go-Tegs logo';}}if(initialsEl)initialsEl.textContent=studentInitials(session.full_name);const holder=img?.closest('.portal-profile-avatar,.portal-card-avatar,.portal-orbit-core,.profile-avatar-xl');if(holder){holder.classList.toggle('has-photo',!!session.profile_pic_url);holder.classList.toggle('show-initials',!!session.profile_pic_removed&&!session.profile_pic_url);}}
@@ -89,7 +91,28 @@ function initPortalPointer(){if(window.matchMedia('(pointer: fine)').matches===f
 function initPortalTilt(){if(window.matchMedia('(pointer: fine)').matches===false||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;document.querySelectorAll('[data-tilt-card]').forEach(card=>{card.addEventListener('pointermove',e=>{const r=card.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;card.style.transform=`perspective(900px) rotateX(${(-y*2.5).toFixed(2)}deg) rotateY(${(x*2.5).toFixed(2)}deg) translateY(-5px)`;});card.addEventListener('pointerleave',()=>{card.style.transform='';});});}
 function initAdminWorkspaceControls(){if(!isAdminPage()||document.getElementById('gotegsAdminLogout'))return;const b=document.createElement('button');b.type='button';b.id='gotegsAdminLogout';b.textContent='Log out';b.setAttribute('aria-label','Log out of admin portal');b.className='admin-global-logout';b.style.cssText='position:fixed;top:18px;right:18px;z-index:9000;padding:.62rem 1rem;border:1px solid #d9cdd0;border-radius:999px;background:#fff;color:#6f2338;font:800 .72rem var(--font-display,system-ui);box-shadow:0 10px 26px rgba(54,30,36,.1);cursor:pointer;';b.addEventListener('click',()=>{clearAdminSession();window.location.href='/admin/';});document.body.appendChild(b);}
 
-async function initShell(){const adminPage=isAdminPage(),studentPage=isStudentProtectedPath(window.location.pathname);if(adminPage){document.body.classList.add('admin-shell-page');scheduleAdminExpiry();initAdminWorkspaceControls();}else if(studentPage){const session=getValidStudentSession();if(session)touchStudentSession(session);document.body.classList.add('student-shell-page');await ensureStudentPortalStyles();await injectPartial('/partials/student-shell.html','navbar-placeholder');initStudentPortalShell();initPortalPointer();initPortalTilt();}else{await injectPartial('/partials/navbar.html','navbar-placeholder');await injectPartial('/partials/footer.html','footer-placeholder');highlightActiveLink();wireNavGroups();wireMobileToggle();setFooterYear();}}
+async function initShell(){const adminPage=isAdminPage(),studentPage=isStudentProtectedPath(window.location.pathname);
+  if(adminPage){
+    document.body.classList.add('admin-shell-page');
+    scheduleAdminExpiry();
+    initAdminWorkspaceControls();
+    await loadNotesScriptsIfNeeded();
+  }else if(studentPage){
+    const session=getValidStudentSession();
+    if(session)touchStudentSession(session);
+    document.body.classList.add('student-shell-page');
+    ensurePortalStyles();
+    await injectPartial('/partials/student-shell.html','navbar-placeholder');
+    initStudentPortalShell();
+    initPortalPointer();
+    initPortalTilt();
+    await loadNotesScriptsIfNeeded();
+  }else{
+    await injectPartial('/partials/navbar.html','navbar-placeholder');
+    await injectPartial('/partials/footer.html','footer-placeholder');
+    highlightActiveLink();wireNavGroups();wireMobileToggle();setFooterYear();
+  }
+}
 
 function setupAdminInactivityTimeout(){if(!isAdminPage())return;const TIMEOUT_MS=30*60*1000;let hiddenAt=null;const mark=()=>{if(hiddenAt===null)hiddenAt=Date.now();};const check=()=>{if(hiddenAt===null)return;const elapsed=Date.now()-hiddenAt;hiddenAt=null;if(elapsed>=TIMEOUT_MS){clearAdminSession();window.location.reload();}};document.addEventListener('visibilitychange',()=>document.hidden?mark():check());window.addEventListener('blur',mark);window.addEventListener('focus',check);}
 

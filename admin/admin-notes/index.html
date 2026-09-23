@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -13,6 +13,10 @@
   <main class="page-container admin-page">
     <nav class="breadcrumb">Admin / Notes</nav>
     <h1>Manage Lesson Notes</h1>
+    <div class="notes-export-card" style="display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0 1.25rem;padding:1rem 1.1rem;border:1px solid #dbe5ee;border-radius:16px;background:#fff;box-shadow:0 12px 30px rgba(20,41,66,.06);">
+      <button id="export-all-notes" type="button" class="btn-primary" style="border:0;cursor:pointer;">↓ Download all lesson notes (.zip)</button>
+      <span id="notes-export-status" role="status" aria-live="polite" style="font-size:.82rem;color:#64748b;">Pull all saved notes from Supabase and package them as editable Word files.</span>
+    </div>
     <ul class="link-grid">
     <li><a href="jss/index.html">JSS (Junior Secondary)</a></li>
     <li><a href="sss/index.html">SSS (Senior Secondary)</a></li>
@@ -23,6 +27,5 @@
 
   <script src="/assets/js/main.js"></script>
   <script src="/assets/js/auth.js"></script>
-  <script src="/assets/js/notes.js"></script>
 </body>
 </html>
