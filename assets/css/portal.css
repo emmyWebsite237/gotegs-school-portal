@@ -58,3 +58,136 @@ body.student-shell-page.portal-pointer-enabled a,body.student-shell-page.portal-
 @media(max-width:899px){.portal-rail{display:none}.portal-mobile-bar{position:sticky;top:0;z-index:80;display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:66px;padding:.6rem .85rem;background:rgba(28,16,20,.97);border-bottom:1px solid rgba(255,255,255,.07);box-shadow:0 12px 26px rgba(28,16,20,.14)}.portal-mobile-brand{display:flex;align-items:center;gap:.55rem;color:#fff;font:900 .82rem var(--font-display);text-decoration:none}.portal-mobile-brand img{width:36px;height:36px;padding:2px;border-radius:10px;background:#fff}.portal-mobile-brand small{display:block;margin-top:1px;color:#d4b88a;font:700 .56rem var(--font-body)}.portal-mobile-toggle{width:42px;height:42px;border-radius:12px;border:1px solid rgba(255,255,255,.11);background:rgba(255,255,255,.06);color:#fff;font-size:1.1rem}.portal-mobile-scrim{position:fixed;inset:0;z-index:100;display:block;background:rgba(24,13,17,.58);opacity:0;pointer-events:none;transition:opacity .2s ease}.portal-mobile-scrim.open{opacity:1;pointer-events:auto}.portal-mobile-drawer{position:fixed;top:0;right:0;bottom:0;z-index:110;width:min(88vw,350px);display:flex;flex-direction:column;padding:1rem;background:linear-gradient(180deg,#1a1014,#2b1620);border-left:1px solid rgba(255,255,255,.07);transform:translateX(100%);transition:transform .23s ease;overflow-y:auto}.portal-mobile-drawer.open{transform:translateX(0)}.portal-mobile-drawer-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding-bottom:1rem;margin-bottom:.65rem;border-bottom:1px solid rgba(255,255,255,.08)}.portal-mobile-drawer-head>button{width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#fff;font-size:1.35rem}.portal-mobile-drawer .portal-logout{margin-top:auto}body.student-shell-page main.page-container{margin-left:0;padding:1.2rem .9rem 3rem}.portal-dashboard{margin-left:0;padding:1rem .8rem 2.8rem}.portal-hero{border-radius:24px;padding:1.2rem}.portal-hero h1{font-size:clamp(1.8rem,8vw,2.65rem)}.portal-section{margin-top:1.65rem}.portal-section-head{align-items:flex-start;flex-direction:column;gap:.25rem}}
 @media(max-width:640px){.portal-card-grid{grid-template-columns:1fr}.portal-card.span-7,.portal-card.span-5,.portal-card.span-4,.portal-card.span-6{grid-column:span 1}.portal-card{min-height:166px}.portal-card--feature{min-height:190px}.portal-focus{align-items:flex-start}.result-app{padding-top:.5rem}}
 @media(prefers-reduced-motion:reduce){.portal-hero-orbit::before,.portal-hero-orbit::after{animation:none}.portal-card,.portal-nav-link,.portal-logout{transition:none}}
+
+
+/* ========================================================================
+   Go-Tegs Student Portal — contemporary UI refresh
+   The school crest remains the visual identity; the interface uses a cooler,
+   cleaner editorial palette so the portal does not read as a dated maroon/gold UI.
+   ======================================================================== */
+body.student-shell-page{
+  --teal:#6b5cff;
+  --teal-dark:#4337b8;
+  --teal-light:#f0eeff;
+  --maroon:#6b5cff;
+  --maroon-dark:#4337b8;
+  --maroon-deep:#171822;
+  --gold:#ff8a5b;
+  --gold-soft:#ffc4ae;
+  --red-touch:#ef5b74;
+  --ink:#171821;
+  --slate:#6e7382;
+  --paper:#ffffff;
+  --border:#e5e6ef;
+  --cream:#f6f7fb;
+  --portal-canvas:#f6f7fb;
+  --portal-surface:#ffffff;
+  --portal-violet:#6b5cff;
+  --portal-violet-dark:#4337b8;
+  --portal-lilac:#f0eeff;
+  --portal-coral:#ff7a59;
+  --portal-charcoal:#171822;
+  --portal-charcoal-2:#232531;
+  --portal-line:#e3e5ee;
+  background:
+    radial-gradient(circle at 92% 0%,rgba(107,92,255,.10),transparent 24rem),
+    radial-gradient(circle at 4% 90%,rgba(255,122,89,.07),transparent 20rem),
+    var(--portal-canvas);
+  color:var(--ink);
+}
+html.student-portal-page{background:var(--portal-canvas,#f6f7fb);}
+body.student-shell-page .portal-rail{
+  background:linear-gradient(180deg,#16171d 0%,#20212a 55%,#171820 100%);
+  border-right:1px solid rgba(255,255,255,.08);
+  box-shadow:20px 0 55px rgba(16,17,23,.12);
+}
+body.student-shell-page .portal-brand-copy span{color:#b9b5ff;}
+body.student-shell-page .portal-profile-avatar{
+  background:linear-gradient(135deg,#fff,#ecebff);
+  color:#4337b8;
+  border-color:rgba(255,255,255,.15);
+}
+body.student-shell-page .portal-profile-initials{
+  color:#4337b8;
+  background:linear-gradient(135deg,#eeecff,#fff);
+}
+body.student-shell-page .portal-nav-link:hover{background:rgba(107,92,255,.11);}
+body.student-shell-page .portal-nav-link.is-active{
+  background:linear-gradient(135deg,rgba(107,92,255,.28),rgba(255,122,89,.10));
+  box-shadow:inset 0 0 0 1px rgba(145,138,255,.24),0 10px 24px rgba(0,0,0,.08);
+}
+body.student-shell-page .portal-nav-link.is-active span{
+  color:#2b2768;
+  background:linear-gradient(135deg,#dedbff,#fff);
+}
+body.student-shell-page .portal-logout:hover{background:rgba(107,92,255,.12);border-color:rgba(166,160,255,.28);}
+body.student-shell-page .portal-hero{
+  background:linear-gradient(135deg,#ffffff 0%,#fafaff 48%,#f1efff 100%);
+  border-color:#e4e4ef;
+  box-shadow:0 24px 62px rgba(31,31,46,.08);
+}
+body.student-shell-page .portal-hero::before{
+  background:radial-gradient(circle at 82% 18%,rgba(107,92,255,.16),transparent 12rem),radial-gradient(circle at 8% 110%,rgba(255,122,89,.10),transparent 15rem);
+}
+body.student-shell-page .portal-hero::after{background:linear-gradient(180deg,#6b5cff,#ff7a59);}
+body.student-shell-page .portal-kicker,
+body.student-shell-page .dashboard-topline span:last-child{color:#5a4bd1;}
+body.student-shell-page .portal-hero h1{color:#171821;}
+body.student-shell-page .portal-hero h1 span{color:#6b5cff;}
+body.student-shell-page .portal-identity-chip{border-color:#e4e5ef;background:#fff;color:#3e4250;}
+body.student-shell-page .portal-hero-orbit::before{border-color:rgba(107,92,255,.16);}
+body.student-shell-page .portal-hero-orbit::after{border-color:rgba(255,122,89,.28);}
+body.student-shell-page .portal-orbit-core{background:linear-gradient(135deg,#5146d3,#171822);border-color:#e3e1ff;box-shadow:0 0 0 12px rgba(107,92,255,.06),0 22px 45px rgba(40,37,90,.18);}
+body.student-shell-page .portal-orbit-tag{color:#5147b9;border-color:#e1e0ed;box-shadow:0 8px 22px rgba(35,35,58,.06);}
+body.student-shell-page .portal-card{
+  border-color:#e4e5ee;
+  background:linear-gradient(160deg,#fff 0%,#fbfbfe 100%);
+  box-shadow:0 14px 34px rgba(26,28,40,.06);
+}
+body.student-shell-page .portal-card::before{background:radial-gradient(circle,rgba(107,92,255,.13),transparent 70%);}
+body.student-shell-page .portal-card:hover{border-color:#d3d1f3;box-shadow:0 20px 48px rgba(34,31,64,.10);}
+body.student-shell-page .portal-icon{background:linear-gradient(135deg,#6b5cff,#4337b8);box-shadow:0 12px 23px rgba(107,92,255,.18);}
+body.student-shell-page .portal-badge{background:#f3f1ff;color:#5147b9;}
+body.student-shell-page .portal-card h3{color:#1b1c25;}
+body.student-shell-page .portal-arrow{color:#5a4bd1;}
+body.student-shell-page .portal-card--feature{background:linear-gradient(135deg,#fff 0%,#fbfbff 56%,#f0efff 100%);}
+body.student-shell-page .portal-card--feature .portal-icon{background:linear-gradient(135deg,#ff7a59,#6b5cff);}
+body.student-shell-page .portal-card--dark{border-color:#252632;background:linear-gradient(145deg,#181920,#292a37);}
+body.student-shell-page .portal-card--dark .portal-icon{background:linear-gradient(135deg,#6b5cff,#ff7a59);}
+body.student-shell-page .portal-focus{border-color:#d9daf0;background:rgba(255,255,255,.72);}
+body.student-shell-page .portal-focus-mark{background:#6b5cff;color:#fff;}
+body.student-shell-page .portal-mobile-bar{background:rgba(23,24,32,.97);border-bottom-color:rgba(255,255,255,.08);}
+body.student-shell-page .portal-mobile-drawer{background:linear-gradient(180deg,#17181f,#242631);}
+
+/* Protected legacy lesson-note routes now use the same private portal shell. */
+body.student-shell-page .notes-table,
+body.student-shell-page .notes-table td,
+body.student-shell-page .notes-table th{border-color:#e5e6ee;}
+body.student-shell-page .notes-table{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 18px 40px rgba(27,29,40,.06);}
+body.student-shell-page .notes-table th{background:#f2f0ff;color:#4b43a9;}
+body.student-shell-page .notes-table td{background:#fff;color:#4c5260;}
+body.student-shell-page .breadcrumb{display:none!important;}
+body.student-shell-page .page-container{background:transparent;}
+
+/* Modernise protected quiz/result variables that still live in page-local CSS. */
+body.student-shell-page .start-test-btn{background:linear-gradient(135deg,#6b5cff,#4337b8)!important;}
+body.student-shell-page .cancel-test-btn{background:#f0f0f5!important;color:#363943!important;}
+body.student-shell-page .preview-panel{border-color:#e1e1f0!important;background:linear-gradient(180deg,#fbfbff,#f1f0ff)!important;}
+body.student-shell-page .countdown-overlay{background:radial-gradient(circle at 50% 40%,rgba(107,92,255,.98),rgba(23,24,34,.99))!important;}
+body.student-shell-page .result-panel{background:linear-gradient(135deg,#181920,#4038a8 64%,#8f4a54)!important;}
+body.student-shell-page .result-card .btn{background:linear-gradient(135deg,#6b5cff,#4337b8)!important;}
+body.student-shell-page .result-meta{background:#fafaff;border-color:#e6e5ef;}
+
+/* Native pointer remains visible; the custom halo is decorative only. */
+body.student-shell-page.portal-pointer-enabled a,
+body.student-shell-page.portal-pointer-enabled button,
+body.student-shell-page.portal-pointer-enabled .portal-card{cursor:pointer!important;}
+body.student-shell-page.portal-pointer-enabled input,
+body.student-shell-page.portal-pointer-enabled textarea,
+body.student-shell-page.portal-pointer-enabled select{cursor:text!important;}
+.portal-pointer,.portal-pointer-ring{pointer-events:none!important;}
+
+@media(max-width:899px){
+  body.student-shell-page main.page-container{margin-left:0;padding:1.2rem .9rem 3rem;}
+  body.student-shell-page .portal-dashboard{margin-left:0;}
+}

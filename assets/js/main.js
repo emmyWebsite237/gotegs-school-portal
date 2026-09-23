@@ -21,7 +21,7 @@ function getValidStudentSession(){const raw=localStorage.getItem(STUDENT_SESSION
 function touchStudentSession(s){s.lastActivity=Date.now();localStorage.setItem(STUDENT_SESSION_KEY,JSON.stringify(s));}
 
 if(isAdminPathCheck(window.location.pathname)){document.documentElement.classList.add('admin-page-mode');if(!hasAdminAuthSession())document.documentElement.style.visibility='hidden';}
-if(isStudentProtectedPath(window.location.pathname))document.documentElement.classList.add('student-portal-page');
+if(isStudentProtectedPath(window.location.pathname)){document.documentElement.classList.add('student-portal-page');if(!document.querySelector('link[data-gotegs-student-portal-css]')){const css=document.createElement('link');css.rel='stylesheet';css.href='/assets/css/portal.css';css.dataset.gotegsStudentPortalCss='true';document.head.appendChild(css);}}
 if(isStudentProtectedPath(window.location.pathname)&&!getValidStudentSession()){document.documentElement.style.visibility='hidden';window.location.href='/student/index.html';}
 
 function scheduleAdminExpiry(){if(!isAdminPage())return;const p=getAdminTokenPayload(sessionStorage.getItem(ADMIN_TOKEN_KEY));const expiresAt=Number(p?.exp||0)*1000;if(!expiresAt)return;window.setTimeout(()=>{clearAdminSession();window.location.reload();},Math.max(0,expiresAt-Date.now()));}
