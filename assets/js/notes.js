@@ -33,7 +33,7 @@
   }
 
   function buildNoteQuery(table, className, term, subject, dept) {
-    let query = supabaseClient.from(table).select("*").eq("class_name", className).eq("term", term).eq("subject", subject);
+    let query = supabaseClient.from(table).eq("class_name", className).eq("term", term).eq("subject", subject);
     return dept ? query.eq("dept", dept) : query.is("dept", null);
   }
 
@@ -80,7 +80,7 @@
 
       // Load existing content if any
       try {
-        const { data } = await buildNoteQuery("lesson_notes", className, term, subject, dept).select("*");
+        const { data } = await buildNoteQuery("lesson_notes", className, term, subject, dept).select("id,content,uploaded_at").order("uploaded_at", { ascending: false }).limit(1);
         if (data && data.length > 0) {
           const latest = data[0];
           editor.innerHTML = latest.content || "";
@@ -165,7 +165,7 @@
       const term = cell.dataset.term;
 
       try {
-        const { data } = await buildNoteQuery("lesson_notes", className, term, subject, dept).select("*");
+        const { data } = await buildNoteQuery("lesson_notes", className, term, subject, dept).select("id,content,uploaded_at").order("uploaded_at", { ascending: false }).limit(1);
 
         if (data && data.length > 0 && data[0].content) {
           const url = new URLSearchParams({ class: className, term, subject });
@@ -189,6 +189,10 @@
 })();
 
 // -------------------- ADMIN: export all stored notes --------------------
+// Large, unbounded SELECTs of all lesson-note HTML can hit Supabase statement
+// timeouts. Export is therefore keyset-paginated on the primary key and pulls
+// note bodies in small batches. The download is still created entirely in the
+// browser and never touches student-result/check-count data.
 (function wireNotesExport(){
   const button=document.getElementById('export-all-notes');
   const status=document.getElementById('notes-export-status');
@@ -200,11 +204,181 @@
   const count=document.getElementById('notes-export-count');
   if(!button || button.dataset.wired==='1') return;
   button.dataset.wired='1';
-  const setProgress=(p,msg,detail)=>{const value=Math.max(0,Math.min(100,Math.round(p)));if(bar)bar.style.width=value+'%';if(bigBar)bigBar.style.width=value+'%';if(percent)percent.textContent=value+'%';if(message&&msg)message.textContent=msg;if(count&&detail)count.textContent=detail;};
-  const waitFor=async(predicate,timeout=8000)=>{const started=Date.now();while(Date.now()-started<timeout){if(predicate())return true;await new Promise(r=>setTimeout(r,100));}return false;};
-  const loadExternal=urls=>new Promise((resolve,reject)=>{const candidates=Array.isArray(urls)?urls:[urls];let i=0;const tryNext=()=>{if(i>=candidates.length){reject(new Error('Required download component could not be loaded.'));return;}const src=candidates[i++];const existing=[...document.scripts].find(s=>s.src===src||s.dataset.gotegsExternal===src);if(existing){if(existing.dataset.loaded==='1'){resolve();return;}existing.addEventListener('load',resolve,{once:true});existing.addEventListener('error',tryNext,{once:true});return;}const el=document.createElement('script');el.src=src;el.dataset.gotegsExternal=src;el.onload=()=>{el.dataset.loaded='1';resolve();};el.onerror=tryNext;document.head.appendChild(el);};tryNext();});
+
+  const setProgress=(p,msg,detail)=>{
+    const value=Math.max(0,Math.min(100,Math.round(p)));
+    if(bar)bar.style.width=value+'%';
+    if(bigBar)bigBar.style.width=value+'%';
+    if(percent)percent.textContent=value+'%';
+    if(message&&msg)message.textContent=msg;
+    if(count&&detail)count.textContent=detail;
+  };
+  const waitFor=async(predicate,timeout=8000)=>{
+    const started=Date.now();
+    while(Date.now()-started<timeout){
+      if(predicate())return true;
+      await new Promise(r=>setTimeout(r,100));
+    }
+    return false;
+  };
+  const loadExternal=urls=>new Promise((resolve,reject)=>{
+    const candidates=Array.isArray(urls)?urls:[urls];
+    let i=0;
+    const tryNext=()=>{
+      if(i>=candidates.length){reject(new Error('Required download component could not be loaded.'));return;}
+      const src=candidates[i++];
+      const existing=[...document.scripts].find(s=>s.src===src||s.dataset.gotegsExternal===src);
+      if(existing){
+        if(existing.dataset.loaded==='1'){resolve();return;}
+        existing.addEventListener('load',resolve,{once:true});
+        existing.addEventListener('error',tryNext,{once:true});
+        return;
+      }
+      const el=document.createElement('script');
+      el.src=src;
+      el.dataset.gotegsExternal=src;
+      el.onload=()=>{el.dataset.loaded='1';resolve();};
+      el.onerror=tryNext;
+      document.head.appendChild(el);
+    };
+    tryNext();
+  });
+
   const sectionLabel=section=>String(section||'').toLowerCase().includes('sss')?'Senior Arm':'Junior Arm';
   const safeName=value=>String(value||'Untitled').replace(/[\\/:*?"<>|]+/g,'-').replace(/\s+/g,' ').trim()||'Untitled';
-  const key=row=>[row.section,row.class_name,row.dept,row.term,row.subject].map(v=>String(v||'').trim().toLowerCase()).join('|');
-  button.addEventListener('click',async()=>{button.disabled=true;if(overlay)overlay.hidden=false;setProgress(2,'Connecting to Supabase…','Starting…');try{const ready=await waitFor(()=>typeof supabaseClient!=='undefined',6000);if(!ready)throw new Error('Supabase is not ready on this page. Please refresh and try again.');setProgress(6,'Loading the download tools…','Preparing document generator…');await loadExternal(['https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js','https://unpkg.com/jszip@3.10.1/dist/jszip.min.js']);await loadExternal(['https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.js','https://unpkg.com/html-docx-js@0.3.1/dist/html-docx.js']);if(!window.JSZip)throw new Error('ZIP generator failed to load.');if(!window.htmlDocx)throw new Error('Word document converter failed to load.');setProgress(12,'Pulling saved lesson notes from Supabase…','Fetching records…');const {data,error}=await supabaseClient.from('lesson_notes').select('section,class_name,dept,term,subject,content,uploaded_at').order('uploaded_at',{ascending:false});if(error)throw error;const seen=new Set();const notes=(Array.isArray(data)?data:[]).filter(row=>{const k=key(row);if(seen.has(k))return false;seen.add(k);return !!row.content&&!!String(row.content).replace(/<[^>]*>/g,'').trim();});if(!notes.length)throw new Error('No saved lesson notes with content were found.');const zip=new JSZip();for(let i=0;i<notes.length;i++){const row=notes[i];const folder=['Lesson Notes',sectionLabel(row.section),safeName(row.class_name||'Class'),row.dept?safeName(row.dept):null,safeName(row.term||'Term')].filter(Boolean).join('/');const subject=safeName(row.subject||'Lesson Note');const html=`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${subject}</title></head><body>${row.content}</body></html>`;zip.file(`${folder}/${subject}.docx`,window.htmlDocx.asBlob(html,{orientation:'portrait',margins:{top:720,right:720,bottom:720,left:720}}));setProgress(15+Math.round(((i+1)/notes.length)*70),'Preparing Word documents…',`${i+1} of ${notes.length} · ${subject}`);await new Promise(requestAnimationFrame);}setProgress(88,'Compressing the ZIP…',`Packaging ${notes.length} Word documents…`);const blob=await zip.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:6}},meta=>setProgress(88+Math.round(meta.percent*0.12),'Finalising the ZIP…',`Compressing ${Math.round(meta.percent)}%`));setProgress(100,'Download ready.',`${notes.length} Word documents prepared.`);await new Promise(r=>setTimeout(r,250));const url=URL.createObjectURL(blob);const link=document.createElement('a');link.href=url;link.download=`Go-Tegs-Lesson-Notes-${new Date().toISOString().slice(0,10)}.zip`;document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);if(status)status.textContent=`Done — ${notes.length} lesson notes packaged and downloaded.`;}catch(err){console.error('Lesson notes export failed:',err);setProgress(0,'Export failed.',err?.message||String(err));if(status)status.textContent='Export failed: '+(err?.message||String(err));}finally{if(overlay)overlay.hidden=true;button.disabled=false;}});
+  const key=row=>[row.section,row.class_name,row.dept,row.term,row.subject].map(v=>String(v??'').trim().toLowerCase()).join('|');
+  const hasText=html=>!!html&&!!String(html).replace(/<[^>]*>/g,'').trim();
+  const pause=()=>new Promise(requestAnimationFrame);
+
+  // Read only a small indexed window of metadata at a time. Sorting by the
+  // primary-key id avoids the expensive uploaded_at sort that caused the
+  // original statement-timeout.
+  async function getMetadataPage(afterId,pageSize){
+    let query=supabaseClient
+      .from('lesson_notes')
+      .select('id,section,class_name,dept,term,subject,uploaded_at')
+      .order('id',{ascending:true})
+      .limit(pageSize);
+    if(afterId!==null) query=query.gt('id',afterId);
+    return query;
+  }
+
+  // Pull only the content for a small set of known IDs. If the batch still
+  // triggers the database limit, fall back to one note at a time.
+  async function getContentBatch(ids){
+    if(!ids.length)return [];
+    const first=await supabaseClient.from('lesson_notes').select('id,content').in('id',ids);
+    if(!first.error)return Array.isArray(first.data)?first.data:[];
+    if(ids.length===1)throw first.error;
+    const rows=[];
+    for(const id of ids){
+      const one=await supabaseClient.from('lesson_notes').select('id,content').eq('id',id).maybeSingle();
+      if(one.error)throw one.error;
+      if(one.data)rows.push(one.data);
+      await new Promise(r=>setTimeout(r,20));
+    }
+    return rows;
+  }
+
+  button.addEventListener('click',async()=>{
+    button.disabled=true;
+    button.textContent='Preparing…';
+    if(overlay)overlay.hidden=false;
+    setProgress(2,'Connecting to Supabase…','Starting…');
+    try{
+      const ready=await waitFor(()=>typeof supabaseClient!=='undefined',6000);
+      if(!ready)throw new Error('Supabase is not ready on this page. Please refresh and try again.');
+
+      setProgress(6,'Loading the download tools…','Preparing document generator…');
+      await loadExternal(['https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js','https://unpkg.com/jszip@3.10.1/dist/jszip.min.js']);
+      await loadExternal(['https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.js','https://unpkg.com/html-docx-js@0.3.1/dist/html-docx.js']);
+      if(!window.JSZip)throw new Error('ZIP generator failed to load.');
+      if(!window.htmlDocx)throw new Error('Word document converter failed to load.');
+
+      const PAGE_SIZE=10;
+      let afterId=null;
+      let page=0;
+      let totalIndexed=0;
+      const metadata=[];
+
+      while(true){
+        page+=1;
+        const {data,error}=await getMetadataPage(afterId,PAGE_SIZE);
+        if(error)throw new Error(`Could not read lesson-note records (page ${page}): ${error.message}`);
+        const rows=Array.isArray(data)?data:[];
+        if(!rows.length)break;
+        metadata.push(...rows);
+        totalIndexed+=rows.length;
+        afterId=rows[rows.length-1].id;
+        setProgress(10,`Reading lesson-note index…`,`Indexed ${totalIndexed} records`);
+        if(rows.length<PAGE_SIZE)break;
+        await pause();
+      }
+
+      if(!metadata.length){
+        setProgress(100,'No saved lesson notes found.','Nothing to download.');
+        if(status)status.textContent='No saved lesson notes were found.';
+        return;
+      }
+
+      const zip=new JSZip();
+      const selected=new Map();
+      for(let start=0;start<metadata.length;start+=PAGE_SIZE){
+        const metaChunk=metadata.slice(start,start+PAGE_SIZE);
+        setProgress(12+Math.round((start/metadata.length)*28),`Pulling lesson-note content…`,`Records ${start+1}–${Math.min(start+metaChunk.length,metadata.length)} of ${metadata.length}`);
+        const contents=await getContentBatch(metaChunk.map(row=>row.id));
+        const contentById=new Map(contents.map(row=>[String(row.id),row.content]));
+        for(const meta of metaChunk){
+          const content=contentById.get(String(meta.id));
+          if(!hasText(content))continue;
+          const full={...meta,content};
+          const k=key(full);
+          const old=selected.get(k);
+          if(!old || new Date(full.uploaded_at||0).getTime()>=new Date(old.uploaded_at||0).getTime())selected.set(k,full);
+        }
+        await pause();
+      }
+
+      const notes=Array.from(selected.values()).sort((a,b)=>new Date(b.uploaded_at||0)-new Date(a.uploaded_at||0));
+      if(!notes.length){
+        setProgress(100,'No lesson notes with content were found.','Nothing to download.');
+        if(status)status.textContent='No saved lesson notes with content were found.';
+        return;
+      }
+
+      for(let i=0;i<notes.length;i++){
+        const row=notes[i];
+        const folder=['Lesson Notes',sectionLabel(row.section),safeName(row.class_name||'Class'),row.dept?safeName(row.dept):null,safeName(row.term||'Term')].filter(Boolean).join('/');
+        const subject=safeName(row.subject||'Lesson Note');
+        const html=`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${subject}</title></head><body>${row.content}</body></html>`;
+        zip.file(`${folder}/${subject}.docx`,window.htmlDocx.asBlob(html,{orientation:'portrait',margins:{top:720,right:720,bottom:720,left:720}}));
+        setProgress(40+Math.round(((i+1)/notes.length)*48),'Preparing Word documents…',`${i+1} of ${notes.length} · ${subject}`);
+        await pause();
+      }
+
+      setProgress(90,'Compressing the ZIP…',`Packaging ${notes.length} Word documents…`);
+      const blob=await zip.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:6}},meta=>{
+        setProgress(90+Math.round(meta.percent*.10),'Finalising the ZIP…',`Compressing ${Math.round(meta.percent)}%`);
+      });
+      setProgress(100,'Download ready.',`${notes.length} lesson notes prepared.`);
+      await new Promise(r=>setTimeout(r,250));
+      const url=URL.createObjectURL(blob);
+      const link=document.createElement('a');
+      link.href=url;
+      link.download=`Go-Tegs-Lesson-Notes-${new Date().toISOString().slice(0,10)}.zip`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),30000);
+      if(status)status.textContent=`Done — ${notes.length} lesson notes packaged and downloaded.`;
+    }catch(err){
+      console.error('Lesson notes export failed:',err);
+      setProgress(0,'Export failed.',err?.message||String(err));
+      if(status)status.textContent='Export failed: '+(err?.message||String(err));
+    }finally{
+      if(overlay)overlay.hidden=true;
+      button.disabled=false;
+      button.textContent='↓ Download lesson notes ZIP';
+    }
+  });
 })();
