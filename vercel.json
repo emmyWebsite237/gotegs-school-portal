@@ -1,7 +1,17 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "redirects": [
+
     {
+      "source": "/store.html",
+      "destination": "/student/store/index.html",
+      "permanent": false
+    },
+    {
+      "source": "/store",
+      "destination": "/student/store/index.html",
+      "permanent": false
+    },    {
       "source": "/admin-updates",
       "destination": "/admin/admin-updates/index.html",
       "permanent": false
@@ -69,16 +79,6 @@
     {
       "source": "/admin-quiz-codes/:path*",
       "destination": "/admin/admin-quiz-codes/:path*",
-      "permanent": false
-    },
-    {
-      "source": "/quiz.html",
-      "destination": "/student/quiz/index.html",
-      "permanent": false
-    },
-    {
-      "source": "/quiz-code.html",
-      "destination": "/student/quiz-code/index.html",
       "permanent": false
     }
   ],

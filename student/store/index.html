@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>School Store | Go-Tegs Student Portal</title>
+  <title>Go-Tegs Store | Go-Tegs International School</title>
   <link rel="stylesheet" href="/assets/css/style.css" />
   <link rel="stylesheet" href="/assets/css/portal.css" />
   <style>
@@ -60,31 +60,15 @@
     .bank-details strong { display: block; font-family: var(--font-display); margin-bottom: 0.3rem; }
 
     #orderMsg { margin-top: 0.9rem; font-size: 0.9rem; font-weight: 600; }
-  
-    body.student-shell-page .student-store-page{min-height:100vh;}
-    .student-store-page .store-intro{margin-top:0;}
-    .student-store-page .store-intro > p{max-width:760px;color:var(--slate,#6e7382);margin:.15rem 0 0;}
-    .student-store-page .category-tabs{margin:1.15rem 0;}
-    .student-store-page .category-tab{border-color:#e4e5ee;background:#fff;color:#3f4350;transition:.18s ease;}
-    .student-store-page .category-tab:hover{transform:translateY(-1px);border-color:#cfcff1;}
-    .student-store-page .category-tab.active{background:linear-gradient(135deg,#6b5cff,#4337b8);border-color:transparent;color:#fff;box-shadow:0 10px 22px rgba(107,92,255,.18);}
-    .student-store-page .store-card{border-color:#e4e5ee;border-radius:18px;background:#fff;box-shadow:0 14px 34px rgba(25,27,40,.06);transition:.18s ease;}
-    .student-store-page .store-card:hover{transform:translateY(-3px);box-shadow:0 20px 44px rgba(32,31,54,.1);}
-    .student-store-page #cartSection{margin-top:1.6rem;border-color:#e1e2ed;border-radius:22px;background:linear-gradient(145deg,#fff,#f7f6ff);box-shadow:0 18px 44px rgba(31,32,51,.07);}
-    .student-store-page .bank-details{background:#f0eeff;border-left-color:#6b5cff;color:#4337b8;}
-    .student-store-page .disclaimer{background:#fff6f3;border-left-color:#ff7a59;color:#8d4a37;}
-    @media(max-width:899px){.student-store-page{padding-top:.65rem;}}
   </style>
 </head>
 <body class="student-shell-page">
   <div id="navbar-placeholder"></div>
 
-  <main class="portal-dashboard student-store-page">
-    <div class="dashboard-topline"><span>Go-Tegs / Private Student Workspace</span><span>School Store</span></div>
-    <section class="portal-section store-intro" aria-labelledby="storeHeading">
-      <div class="portal-section-head"><div><div class="portal-section-label">Student store</div><h1 class="portal-section-title" id="storeHeading">Get what you need for school.</h1></div><p class="portal-section-note">Private student workspace</p></div>
-      <p>Browse school books and stationery below. There's no limit on quantity — order as much as you need. Set quantities for what you'd like, then place your order at the bottom of the page.</p>
-    </section>
+  <main class="page-container">
+    <nav class="breadcrumb">Student Portal / Store</nav>
+    <h1>Go-Tegs Store</h1>
+    <p>Browse school books and stationery below. There's no limit on quantity — order as much as you need. Set quantities for what you'd like, then place your order at the bottom of the page.</p>
 
     <div class="category-tabs" id="categoryTabs"></div>
 
@@ -122,6 +106,8 @@
       </form>
     </div>
   </main>
+
+  <div id="footer-placeholder"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/assets/js/main.js"></script>
