@@ -191,3 +191,177 @@ body.student-shell-page.portal-pointer-enabled select{cursor:text!important;}
   body.student-shell-page main.page-container{margin-left:0;padding:1.2rem .9rem 3rem;}
   body.student-shell-page .portal-dashboard{margin-left:0;}
 }
+
+
+/* Go-Tegs Portal — modern visual theme
+   Modern ink / violet / mint system. No dependency on the old maroon-gold palette. */
+:root{
+  --portal-modern-ink:#171820;
+  --portal-modern-ink-2:#262834;
+  --portal-modern-violet:#6d5ce7;
+  --portal-modern-violet-2:#4d42b6;
+  --portal-modern-lilac:#ecebff;
+  --portal-modern-mint:#b9eee0;
+  --portal-modern-mint-2:#78cdb8;
+  --portal-modern-coral:#ff7b68;
+  --portal-modern-bg:#f6f7f5;
+  --portal-modern-paper:#ffffff;
+  --portal-modern-line:#e6e7eb;
+  --portal-modern-muted:#737683;
+}
+
+html.student-portal-page{background:var(--portal-modern-bg)!important;}
+body.student-shell-page{
+  background:
+    radial-gradient(circle at 90% 0,rgba(109,92,231,.11),transparent 28rem),
+    radial-gradient(circle at 2% 82%,rgba(120,205,184,.13),transparent 24rem),
+    var(--portal-modern-bg)!important;
+  color:var(--portal-modern-ink)!important;
+}
+
+.portal-rail{
+  background:linear-gradient(180deg,#171820 0%,#22242e 52%,#1b1c25 100%)!important;
+}
+.portal-brand-copy span{color:#a9a2ff!important;}
+.portal-brand-mark{background:#fff!important;}
+.portal-profile-avatar{
+  background:linear-gradient(135deg,#ffffff,#dff8f0)!important;
+  color:var(--portal-modern-violet-2)!important;
+}
+.portal-profile-initials{
+  color:var(--portal-modern-violet-2)!important;
+  background:linear-gradient(135deg,#e6e3ff,#f6fffc)!important;
+}
+.portal-nav-label{color:#989bae!important;}
+.portal-nav-link{color:#d8dae2!important;}
+.portal-nav-link span{
+  color:#b9eee0!important;
+  background:rgba(255,255,255,.055)!important;
+}
+.portal-nav-link:hover{background:rgba(109,92,231,.13)!important;}
+.portal-nav-link.is-active{
+  background:linear-gradient(135deg,rgba(109,92,231,.48),rgba(120,205,184,.12))!important;
+  box-shadow:inset 0 0 0 1px rgba(185,238,224,.20),0 10px 24px rgba(0,0,0,.10)!important;
+}
+.portal-nav-link.is-active span{
+  color:#20212a!important;
+  background:linear-gradient(135deg,#b9eee0,#f1f8f6)!important;
+}
+.portal-nav-link--disabled{opacity:.4!important;}
+.portal-logout{
+  border-color:rgba(255,255,255,.12)!important;
+  color:#e9eaf0!important;
+}
+.portal-logout:hover{
+  background:rgba(109,92,231,.14)!important;
+  border-color:rgba(185,238,224,.32)!important;
+}
+
+.portal-pointer{background:#b9eee0!important;box-shadow:0 0 22px rgba(120,205,184,.42)!important;}
+.portal-pointer-ring{
+  border-color:rgba(109,92,231,.55)!important;
+  background:rgba(255,255,255,.15)!important;
+}
+.portal-pointer-ring.is-active{border-color:rgba(109,92,231,.88)!important;}
+
+.dashboard-topline{color:#767984!important;}
+.dashboard-topline span:last-child{color:var(--portal-modern-violet)!important;}
+.portal-hero{
+  background:linear-gradient(135deg,#fff 0%,#fff 52%,#f0efff 100%)!important;
+  border-color:#e4e5ea!important;
+  box-shadow:0 24px 60px rgba(29,31,42,.08)!important;
+}
+.portal-hero::before{
+  background:
+    radial-gradient(circle at 82% 18%,rgba(109,92,231,.16),transparent 12rem),
+    radial-gradient(circle at 14% 108%,rgba(120,205,184,.15),transparent 15rem)!important;
+}
+.portal-hero::after{background:linear-gradient(180deg,#6d5ce7,#78cdb8)!important;}
+.portal-kicker{color:var(--portal-modern-violet)!important;}
+.portal-hero h1{color:#171820!important;}
+.portal-hero h1 span{color:var(--portal-modern-violet)!important;}
+.portal-identity-chip{
+  border-color:#dddff0!important;
+  color:#514f6b!important;
+  background:#fff!important;
+}
+.portal-hero-orbit::before{border-color:rgba(109,92,231,.18)!important;}
+.portal-hero-orbit::after{border-color:rgba(120,205,184,.38)!important;}
+.portal-orbit-core{
+  background:linear-gradient(135deg,#6d5ce7,#2f2a69)!important;
+  border-color:#b9eee0!important;
+  box-shadow:0 0 0 12px rgba(109,92,231,.07),0 24px 48px rgba(39,34,88,.18)!important;
+}
+.portal-orbit-tag{
+  color:#4b4665!important;
+  border-color:#e0e1eb!important;
+}
+.portal-section-label{color:#77798a!important;}
+.portal-section-title{color:#171820!important;}
+.portal-section-note{color:#757783!important;}
+
+.portal-card{
+  border-color:#e2e3e9!important;
+  background:rgba(255,255,255,.94)!important;
+  box-shadow:0 14px 38px rgba(30,32,45,.06)!important;
+}
+.portal-card::before{
+  background:radial-gradient(circle,rgba(109,92,231,.15),transparent 70%)!important;
+}
+.portal-card:hover{
+  border-color:#d2d3e0!important;
+  box-shadow:0 22px 48px rgba(30,32,45,.10)!important;
+}
+.portal-icon{
+  background:linear-gradient(135deg,#6d5ce7,#78cdb8)!important;
+  color:#fff!important;
+  box-shadow:0 12px 23px rgba(78,67,178,.18)!important;
+}
+.portal-badge{background:#f1f1ff!important;color:#5c5590!important;}
+.portal-card h3{color:#171820!important;}
+.portal-card p{color:#717480!important;}
+.portal-arrow{color:var(--portal-modern-violet)!important;}
+.portal-card--feature{background:linear-gradient(135deg,#fff,#f1efff)!important;}
+.portal-card--feature .portal-icon{background:linear-gradient(135deg,#6d5ce7,#ff7b68)!important;}
+.portal-card--dark{
+  border-color:#2d2f3b!important;
+  background:linear-gradient(145deg,#1b1c25,#34304f)!important;
+}
+.portal-card--dark p{color:#ddddea!important;}
+.portal-card--dark .portal-badge{color:#dcd9ff!important;}
+.portal-card--dark .portal-arrow{color:#b9eee0!important;}
+.portal-focus{
+  border-color:#cfd2da!important;
+  color:#747780!important;
+}
+.portal-focus-mark{background:var(--portal-modern-violet)!important;color:#fff!important;}
+
+.portal-mobile-bar{
+  background:rgba(23,24,32,.97)!important;
+}
+.portal-mobile-toggle{
+  border-color:rgba(255,255,255,.12)!important;
+}
+.portal-mobile-drawer{
+  background:linear-gradient(180deg,#171820,#262834)!important;
+}
+
+body.student-shell-page .notes-table{
+  border-color:#e3e4ea!important;
+}
+body.student-shell-page .notes-table th{
+  background:#efefff!important;
+  color:#4f4b73!important;
+}
+body.student-shell-page .notes-table td{
+  border-color:#e4e5ea!important;
+  color:#5d606a!important;
+}
+
+@media(max-width:899px){
+  body.student-shell-page{
+    background:
+      radial-gradient(circle at 90% 0,rgba(109,92,231,.10),transparent 22rem),
+      var(--portal-modern-bg)!important;
+  }
+}
