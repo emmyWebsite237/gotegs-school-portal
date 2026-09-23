@@ -189,106 +189,22 @@
 })();
 
 // -------------------- ADMIN: export all stored notes --------------------
-// Uses the existing lesson_notes rows. This never touches student results/check counts.
 (function wireNotesExport(){
   const button=document.getElementById('export-all-notes');
   const status=document.getElementById('notes-export-status');
+  const bar=document.getElementById('notes-export-progress-bar');
+  const overlay=document.getElementById('notes-export-overlay');
+  const bigBar=document.getElementById('notes-export-big-bar');
+  const percent=document.getElementById('notes-export-percent');
+  const message=document.getElementById('notes-export-progress-message');
+  const count=document.getElementById('notes-export-count');
   if(!button || button.dataset.wired==='1') return;
   button.dataset.wired='1';
-
-  const loadExternal=src=>new Promise((resolve,reject)=>{
-    const existing=document.querySelector(`script[src="${src}"]`);
-    if(existing){
-      if(existing.dataset.loaded==='1'){resolve();return;}
-      existing.addEventListener('load',resolve,{once:true});
-      existing.addEventListener('error',reject,{once:true});
-      return;
-    }
-    const el=document.createElement('script');
-    el.src=src;
-    el.onload=()=>{el.dataset.loaded='1';resolve();};
-    el.onerror=()=>reject(new Error(`Could not load ${src}`));
-    document.head.appendChild(el);
-  });
-
-  const sectionLabel=section=>{
-    const value=String(section||'').toLowerCase();
-    return value.includes('sss') ? 'Senior Arm' : 'Junior Arm';
-  };
-  const safeName=value=>String(value||'Untitled')
-    .replace(/[\\/:*?"<>|]+/g,'-')
-    .replace(/\s+/g,' ')
-    .trim() || 'Untitled';
-  const key=row=>[row.section,row.class_name,row.dept,row.term,row.subject]
-    .map(v=>String(v||'').trim().toLowerCase()).join('|');
-
-  button.addEventListener('click',async()=>{
-    const original=button.textContent;
-    button.disabled=true;
-    button.textContent='Preparing…';
-    try{
-      if(status)status.textContent='Connecting to Supabase…';
-      await loadExternal('https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js');
-      await loadExternal('https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.js');
-      if(!window.JSZip) throw new Error('ZIP generator failed to load.');
-      if(!window.htmlDocx) throw new Error('Word document converter failed to load.');
-
-      const {data,error}=await supabaseClient
-        .from('lesson_notes')
-        .select('section,class_name,dept,term,subject,content,uploaded_at')
-        .order('uploaded_at',{ascending:false});
-      if(error) throw error;
-
-      const seen=new Set();
-      const notes=(Array.isArray(data)?data:[]).filter(row=>{
-        const k=key(row);
-        if(seen.has(k)) return false;
-        seen.add(k);
-        return !!row.content && !!String(row.content).replace(/<[^>]*>/g,'').trim();
-      });
-      if(!notes.length){
-        if(status)status.textContent='No saved lesson notes with content were found.';
-        return;
-      }
-
-      const zip=new JSZip();
-      for(let i=0;i<notes.length;i++){
-        const row=notes[i];
-        const folder=[
-          'Lesson Notes',
-          sectionLabel(row.section),
-          safeName(row.class_name||'Class'),
-          row.dept ? safeName(row.dept) : null,
-          safeName(row.term||'Term')
-        ].filter(Boolean).join('/');
-        const subject=safeName(row.subject||'Lesson Note');
-        const html=`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${subject}</title></head><body>${row.content}</body></html>`;
-        const docBlob=window.htmlDocx.asBlob(html,{orientation:'portrait',margins:{top:720,right:720,bottom:720,left:720}});
-        zip.file(`${folder}/${subject}.docx`,docBlob);
-        if(status)status.textContent=`Preparing ${i+1} of ${notes.length}: ${subject}`;
-        await new Promise(requestAnimationFrame);
-      }
-
-      if(status)status.textContent=`Compressing ${notes.length} Word documents…`;
-      const blob=await zip.generateAsync(
-        {type:'blob',compression:'DEFLATE',compressionOptions:{level:6}},
-        meta=>{if(status)status.textContent=`Compressing… ${Math.round(meta.percent)}%`;}
-      );
-      const url=URL.createObjectURL(blob);
-      const link=document.createElement('a');
-      link.href=url;
-      link.download=`Go-Tegs-Lesson-Notes-${new Date().toISOString().slice(0,10)}.zip`;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      setTimeout(()=>URL.revokeObjectURL(url),30000);
-      if(status)status.textContent=`Done — ${notes.length} .docx lesson notes downloaded.`;
-    }catch(err){
-      console.error('Lesson notes export failed:',err);
-      if(status)status.textContent='Export failed: '+(err?.message||String(err));
-    }finally{
-      button.disabled=false;
-      button.textContent=original;
-    }
-  });
+  const setProgress=(p,msg,detail)=>{const value=Math.max(0,Math.min(100,Math.round(p)));if(bar)bar.style.width=value+'%';if(bigBar)bigBar.style.width=value+'%';if(percent)percent.textContent=value+'%';if(message&&msg)message.textContent=msg;if(count&&detail)count.textContent=detail;};
+  const waitFor=async(predicate,timeout=8000)=>{const started=Date.now();while(Date.now()-started<timeout){if(predicate())return true;await new Promise(r=>setTimeout(r,100));}return false;};
+  const loadExternal=urls=>new Promise((resolve,reject)=>{const candidates=Array.isArray(urls)?urls:[urls];let i=0;const tryNext=()=>{if(i>=candidates.length){reject(new Error('Required download component could not be loaded.'));return;}const src=candidates[i++];const existing=[...document.scripts].find(s=>s.src===src||s.dataset.gotegsExternal===src);if(existing){if(existing.dataset.loaded==='1'){resolve();return;}existing.addEventListener('load',resolve,{once:true});existing.addEventListener('error',tryNext,{once:true});return;}const el=document.createElement('script');el.src=src;el.dataset.gotegsExternal=src;el.onload=()=>{el.dataset.loaded='1';resolve();};el.onerror=tryNext;document.head.appendChild(el);};tryNext();});
+  const sectionLabel=section=>String(section||'').toLowerCase().includes('sss')?'Senior Arm':'Junior Arm';
+  const safeName=value=>String(value||'Untitled').replace(/[\\/:*?"<>|]+/g,'-').replace(/\s+/g,' ').trim()||'Untitled';
+  const key=row=>[row.section,row.class_name,row.dept,row.term,row.subject].map(v=>String(v||'').trim().toLowerCase()).join('|');
+  button.addEventListener('click',async()=>{button.disabled=true;if(overlay)overlay.hidden=false;setProgress(2,'Connecting to Supabase…','Starting…');try{const ready=await waitFor(()=>typeof supabaseClient!=='undefined',6000);if(!ready)throw new Error('Supabase is not ready on this page. Please refresh and try again.');setProgress(6,'Loading the download tools…','Preparing document generator…');await loadExternal(['https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js','https://unpkg.com/jszip@3.10.1/dist/jszip.min.js']);await loadExternal(['https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.js','https://unpkg.com/html-docx-js@0.3.1/dist/html-docx.js']);if(!window.JSZip)throw new Error('ZIP generator failed to load.');if(!window.htmlDocx)throw new Error('Word document converter failed to load.');setProgress(12,'Pulling saved lesson notes from Supabase…','Fetching records…');const {data,error}=await supabaseClient.from('lesson_notes').select('section,class_name,dept,term,subject,content,uploaded_at').order('uploaded_at',{ascending:false});if(error)throw error;const seen=new Set();const notes=(Array.isArray(data)?data:[]).filter(row=>{const k=key(row);if(seen.has(k))return false;seen.add(k);return !!row.content&&!!String(row.content).replace(/<[^>]*>/g,'').trim();});if(!notes.length)throw new Error('No saved lesson notes with content were found.');const zip=new JSZip();for(let i=0;i<notes.length;i++){const row=notes[i];const folder=['Lesson Notes',sectionLabel(row.section),safeName(row.class_name||'Class'),row.dept?safeName(row.dept):null,safeName(row.term||'Term')].filter(Boolean).join('/');const subject=safeName(row.subject||'Lesson Note');const html=`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${subject}</title></head><body>${row.content}</body></html>`;zip.file(`${folder}/${subject}.docx`,window.htmlDocx.asBlob(html,{orientation:'portrait',margins:{top:720,right:720,bottom:720,left:720}}));setProgress(15+Math.round(((i+1)/notes.length)*70),'Preparing Word documents…',`${i+1} of ${notes.length} · ${subject}`);await new Promise(requestAnimationFrame);}setProgress(88,'Compressing the ZIP…',`Packaging ${notes.length} Word documents…`);const blob=await zip.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:6}},meta=>setProgress(88+Math.round(meta.percent*0.12),'Finalising the ZIP…',`Compressing ${Math.round(meta.percent)}%`));setProgress(100,'Download ready.',`${notes.length} Word documents prepared.`);await new Promise(r=>setTimeout(r,250));const url=URL.createObjectURL(blob);const link=document.createElement('a');link.href=url;link.download=`Go-Tegs-Lesson-Notes-${new Date().toISOString().slice(0,10)}.zip`;document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);if(status)status.textContent=`Done — ${notes.length} lesson notes packaged and downloaded.`;}catch(err){console.error('Lesson notes export failed:',err);setProgress(0,'Export failed.',err?.message||String(err));if(status)status.textContent='Export failed: '+(err?.message||String(err));}finally{if(overlay)overlay.hidden=true;button.disabled=false;}});
 })();

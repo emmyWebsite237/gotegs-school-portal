@@ -19,8 +19,8 @@
   <main class="print-wrap">
     <div class="print-head"><div><div class="admin-eyebrow">Admin / student results</div><h1>Result Print Centre</h1><p>Student results are prepared one page at a time using the same clear report layout used on the student's result page. Nothing here uses or changes the student's result-check count.</p></div><a class="btn btn-secondary" href="/admin/">Back to Admin</a></div>
     <div class="print-actions"><button class="btn" id="downloadAll" type="button" disabled>Download All Results PDF</button><button class="btn btn-secondary" id="refreshPreview" type="button">Preview All Results</button><button class="btn danger hidden" id="cancelPreview" type="button">Cancel Preview</button></div>
-    <div class="print-status"><div><strong id="printCount">0 students</strong> · <span id="printReady">Preparing preview…</span></div><div class="print-progress" aria-label="Preview progress"><span id="printProgress"></span></div><div><strong id="printSize">Calculating size…</strong></div></div>
-    <div class="print-preview" id="printPreview"><div class="preview-empty">Preparing result pages…</div></div>
+    <div class="print-status"><div><strong id="printCount">0 students</strong> · <span id="printReady">Preview not started.</span></div><div class="print-progress" aria-label="Preview progress"><span id="printProgress"></span></div><div><strong id="printSize">Calculating size…</strong></div></div>
+    <div class="print-preview" id="printPreview"><div class="preview-empty"><strong>Preview not loaded.</strong><br/>Tap “Preview All Results” when you are ready. Nothing is pulled or rendered until you initiate the preview.</div></div>
     <p class="cancel-note">Preview can be cancelled at any time. Download does not count as a student result check.</p>
   </main>
   <script src="/assets/js/main.js"></script>
@@ -51,7 +51,6 @@
     document.getElementById('cancelPreview').addEventListener('click',()=>{cancelled=true;document.getElementById('cancelPreview').classList.add('hidden');});
     document.getElementById('refreshPreview').addEventListener('click',loadPreview);
     document.getElementById('downloadAll').addEventListener('click',async()=>{const btn=document.getElementById('downloadAll');if(!pageImages.length||pageImages.some(img=>!img))return;btn.disabled=true;btn.textContent='Building PDF…';try{const PDF=window.jspdf?.jsPDF;if(!PDF)throw new Error('PDF engine did not load.');const pdf=new PDF('p','mm','a4');pageImages.forEach((img,i)=>{if(i)pdf.addPage();pdf.addImage(img,'JPEG',0,0,210,297,`gotegs-${i}`,'FAST');});pdf.save(`Go-Tegs-Results-${new Date().toISOString().slice(0,10)}.pdf`);}catch(e){alert(e.message||'Could not create PDF.');}finally{btn.disabled=false;btn.textContent='Download All Results PDF';}});
-    window.addEventListener('load',loadPreview);
   </script>
 </body>
 </html>

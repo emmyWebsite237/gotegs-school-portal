@@ -6,6 +6,10 @@
   <title>Manage Lesson Notes | Admin | Go-Tegs</title>
   <link rel="stylesheet" href="/assets/css/style.css" />
   <link rel="stylesheet" href="/assets/css/admin.css" />
+
+<style>
+.notes-export-card{margin:1rem 0 1.35rem;padding:1.2rem 1.25rem;border:1px solid #d7e2ed;border-radius:20px;background:linear-gradient(135deg,#fff,#f7fbff);box-shadow:0 18px 40px rgba(18,38,61,.08);display:grid;grid-template-columns:1fr auto;gap:.6rem 1.2rem;align-items:center}.notes-export-copy h2{margin:.1rem 0 .25rem;color:#13243b;font-size:1.05rem}.notes-export-copy p{margin:0;color:#64748b;font-size:.82rem;max-width:760px}.notes-export-actions{display:flex;justify-content:flex-end}.notes-export-actions .btn-primary{border:0;cursor:pointer;padding:.75rem 1rem;border-radius:12px;font-weight:800;background:linear-gradient(135deg,#1d63c9,#254c9b);color:#fff;box-shadow:0 10px 24px rgba(37,76,155,.2)}.notes-export-actions button:disabled{opacity:.55;cursor:wait}.notes-export-status{grid-column:1/-1;font-size:.78rem;color:#65758a;min-height:1.2rem}.notes-export-progress{grid-column:1/-1;height:8px;border-radius:999px;background:#e8eef5;overflow:hidden}.notes-export-progress span{display:block;width:0;height:100%;background:linear-gradient(90deg,#254c9b,#8a62c7);transition:width .18s ease}.notes-export-overlay{position:fixed;inset:0;background:rgba(10,17,28,.55);backdrop-filter:blur(6px);z-index:9999;display:grid;place-items:center;padding:1rem}.notes-export-overlay[hidden]{display:none}.notes-export-dialog{width:min(560px,100%);padding:1.5rem;border-radius:24px;background:#fff;box-shadow:0 30px 80px rgba(0,0,0,.25)}.notes-export-dialog h2{margin:.2rem 0 .4rem;color:#13243b}.notes-export-dialog p{margin:0;color:#64748b}.notes-export-big-progress{margin:1.2rem 0 .65rem;height:12px;border-radius:999px;background:#e9eef5;overflow:hidden}.notes-export-big-progress span{display:block;width:0;height:100%;background:linear-gradient(90deg,#254c9b,#8a62c7);transition:width .2s ease}.notes-export-progress-row{display:flex;justify-content:space-between;gap:1rem;color:#607086;font-size:.78rem}.notes-export-progress-row strong{color:#13243b;font-size:1rem}@media(max-width:720px){.notes-export-card{grid-template-columns:1fr}.notes-export-actions{justify-content:flex-start}}
+</style>
 </head>
 <body>
   <div id="navbar-placeholder"></div>
@@ -13,9 +17,24 @@
   <main class="page-container admin-page">
     <nav class="breadcrumb">Admin / Notes</nav>
     <h1>Manage Lesson Notes</h1>
-    <div class="notes-export-card" style="display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin:1rem 0 1.25rem;padding:1rem 1.1rem;border:1px solid #dbe5ee;border-radius:16px;background:#fff;box-shadow:0 12px 30px rgba(20,41,66,.06);">
-      <button id="export-all-notes" type="button" class="btn-primary" style="border:0;cursor:pointer;">↓ Download all lesson notes (.zip)</button>
-      <span id="notes-export-status" role="status" aria-live="polite" style="font-size:.82rem;color:#64748b;">Pull all saved notes from Supabase and package them as editable Word files.</span>
+    <section class="notes-export-card" aria-labelledby="notes-export-title">
+      <div class="notes-export-copy">
+        <div class="admin-eyebrow">DOCUMENT CENTRE</div>
+        <h2 id="notes-export-title">Download all saved lesson notes</h2>
+        <p>Pull the notes already stored in Supabase and package them into correctly arranged Word documents. The browser download starts only after preparation reaches 100%.</p>
+      </div>
+      <div class="notes-export-actions"><button id="export-all-notes" type="button" class="btn-primary">↓ Download lesson notes ZIP</button></div>
+      <div class="notes-export-status" id="notes-export-status" role="status" aria-live="polite">Ready when you are.</div>
+      <div class="notes-export-progress" aria-hidden="true"><span id="notes-export-progress-bar"></span></div>
+    </section>
+    <div class="notes-export-overlay" id="notes-export-overlay" hidden>
+      <div class="notes-export-dialog" role="dialog" aria-modal="true" aria-labelledby="notes-export-progress-title">
+        <div class="admin-eyebrow">LESSON NOTES EXPORT</div>
+        <h2 id="notes-export-progress-title">Preparing your download…</h2>
+        <p id="notes-export-progress-message">Connecting to Supabase…</p>
+        <div class="notes-export-big-progress"><span id="notes-export-big-bar"></span></div>
+        <div class="notes-export-progress-row"><strong id="notes-export-percent">0%</strong><span id="notes-export-count">Starting…</span></div>
+      </div>
     </div>
     <ul class="link-grid">
     <li><a href="jss/index.html">JSS (Junior Secondary)</a></li>
@@ -27,5 +46,6 @@
 
   <script src="/assets/js/main.js"></script>
   <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/notes.js"></script>
 </body>
 </html>
