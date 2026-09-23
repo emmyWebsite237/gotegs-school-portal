@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiz | Go-Tegs International School</title>
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <link rel="stylesheet" href="/assets/css/portal.css" />
+  <style>
+    .quiz-stats { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 1.5rem; }
+    .stat-pill {
+      display: flex; align-items: center; gap: 0.5rem;
+      background: var(--paper); border: 1px solid var(--border); border-radius: 999px;
+      padding: 0.55rem 1.1rem; font-family: var(--font-display); font-weight: 700; font-size: 0.88rem;
+    }
+    .stat-pill .emoji { font-size: 1.15rem; }
+    .stat-pill.level { background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%); color: #fff; border-color: transparent; }
+    .stat-pill .xp-bar-track { width: 70px; height: 6px; background: rgba(0,0,0,0.08); border-radius: 99px; overflow: hidden; }
+    .stat-pill.level .xp-bar-track { background: rgba(255,255,255,0.25); }
+    .stat-pill .xp-bar-fill { height: 100%; background: var(--gold); border-radius: 99px; transition: width 0.4s ease; }
+
+    .mute-btn { margin-left: auto; background: none; border: 1px solid var(--border); border-radius: 999px; width: 40px; height: 40px; font-size: 1.1rem; cursor: pointer; }
+
+    .topic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+    .topic-card {
+      position: relative; overflow: hidden; border-radius: 16px; padding: 1.5rem;
+      color: #fff; text-align: left; border: none; cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+      min-height: 150px; display: flex; flex-direction: column; justify-content: flex-end;
+    }
+    .topic-card:hover { transform: translateY(-4px) scale(1.015); box-shadow: 0 14px 28px rgba(16,24,38,0.22); }
+    .topic-card .topic-emoji { position: absolute; top: 0.9rem; right: 1rem; font-size: 2.6rem; opacity: 0.9; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2)); }
+    .topic-card h3 { color: #fff; font-size: 1.15rem; margin: 0 0 0.25rem; position: relative; z-index: 1; }
+    .topic-card p { color: rgba(255,255,255,0.85); font-size: 0.83rem; margin: 0; position: relative; z-index: 1; }
+    .topic-card .best-badge { position: absolute; top: 0.9rem; left: 1rem; background: rgba(0,0,0,0.25); padding: 0.2rem 0.6rem; border-radius: 999px; font-size: 0.72rem; font-weight: 700; }
+
+    .quiz-card { border: 1px solid var(--border); border-left: 5px solid var(--teal); border-radius: 0 16px 16px 0; background: var(--paper); padding: 1.85rem; margin-top: 1.5rem; box-shadow: var(--shadow-sm); }
+    .quiz-meta { display: flex; justify-content: space-between; align-items: center; font-family: var(--font-display); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--teal-dark); margin-bottom: 0.5rem; }
+    .quiz-progress { height: 8px; border-radius: 99px; background: var(--teal-light); overflow: hidden; margin-bottom: 1.5rem; }
+    .quiz-progress span { display: block; height: 100%; background: linear-gradient(90deg, var(--gold), var(--teal)); transition: width 0.3s ease; }
+
+    .quiz-question { font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; line-height: 1.4; margin-bottom: 1.3rem; display: flex; align-items: center; gap: 0.6rem; }
+
+    .quiz-options { display: flex; flex-direction: column; gap: 0.65rem; }
+    .quiz-option {
+      display: flex; align-items: center; gap: 0.8rem; width: 100%; padding: 0.95rem 1.1rem; text-align: left;
+      border: 2px solid var(--border); border-radius: 12px; background: var(--paper);
+      font-family: var(--font-body); font-size: 0.98rem; color: var(--ink);
+      transition: border-color 0.15s ease, background 0.15s ease, transform 0.1s ease;
+    }
+    .quiz-option:hover:not(:disabled) { border-color: var(--teal); background: var(--teal-light); transform: translateX(2px); }
+    .quiz-option:active:not(:disabled) { transform: scale(0.98); }
+    .quiz-option .key { flex-shrink: 0; height: 30px; width: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--teal-light); color: var(--teal-dark); font-family: var(--font-display); font-weight: 700; font-size: 0.85rem; }
+    .quiz-option.correct { border-color: #1f9d55; background: #eafaf1; animation: pop 0.3s ease; }
+    .quiz-option.correct .key { background: #1f9d55; color: #fff; }
+    .quiz-option.wrong { border-color: #d64545; background: #fdeeee; animation: shake 0.35s ease; }
+    .quiz-option.wrong .key { background: #d64545; color: #fff; }
+    .quiz-option:disabled { cursor: default; }
+
+    @keyframes pop { 0% { transform: scale(1); } 40% { transform: scale(1.03); } 100% { transform: scale(1); } }
+    @keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+
+    .quiz-feedback { margin-top: 1.2rem; padding: 1rem 1.15rem; border-radius: 0 10px 10px 0; background: var(--teal-light); border-left: 4px solid var(--gold); font-size: 0.92rem; color: var(--ink); display: none; }
+    .quiz-feedback strong { font-family: var(--font-display); }
+    .quiz-actions { margin-top: 1.4rem; display: flex; gap: 0.6rem; flex-wrap: wrap; }
+
+    .result-hero { text-align: center; padding: 1rem 0 0.5rem; }
+    .result-emoji { font-size: 3.6rem; line-height: 1; margin-bottom: 0.3rem; }
+    .score-ring { font-family: var(--font-display); font-size: 2.8rem; font-weight: 800; color: var(--teal); line-height: 1; margin-bottom: 0.2rem; }
+    .xp-gain { display: inline-flex; align-items: center; gap: 0.4rem; background: var(--teal-light); color: var(--teal-dark); font-family: var(--font-display); font-weight: 700; padding: 0.4rem 0.9rem; border-radius: 999px; margin-top: 0.6rem; font-size: 0.88rem; }
+
+    .badge-row { display: flex; flex-wrap: wrap; gap: 0.6rem; justify-content: center; margin-top: 1.3rem; }
+    .badge-chip {
+      display: flex; align-items: center; gap: 0.4rem; background: linear-gradient(135deg, var(--gold), var(--gold-soft));
+      color: var(--maroon-deep); padding: 0.45rem 0.9rem; border-radius: 999px; font-family: var(--font-display); font-weight: 700; font-size: 0.82rem;
+      animation: badge-in 0.4s ease both;
+    }
+    @keyframes badge-in { from { opacity: 0; transform: scale(0.7) translateY(6px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+
+    .confetti-piece { position: fixed; top: -10px; z-index: 3000; pointer-events: none; border-radius: 2px; }
+  </style>
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+
+  <main class="page-container">
+    <nav class="breadcrumb">Home / Student / Quiz</nav>
+    <h1>🧠 Quiz Time!</h1>
+    <p>Pick a topic, test yourself, and level up. Your progress is saved on this device.</p>
+
+    <div class="quiz-stats" id="statsStrip"></div>
+    <div class="topic-grid" id="topicList"></div>
+
+    <div class="quiz-card" id="quizCard" style="display:none;">
+      <div class="quiz-meta">
+        <span id="quizTopic"></span>
+        <span id="quizCount"></span>
+      </div>
+      <div class="quiz-progress"><span id="quizBar" style="width:0%"></span></div>
+
+      <div id="quizBody">
+        <p class="quiz-question" id="quizQuestion"></p>
+        <div class="quiz-options" id="quizOptions"></div>
+        <div class="quiz-feedback" id="quizFeedback"></div>
+        <div class="quiz-actions">
+          <button class="btn" id="nextBtn" style="display:none;">Next Question ➜</button>
+          <button class="btn-save" id="quitBtn">⬅ Back to Topics</button>
+        </div>
+      </div>
+
+      <div id="quizResult" style="display:none;">
+        <div class="result-hero">
+          <div class="result-emoji" id="resultEmoji">🎉</div>
+          <div class="score-ring" id="scoreText"></div>
+          <p id="scoreMessage"></p>
+          <div class="xp-gain" id="xpGain"></div>
+        </div>
+        <div class="badge-row" id="badgeRow"></div>
+        <div class="quiz-actions" style="justify-content:center; margin-top:1.6rem;">
+          <button class="btn" id="retryBtn">🔁 Try Again</button>
+          <button class="btn-save" id="backBtn">⬅ Back to Topics</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-placeholder"></div>
+  <script src="/assets/js/main.js"></script>
+  <script>
+  /* ======================================================================
+     EDIT YOUR QUIZZES HERE — add an emoji + colors per topic, and your
+     question list. Fully static: nothing here talks to a server.
+     ====================================================================== */
+  const QUIZZES = {
+    "Mathematics": {
+      emoji: "➗", gradient: "linear-gradient(135deg,#2563eb,#1d4ed8)",
+      questions: [
+        { q: "What is 15% of 200?", options: ["20", "30", "35", "40"], answer: 1, why: "10% of 200 is 20, and 5% is 10. 20 + 10 = 30." },
+        { q: "A triangle's angles add up to how many degrees?", options: ["90°", "180°", "270°", "360°"], answer: 1, why: "The interior angles of any triangle always sum to 180°." },
+        { q: "Solve for x: 3x + 6 = 21", options: ["3", "5", "7", "9"], answer: 1, why: "Subtract 6 from both sides to get 3x = 15, then divide by 3, so x = 5." }
+      ]
+    },
+    "Basic Science": {
+      emoji: "🔬", gradient: "linear-gradient(135deg,#16a34a,#15803d)",
+      questions: [
+        { q: "Which gas do plants take in during photosynthesis?", options: ["Oxygen", "Nitrogen", "Carbon dioxide", "Hydrogen"], answer: 2, why: "Plants absorb carbon dioxide and release oxygen during photosynthesis." },
+        { q: "What is the boiling point of water at sea level?", options: ["50°C", "90°C", "100°C", "120°C"], answer: 2, why: "At standard atmospheric pressure, water boils at 100°C." },
+        { q: "Which organ pumps blood around the body?", options: ["Liver", "Heart", "Lungs", "Kidney"], answer: 1, why: "The heart pumps blood through the circulatory system." }
+      ]
+    },
+    "English Language": {
+      emoji: "📖", gradient: "linear-gradient(135deg,#d97706,#b45309)",
+      questions: [
+        { q: "Which word is a synonym of 'rapid'?", options: ["Slow", "Quick", "Heavy", "Quiet"], answer: 1, why: "'Rapid' and 'quick' both describe something happening fast." },
+        { q: "Choose the correctly spelled word.", options: ["Recieve", "Receive", "Receeve", "Reciev"], answer: 1, why: "The rule is 'i before e except after c' — so it's 'receive'." },
+        { q: "What is the plural of 'child'?", options: ["Childs", "Childes", "Children", "Childrens"], answer: 2, why: "'Child' has an irregular plural form: 'children'." }
+      ]
+    }
+  };
+  /* ==================== END OF EDITABLE SECTION ==================== */
+
+  const el = (id) => document.getElementById(id);
+
+  const session = JSON.parse(localStorage.getItem('gotegs_student_session') || 'null');
+  const STORAGE_KEY = 'gotegs_quiz_profile_' + (session ? session.student_id : 'guest');
+
+  function loadProfile() {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : { xp: 0, streak: 0, lastPlayed: null, badges: [], bestScores: {}, soundOn: true };
+  }
+  function saveProfile(p) { localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); }
+
+  let profile = loadProfile();
+
+  function xpForLevel(level) { return (level - 1) * 100; }
+  function levelFromXp(xp) { return Math.floor(xp / 100) + 1; }
+
+  function renderStats() {
+    const level = levelFromXp(profile.xp);
+    const intoLevel = profile.xp - xpForLevel(level);
+    el('statsStrip').innerHTML = `
+      <div class="stat-pill level">
+        <span class="emoji">⭐</span> Level ${level}
+        <div class="xp-bar-track"><div class="xp-bar-fill" style="width:${intoLevel}%"></div></div>
+      </div>
+      <div class="stat-pill"><span class="emoji">💎</span> ${profile.xp} XP</div>
+      <div class="stat-pill"><span class="emoji">🔥</span> ${profile.streak}-day streak</div>
+      <button class="mute-btn" id="muteBtn" title="Toggle sound">${profile.soundOn ? '🔊' : '🔇'}</button>
+    `;
+    el('muteBtn').addEventListener('click', () => {
+      profile.soundOn = !profile.soundOn;
+      saveProfile(profile);
+      renderStats();
+    });
+  }
+
+  function touchStreak() {
+    const today = new Date().toISOString().slice(0, 10);
+    if (profile.lastPlayed === today) return;
+    const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+    profile.streak = profile.lastPlayed === yesterday ? profile.streak + 1 : 1;
+    profile.lastPlayed = today;
+    saveProfile(profile);
+  }
+
+  let audioCtx = null;
+  function tone(freq, duration, type, delay) {
+    delay = delay || 0;
+    if (!profile.soundOn) return;
+    try {
+      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type || 'sine'; osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.12, audioCtx.currentTime + delay);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + delay + duration);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(audioCtx.currentTime + delay);
+      osc.stop(audioCtx.currentTime + delay + duration);
+    } catch (e) { /* audio not available — fail silently */ }
+  }
+  const sfx = {
+    correct: () => tone(880, 0.15, 'triangle'),
+    wrong: () => tone(180, 0.25, 'sawtooth'),
+    perfect: () => { tone(523, 0.12); tone(659, 0.12, 'sine', 0.12); tone(784, 0.2, 'sine', 0.24); },
+  };
+
+  function burstConfetti() {
+    const colors = ['#ffc93c', '#1d63c9', '#e0503f', '#22c55e', '#ffffff'];
+    for (let i = 0; i < 60; i++) {
+      const piece = document.createElement('div');
+      piece.className = 'confetti-piece';
+      const size = 6 + Math.random() * 6;
+      piece.style.width = size + 'px';
+      piece.style.height = (size * 0.6) + 'px';
+      piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+      piece.style.left = Math.random() * 100 + 'vw';
+      document.body.appendChild(piece);
+      const duration = 2200 + Math.random() * 1400;
+      const rotate = (Math.random() > 0.5 ? 1 : -1) * (360 + Math.random() * 360);
+      piece.animate(
+        [
+          { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+          { transform: 'translateY(100vh) rotate(' + rotate + 'deg)', opacity: 0.9 },
+        ],
+        { duration: duration, easing: 'ease-in' }
+      ).onfinish = () => piece.remove();
+    }
+  }
+
+  function renderTopics() {
+    el('topicList').innerHTML = Object.entries(QUIZZES).map(([name, t]) => {
+      const best = profile.bestScores[name];
+      return '<button class="topic-card" style="background:' + t.gradient + ';" data-topic="' + name + '">' +
+        (best !== undefined ? '<span class="best-badge">🏅 Best: ' + best + '%</span>' : '') +
+        '<span class="topic-emoji">' + t.emoji + '</span>' +
+        '<h3>' + name + '</h3>' +
+        '<p>' + t.questions.length + ' questions</p>' +
+        '</button>';
+    }).join('');
+
+    el('topicList').querySelectorAll('.topic-card').forEach((btn) => {
+      btn.addEventListener('click', () => startQuiz(btn.dataset.topic));
+    });
+  }
+
+  let topic = null, questions = [], index = 0, score = 0, answered = false, startedAt = 0;
+
+  function startQuiz(name) {
+    topic = name;
+    questions = QUIZZES[name].questions;
+    index = 0; score = 0; startedAt = Date.now();
+    el('topicList').style.display = 'none';
+    el('quizCard').style.display = 'block';
+    el('quizBody').style.display = 'block';
+    el('quizResult').style.display = 'none';
+    el('quizTopic').textContent = QUIZZES[name].emoji + ' ' + name;
+    showQuestion();
+  }
+
+  function showQuestion() {
+    answered = false;
+    const item = questions[index];
+    el('quizCount').textContent = 'Question ' + (index + 1) + ' of ' + questions.length;
+    el('quizBar').style.width = (index / questions.length * 100) + '%';
+    el('quizQuestion').innerHTML = '<span>❓</span> ' + item.q;
+    el('quizFeedback').style.display = 'none';
+    el('nextBtn').style.display = 'none';
+
+    el('quizOptions').innerHTML = item.options.map((opt, i) =>
+      '<button type="button" class="quiz-option" data-i="' + i + '">' +
+      '<span class="key">' + String.fromCharCode(65 + i) + '</span><span>' + opt + '</span>' +
+      '</button>'
+    ).join('');
+
+    el('quizOptions').querySelectorAll('.quiz-option').forEach((btn) => {
+      btn.addEventListener('click', () => selectAnswer(Number(btn.dataset.i)));
+    });
+  }
+
+  function selectAnswer(choice) {
+    if (answered) return;
+    answered = true;
+    const item = questions[index];
+    const buttons = el('quizOptions').querySelectorAll('.quiz-option');
+    buttons.forEach((btn, i) => {
+      btn.disabled = true;
+      if (i === item.answer) btn.classList.add('correct');
+      else if (i === choice) btn.classList.add('wrong');
+    });
+
+    const isCorrect = choice === item.answer;
+    if (isCorrect) { score++; sfx.correct(); } else { sfx.wrong(); }
+
+    const fb = el('quizFeedback');
+    fb.innerHTML = '<strong>' + (isCorrect ? '✅ Correct!' : '❌ Not quite.') + '</strong> ' + item.why;
+    fb.style.display = 'block';
+
+    el('nextBtn').textContent = index === questions.length - 1 ? '🏁 See My Results' : 'Next Question ➜';
+    el('nextBtn').style.display = 'inline-flex';
+  }
+
+  function finish() {
+    const pct = Math.round((score / questions.length) * 100);
+    const elapsedSec = (Date.now() - startedAt) / 1000;
+
+    el('quizBar').style.width = '100%';
+    el('quizBody').style.display = 'none';
+    el('quizResult').style.display = 'block';
+    el('quizCount').textContent = 'Completed';
+
+    touchStreak();
+    const earnedXp = score * 10 + (pct === 100 ? 20 : 0);
+    const prevLevel = levelFromXp(profile.xp);
+    profile.xp += earnedXp;
+    const newLevel = levelFromXp(profile.xp);
+
+    const prevBest = profile.bestScores[topic] === undefined ? -1 : profile.bestScores[topic];
+    const improved = pct > prevBest;
+    if (improved) profile.bestScores[topic] = pct;
+
+    const newBadges = [];
+    const award = (id, label) => { if (profile.badges.indexOf(id) === -1) { profile.badges.push(id); newBadges.push(label); } };
+    award('first_quiz', '🥇 First Quiz');
+    if (pct === 100) award('perfect_score', '💯 Perfect Score');
+    if (profile.streak >= 3) award('streak_3', '🔥 3-Day Streak');
+    if (profile.streak >= 7) award('streak_7', '🔥🔥 7-Day Streak');
+    if (elapsedSec / questions.length < 6) award('speed_demon', '⚡ Speed Demon');
+    if (newLevel >= 5) award('level_5', '🌟 Level 5 Reached');
+    if (improved && prevBest >= 0) award('comeback_kid', '📈 Comeback Kid');
+
+    saveProfile(profile);
+    renderStats();
+
+    el('resultEmoji').textContent = pct === 100 ? '🏆' : pct >= 70 ? '🎉' : pct >= 50 ? '🙂' : '💪';
+    el('scoreText').textContent = score + ' / ' + questions.length;
+    let note;
+    if (pct === 100) note = 'A perfect score. Excellent work!';
+    else if (pct >= 70) note = 'Well done — a strong result.';
+    else if (pct >= 50) note = 'A fair attempt. Review the ones you missed and try again.';
+    else note = 'Keep practising. Go over the topic and give it another go.';
+    el('scoreMessage').textContent = pct + '% — ' + note;
+    el('xpGain').innerHTML = '💎 +' + earnedXp + ' XP' + (newLevel > prevLevel ? ' &nbsp;•&nbsp; ⭐ Level Up! Level ' + newLevel : '');
+
+    el('badgeRow').innerHTML = newBadges.map((b, i) =>
+      '<span class="badge-chip" style="animation-delay:' + (i * 0.1) + 's">' + b + '</span>'
+    ).join('');
+
+    if (pct === 100) { sfx.perfect(); burstConfetti(); }
+  }
+
+  function backToTopics() {
+    el('quizCard').style.display = 'none';
+    el('topicList').style.display = 'grid';
+    renderTopics();
+  }
+
+  el('nextBtn').addEventListener('click', () => {
+    if (index === questions.length - 1) { finish(); return; }
+    index++;
+    showQuestion();
+  });
+  el('quitBtn').addEventListener('click', backToTopics);
+  el('backBtn').addEventListener('click', backToTopics);
+  el('retryBtn').addEventListener('click', () => startQuiz(topic));
+
+  renderStats();
+  renderTopics();
+  </script>
+</body>
+</html>

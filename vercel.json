@@ -72,8 +72,13 @@
       "permanent": false
     },
     {
-      "source": "/store.html",
-      "destination": "/student/store/index.html",
+      "source": "/quiz.html",
+      "destination": "/student/quiz/index.html",
+      "permanent": false
+    },
+    {
+      "source": "/quiz-code.html",
+      "destination": "/student/quiz-code/index.html",
       "permanent": false
     }
   ],
