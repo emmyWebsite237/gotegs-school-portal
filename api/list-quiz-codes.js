@@ -120,6 +120,7 @@ export default async function handler(req, res) {
           attempts_allowed: Number(body.attempts_allowed) || 1,
           show_answers_after: body.show_answers_after !== false,
           expires_at: body.expires_at || null,
+          library_visible: body.library_visible !== false,
         })
         .eq('id', targetId)
         .select()

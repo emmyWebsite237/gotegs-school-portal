@@ -36,7 +36,7 @@ export default async function handler(req, res) {
     if (!verifyToken(token)) return res.status(401).json({ error: 'Admin session expired. Log in again.' });
     const {
       title, class_restriction, time_limit_minutes, attempts_allowed,
-      show_answers_after, expires_at, questions,
+      show_answers_after, expires_at, library_visible, questions,
     } = req.body || {};
 
     if (!title || !Array.isArray(questions) || questions.length === 0) {
@@ -67,6 +67,7 @@ export default async function handler(req, res) {
         attempts_allowed: attempts_allowed || 1,
         show_answers_after: show_answers_after !== false,
         expires_at: expires_at || null,
+        library_visible: library_visible !== false,
       })
       .select()
       .single();

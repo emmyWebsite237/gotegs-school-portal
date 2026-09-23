@@ -16,7 +16,7 @@
     .admin-link-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin-top:1.35rem;}
     .admin-link-card{position:relative;display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:92px;padding:1rem 1.15rem;border:1px solid #d9e0e5;border-radius:20px;background:rgba(255,255,255,.82);box-shadow:0 14px 36px rgba(32,23,26,.06);text-decoration:none;color:#1c2430;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;overflow:hidden;}
     .admin-link-card::before{content:'';position:absolute;left:0;top:10px;bottom:10px;width:4px;background:linear-gradient(180deg,#7a2139,#c49b4e);border-radius:0 4px 4px 0;}
-    .admin-link-card:hover{transform:translateY(-3px);box-shadow:0 20px 45px rgba(32,23,26,.10);border-color:#c7d2d9;}
+    .admin-link-card:hover{transform:translateY(-3px);box-shadow:0 20px 45px rgba(32,23,26,.10);border-color:#c7d2d9;} .admin-link-card--disabled{opacity:.48;filter:grayscale(1);cursor:not-allowed;} .admin-link-card--disabled:hover{transform:none;box-shadow:0 14px 36px rgba(32,23,26,.06);}
     .admin-link-copy{display:grid;gap:.2rem;padding-left:.25rem;}.admin-link-copy strong{font:800 .88rem var(--font-display);}.admin-link-copy span{font-size:.72rem;color:#7a8790;}
     .admin-link-arrow{width:34px;height:34px;display:grid;place-items:center;border-radius:50%;background:#f6efe7;color:#7a2139;font-weight:800;flex:0 0 34px;}
     .admin-settings-panel{margin-top:2rem;padding:1.3rem;border:1px solid #d9e0e5;border-radius:22px;background:rgba(255,255,255,.88);box-shadow:0 16px 40px rgba(32,23,26,.06);}
@@ -40,7 +40,8 @@
       <a class="admin-link-card" href="/admin/admin-social/index.html"><span class="admin-link-copy"><strong>Manage Social Links</strong><span>Public social channels</span></span><span class="admin-link-arrow">→</span></a>
       <a class="admin-link-card" href="/admin/admin-quiz-codes/index.html"><span class="admin-link-copy"><strong>Manage Quiz Codes</strong><span>Create and maintain generated tests</span></span><span class="admin-link-arrow">→</span></a>
       <a class="admin-link-card" href="/admin/admin-gallery/index.html"><span class="admin-link-copy"><strong>Manage Gallery</strong><span>Cloudinary-powered school gallery</span></span><span class="admin-link-arrow">→</span></a>
-      <a class="admin-link-card" href="/admin/admin-results-pdf/index.html"><span class="admin-link-copy"><strong>Result Archive PDF</strong><span>Prepare every student's report as a ready PDF packet</span></span><span class="admin-link-arrow">↓</span></a>
+      <div class="admin-link-card admin-link-card--disabled" aria-disabled="true"><span class="admin-link-copy"><strong>Tournaments</strong><span>Coming Soon · Planning workspace not yet active</span></span><span class="admin-link-arrow">✦</span></div>
+      <a class="admin-link-card" href="/admin/admin-results-pdf/index.html"><span class="admin-link-copy"><strong>Result Print Centre</strong><span>Prepare every student's report as a ready PDF packet</span></span><span class="admin-link-arrow">↓</span></a>
     </section>
 
     <section class="admin-settings-panel" aria-labelledby="resultSettingsTitle">

@@ -126,6 +126,47 @@ export default async function handler(req, res) {
 
     const table = tableName(input.section);
 
+    if (action === 'placement-history') {
+      const studentId = cleanText(input.student_id || '', 80);
+      if (!studentId) return res.status(400).json({ error: 'Student reference is required.' });
+      const { data, error } = await supabase
+        .from('student_placement_history')
+        .select('id,student_id,full_name,from_section,from_class,to_section,to_class,school_year,changed_by,changed_at')
+        .eq('student_id', studentId)
+        .order('changed_at', { ascending: false });
+      if (error) return res.status(400).json({ error: 'Could not load placement history: ' + error.message });
+      return res.status(200).json({ history: data || [] });
+    }
+
+    if (action === 'promote') {
+      const studentId = cleanText(input.student_id || input.student?.student_id || '', 80);
+      const fromSection = tableName(input.from_section || input.section);
+      const toSection = tableName(input.to_section || input.target_section);
+      const toClass = cleanText(input.to_class || '', 40);
+      const toDept = cleanText(input.to_dept || '', 80) || null;
+      if (!studentId || !fromSection || !toSection || !toClass) {
+        return res.status(400).json({ error: 'Student, destination section and destination class are required.' });
+      }
+      const settings = await supabase
+        .from('admin_portal')
+        .select('year')
+        .order('id', { ascending: true })
+        .limit(1)
+        .maybeSingle();
+      if (settings.error) throw settings.error;
+      const { data, error } = await supabase.rpc('admin_move_student', {
+        p_student_id: studentId,
+        p_from_section: fromSection,
+        p_to_section: toSection,
+        p_to_class: toClass,
+        p_to_dept: toDept,
+        p_school_year: settings.data?.year || null,
+        p_changed_by: 'admin'
+      });
+      if (error) return res.status(400).json({ error: 'Could not change student placement: ' + error.message });
+      return res.status(200).json({ success: true, placement: data });
+    }
+
     if (action === 'create') {
       if (!table) return res.status(400).json({ error: 'Choose JSS or SSS before adding a student.' });
       const student = normalizeStudent(input.student, table);

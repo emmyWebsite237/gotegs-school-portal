@@ -7,8 +7,17 @@ const ADMIN_SESSION_MAX_AGE_MS = 30 * 60 * 1000;
 const STUDENT_SESSION_KEY = 'gotegs_student_session';
 const STUDENT_SESSION_MAX_AGE_MS = 5 * 60 * 60 * 1000;
 const STUDENT_PROTECTED_PREFIXES = [
-  '/lesson-notes/','/quiz.html','/quiz-code.html','/student/dashboard.html','/student/profile.html',
-  '/student/lesson-notes/','/student/result/','/student/testimonial/','/student/store/'
+  '/student/dashboard.html',
+  '/student/profile.html',
+  '/student/result/',
+  '/student/lesson-notes/',
+  '/student/quiz/',
+  '/student/quiz-code/',
+  '/student/store/',
+  '/student/testimonial/',
+  '/lesson-notes/',
+  '/quiz.html',
+  '/quiz-code.html'
 ];
 
 function isAdminPathCheck(pathname){return pathname==='/admin'||pathname.startsWith('/admin/');}
@@ -49,8 +58,8 @@ function studentInitials(name){return String(name||'Student').split(/\s+/).filte
 function setPortalAvatar(img, initialsEl, session){const fallbackLogo='/assets/img/logo.png';if(img){if(session.profile_pic_url){img.src=session.profile_pic_url;img.alt=`${session.full_name||'Student'} profile picture`;}else{img.src=fallbackLogo;img.alt='Go-Tegs logo';}}if(initialsEl)initialsEl.textContent=studentInitials(session.full_name);const holder=img?.closest('.portal-profile-avatar,.portal-card-avatar,.portal-orbit-core,.profile-avatar-xl');if(holder){holder.classList.toggle('has-photo',!!session.profile_pic_url);holder.classList.toggle('show-initials',!!session.profile_pic_removed&&!session.profile_pic_url);}}
 
 function initStudentPortalShell(){const session=getValidStudentSession();if(!session)return;const name=String(session.full_name||'Student');const classLine=`${session.class||'Student'}${session.dept?' · '+session.dept:''}`;document.querySelectorAll('[data-portal-name]').forEach(el=>el.textContent=name);document.querySelectorAll('[data-portal-class]').forEach(el=>el.textContent=classLine);document.querySelectorAll('[data-portal-initials]').forEach(el=>el.textContent=studentInitials(name));document.querySelectorAll('[data-portal-profile-image],[data-profile-image]').forEach(img=>setPortalAvatar(img,img.closest('.portal-profile-avatar,.portal-orbit-core,.profile-avatar-xl')?.querySelector('[data-portal-initials]'),session));
-  const path=window.location.pathname;let activeKey='';if(path==='/student/dashboard.html'||path==='/student/'||path==='/student/index.html')activeKey='dashboard';else if(path==='/student/profile.html')activeKey='profile';else if(path.startsWith('/student/result/'))activeKey='results';else if(path.startsWith('/student/lesson-notes/'))activeKey='notes';else if(path.startsWith('/student/store/'))activeKey='store';else if(path==='/quiz.html')activeKey='quiz';else if(path==='/quiz-code.html')activeKey='quiz-code';document.querySelectorAll('[data-portal-link]').forEach(link=>link.classList.toggle('is-active',link.dataset.portalLink===activeKey));
-  document.querySelectorAll('#portalLogout,#portalLogoutMobile').forEach(button=>button.addEventListener('click',()=>{localStorage.removeItem(STUDENT_SESSION_KEY);sessionStorage.setItem('gotegs_logged_out_from_student','1');window.location.assign('/student/index.html');}));
+  const path=window.location.pathname;let activeKey='';if(path==='/student/dashboard.html'||path==='/student/'||path==='/student/index.html')activeKey='dashboard';else if(path==='/student/profile.html')activeKey='profile';else if(path.startsWith('/student/result/'))activeKey='results';else if(path.startsWith('/student/lesson-notes/'))activeKey='notes';else if(path.startsWith('/student/quiz/'))activeKey='quiz';else if(path.startsWith('/student/quiz-code/'))activeKey='quiz-code';else if(path.startsWith('/student/store/'))activeKey='store';document.querySelectorAll('[data-portal-link]').forEach(link=>link.classList.toggle('is-active',link.dataset.portalLink===activeKey));
+  document.querySelectorAll('#portalLogout,#portalLogoutMobile').forEach(button=>button.addEventListener('click',()=>{localStorage.removeItem(STUDENT_SESSION_KEY);sessionStorage.removeItem('gotegs_result_data');window.location.replace('/student/index.html');}));
   const toggle=document.getElementById('portalMobileToggle'),drawer=document.getElementById('portalMobileDrawer'),scrim=document.getElementById('portalMobileScrim'),close=document.getElementById('portalMobileClose');if(toggle&&drawer&&scrim){const setOpen=open=>{drawer.classList.toggle('open',open);scrim.classList.toggle('open',open);toggle.setAttribute('aria-expanded',String(open));document.body.style.overflow=open?'hidden':'';};toggle.addEventListener('click',()=>setOpen(!drawer.classList.contains('open')));scrim.addEventListener('click',()=>setOpen(false));close?.addEventListener('click',()=>setOpen(false));drawer.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>setOpen(false)));document.addEventListener('keydown',e=>{if(e.key==='Escape')setOpen(false);});}
 }
 
