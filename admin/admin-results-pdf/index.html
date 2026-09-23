@@ -10,47 +10,293 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
   <style>
-    body.admin-shell-page{background:var(--teal-light,#eaf3fd);}
-    .print-wrap{max-width:1180px;margin:0 auto;padding:2rem 1rem 4rem}.print-head{display:flex;justify-content:space-between;gap:1rem;align-items:flex-end;flex-wrap:wrap}.print-head h1{margin:.2rem 0 .35rem;color:var(--ink,#101826);font-size:clamp(1.9rem,4vw,3rem);letter-spacing:-.045em}.print-head p{margin:0;max-width:760px;color:var(--slate,#5b6b7f);font-size:.84rem}.print-actions{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1rem}.print-actions .btn{background:var(--teal,#1d63c9);color:#fff}.print-actions .btn-secondary{background:var(--slate,#5b6b7f)}.print-actions .btn.danger{background:#fff;color:#b42318;border:1px solid #efcaca}.print-actions .btn:disabled{opacity:.55;cursor:wait}.print-status{display:grid;grid-template-columns:1fr minmax(220px,1.4fr) auto;align-items:center;gap:1rem;margin-top:1rem;padding:.85rem 1rem;border:1px solid #d5e2ed;border-radius:15px;background:#fff}.print-progress{height:8px;border-radius:999px;background:#e6eef6;overflow:hidden}.print-progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--teal),#7c9fe8);transition:width .18s ease}.print-preview{display:grid;gap:1rem;justify-items:center;margin-top:1.3rem}.preview-empty{width:min(850px,100%);padding:2rem;text-align:center;border:1px dashed #bfd1df;border-radius:16px;background:#fff;color:#64788a}.report-page-wrap{width:850px;max-width:100%;background:transparent}.report-page-wrap .report-card{margin:0 auto}.report-page-wrap + .report-page-wrap{margin-top:1.25rem}.cancel-note{font-size:.72rem;color:#6d7d8a}.hidden{display:none!important}
-    @media(max-width:850px){.print-status{grid-template-columns:1fr}.report-page-wrap{overflow:auto}.report-page-wrap .report-card{margin:0;width:800px}}
+    .print-wrap{max-width:1180px;margin:0 auto;padding:2rem 1rem 4rem}.print-head{display:flex;justify-content:space-between;gap:1rem;align-items:flex-end;flex-wrap:wrap}.print-head h1{margin:.2rem 0 .35rem;color:var(--ink,#101826);font-size:clamp(1.9rem,4vw,3rem);letter-spacing:-.045em}.print-head p{margin:0;max-width:820px;color:var(--slate,#5b6b7f);font-size:.84rem}.print-actions{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1rem}.print-actions .btn{background:var(--teal,#1d63c9);color:#fff}.print-actions .btn-secondary{background:var(--slate,#5b6b7f)}.print-actions .btn.danger{background:#fff;color:#b42318;border:1px solid #efcaca}.print-actions .btn:disabled{opacity:.55;cursor:wait}.print-status{display:grid;grid-template-columns:1fr minmax(220px,1.5fr) auto;align-items:center;gap:1rem;margin-top:1rem;padding:.85rem 1rem;border:1px solid #d5e2ed;border-radius:15px;background:#fff}.print-progress{height:8px;border-radius:999px;background:#e6eef6;overflow:hidden}.print-progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--teal,#1d63c9),#7c9fe8);transition:width .18s ease}.print-preview{display:grid;gap:1.25rem;justify-items:center;margin-top:1.3rem}.preview-empty{width:min(900px,100%);padding:2rem;text-align:center;border:1px dashed #bfd1df;border-radius:16px;background:#fff;color:#64788a}.preview-sheet{width:min(794px,100%);aspect-ratio:210/297;background:#fff;border:1px solid #d6dce4;box-shadow:0 16px 36px rgba(16,24,38,.1);display:flex;align-items:center;justify-content:center;overflow:hidden}.preview-sheet img{display:block;max-width:100%;max-height:100%;width:100%;height:100%;object-fit:contain;background:#fff}.preview-number{font:800 .68rem var(--font-display,system-ui);letter-spacing:.08em;text-transform:uppercase;color:#6c7b8b;margin:-.8rem 0 -.3rem}.capture-stage{position:fixed;left:-100000px;top:0;width:850px;background:#fff;pointer-events:none;z-index:-1}.capture-stage .report-card{width:850px;max-width:none;margin:0;padding:25px;min-height:950px;overflow:visible;box-sizing:border-box}.hidden{display:none!important}.cancel-note{font-size:.72rem;color:#6d7d8a;margin-top:1rem}
+    @media(max-width:850px){.print-status{grid-template-columns:1fr}.preview-sheet{width:100%}}
   </style>
 </head>
-<body>
+<body class="admin-shell-page">
   <main class="print-wrap">
-    <div class="print-head"><div><div class="admin-eyebrow">Admin / student results</div><h1>Result Print Centre</h1><p>Student results are prepared one page at a time using the same clear report layout used on the student's result page. Nothing here uses or changes the student's result-check count.</p></div><a class="btn btn-secondary" href="/admin/">Back to Admin</a></div>
-    <div class="print-actions"><button class="btn" id="downloadAll" type="button" disabled>Download All Results PDF</button><button class="btn btn-secondary" id="refreshPreview" type="button">Preview All Results</button><button class="btn danger hidden" id="cancelPreview" type="button">Cancel Preview</button></div>
-    <div class="print-status"><div><strong id="printCount">0 students</strong> · <span id="printReady">Preview not started.</span></div><div class="print-progress" aria-label="Preview progress"><span id="printProgress"></span></div><div><strong id="printSize">Calculating size…</strong></div></div>
-    <div class="print-preview" id="printPreview"><div class="preview-empty"><strong>Preview not loaded.</strong><br/>Tap “Preview All Results” when you are ready. Nothing is pulled or rendered until you initiate the preview.</div></div>
-    <p class="cancel-note">Preview can be cancelled at any time. Download does not count as a student result check.</p>
+    <div class="print-head">
+      <div>
+        <div class="admin-eyebrow">Admin / student results</div>
+        <h1>Result Print Centre</h1>
+        <p>Prepare the same clear report layout used for student results. Each student is rendered as exactly one A4 page. Preview is manual, and preparing or downloading results never changes a student's result-check count.</p>
+      </div>
+      <a class="btn btn-secondary" href="/admin/">Back to Admin</a>
+    </div>
+
+    <div class="print-actions">
+      <button class="btn" id="downloadAll" type="button" disabled>Download All Results PDF</button>
+      <button class="btn btn-secondary" id="previewAll" type="button">Preview All Results</button>
+      <button class="btn danger hidden" id="cancelPreview" type="button">Cancel Preview</button>
+    </div>
+
+    <div class="print-status" aria-live="polite">
+      <div><strong id="printCount">0 students</strong> · <span id="printReady">Preview has not been started.</span></div>
+      <div class="print-progress" aria-label="Preview progress"><span id="printProgress"></span></div>
+      <div><strong id="printSize">Not calculated</strong></div>
+    </div>
+
+    <div class="print-preview" id="printPreview">
+      <div class="preview-empty">Tap “Preview All Results” to prepare the student reports.</div>
+    </div>
+
+    <p class="cancel-note">The preview must be started manually. Download becomes available after all pages have been prepared. The generated PDF uses one student per A4 page.</p>
   </main>
+
+  <div id="captureStage" class="capture-stage" aria-hidden="true"></div>
+
   <script src="/assets/js/main.js"></script>
   <script>
-    const subjectNames={maths:'Mathematics',english:'English Language',physics:'Physics',chem:'Chemistry',bio:'Biology',fmath:'Further Mathematics',civic:'Civic Education',govt:'Government',econs:'Economics',dp:'Data Processing',agric:'Agricultural Science',crs:'C.R.S',catering_c_p:'Catering and Craft Practice',digital_tech:'Digital Technology',dic:'Diction',lit_in_eng:'Literature in English',basic_science:'Basic Science',basic_tech:'Basic Technology',bus_stud:'Business Studies',social_stud:'Social Studies',home_econs:'Home Economics',sec_edu:'Security Education',french:'French',music:'Music',history:'History',cmp:'Computer Studies',phe:'P.H.E',cca:'C.C.A',lit:'Literature'};
-    function esc(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
-    function grade(v){const n=Number(v||0);if(n>=75)return'A1';if(n>=70)return'B2';if(n>=65)return'B3';if(n>=60)return'C4';if(n>=55)return'C5';if(n>=50)return'C6';if(n>=45)return'D7';if(n>=40)return'E8';return'F9'}
-    function display(v){return v===null||v===undefined||v===''?'—':esc(v)}
-    let pageImages=[],cancelled=false;
-    function buildReport(student,index,year){
-      const bases=Object.keys(student).filter(k=>k.endsWith('_mtt')).map(k=>k.slice(0,-4));const seen=new Set();const subjects=bases.filter(b=>{if(seen.has(b))return false;seen.add(b);return true}).filter(b=>student[`${b}_mtt`]!==undefined||student[`${b}_exam`]!==undefined);
-      let total=0,count=0;
-      const body=subjects.map(base=>{const m=student[`${base}_mtt`],e=student[`${base}_exam`];const has=(m!==null&&m!==undefined&&m!=='')||(e!==null&&e!==undefined&&e!=='');const t=has?(Number(m||0)+Number(e||0)):null;if(t!==null){total+=t;count++;}return `<tr><td>${esc(subjectNames[base]||base.replace(/_/g,' '))}</td><td style="text-align:center;">${display(m)}</td><td style="text-align:center;">${display(e)}</td><td style="text-align:center;font-weight:bold;">${t===null?'—':t}</td><td style="text-align:center;">${t===null?'—':t+'%'}</td><td style="text-align:center;font-weight:bold;">${t===null?'—':grade(t)}</td></tr>`}).join('');
-      const mean=count?(total/count).toFixed(1):'0.0';const absent=Math.max(0,(Number(student.opened)||0)-(Number(student.present)||0));
-      return `<div class="report-page-wrap"><div class="report-card" data-page-index="${index}"><div class="unofficial-overlay" style="display:${student.is_paid===true?'none':'block'}">UNOFFICIAL COPY</div><div class="report-header"><img class="school-logo" src="/assets/img/logo.png" alt="Go-Tegs logo"/><div class="header-text"><h1 class="school-name">Go-Tegs International School</h1><div class="motto">Motto: Training the Leaders of Tomorrow</div><div class="address">15, Ayesanmi Street, GloryLand Estate, Powerline Bus Stop, Isheri Olofin, Alimosho, Lagos</div><div class="address">Tel: 08066525319, 08106958638</div></div></div><div class="report-title">${esc(year||'Current School Year')} Report</div><div class="info-grid"><div class="info-item"><span class="info-label">Name:</span> ${esc(student.full_name||'')}</div><div class="info-item"><span class="info-label">School Opened:</span> ${display(student.opened)}</div><div class="info-item"><span class="info-label">Date of Birth:</span> ${display(student.dob)}</div><div class="info-item"><span class="info-label">Times Present:</span> ${display(student.present)}</div><div class="info-item"><span class="info-label">Class:</span> ${esc(student.class||'')}</div><div class="info-item"><span class="info-label">Times Absent:</span> ${absent}</div></div><table class="report-table"><thead><tr><th>Subject</th><th style="text-align:center;">MTT</th><th style="text-align:center;">Examination</th><th style="text-align:center;">TMB</th><th style="text-align:center;">Percentage</th><th style="text-align:center;">Grade</th></tr></thead><tbody>${body||'<tr><td colspan="6">No result marks entered yet.</td></tr>'}</tbody></table><p style="font-size:10.5px;color:var(--slate);margin-top:4px;"><strong>Guide:</strong> MTT = Mid-Term Test (out of 40) &nbsp;|&nbsp; Examination (out of 60) &nbsp;|&nbsp; TMB = Total Mark Obtained (out of 100)</p><div class="bottom-wrap"><table class="comments-table"><tr><td><strong>Class Teacher\'s Remark:</strong><br/>${esc(student.teacher_remark||'---')}</td></tr><tr><td><strong>Principal\'s Remark:</strong><br/>${esc(student.principal_remark||'')}</td></tr></table><table class="summary-table"><tr><td>Total Mark Obtainable</td><td style="text-align:center;">${count*100}</td></tr><tr><td>Total Mark Obtained</td><td style="text-align:center;">${total}</td></tr><tr><td>Mean Percentage</td><td style="text-align:center;">${mean}%</td></tr><tr><td>Overall Grade</td><td style="text-align:center;">${grade(mean)}</td></tr></table></div><div class="report-footer"><div class="timestamp">Generated: ${new Date().toLocaleString()}</div><div class="sig-space"><img src="/assets/img/signature.png" style="width:110px;display:block;margin-left:30px;margin-bottom:2px;" alt="Signature" onerror="this.style.display='none'"/><div class="sig-line"></div><strong style="text-transform:uppercase;font-size:12px;">School Principal</strong></div></div></div></div>`;
+    const subjectNames = {
+      maths:'Mathematics', english:'English Language', basic_science:'Basic Science', basic_tech:'Basic Technology',
+      bus_stud:'Business Studies', agric:'Agricultural Science', social_stud:'Social Studies', home_econs:'Home Economics',
+      sec_edu:'Security Education', french:'French', music:'Music', dic:'Diction', history:'History', cmp:'Computer Studies',
+      phe:'P.H.E', cca:'C.C.A', lit:'Literature', civic:'Civic Education', physics:'Physics', chem:'Chemistry', bio:'Biology',
+      fmath:'Further Mathematics', dp:'Data Processing', econs:'Economics', crs:'C.R.S', catering_c_p:'Catering and Craft Practice',
+      digital_tech:'Digital Technology', lit_in_eng:'Literature in English'
+    };
+    const sectionSubjects = {
+      jss_students:['english','maths','basic_science','basic_tech','bus_stud','agric','social_stud','home_econs','sec_edu','french','music','dic','history','cmp','phe','cca','lit'],
+      sss_students:['maths','english','civic','physics','chem','bio','fmath','dp','econs','agric','crs','catering_c_p','digital_tech','dic','lit_in_eng']
+    };
+    const esc = (v) => String(v ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    const display = (v) => v === null || v === undefined || v === '' ? '—' : esc(v);
+    const grade = (v) => { const n = Number(v); if(n>=75)return 'A1'; if(n>=70)return 'B2'; if(n>=65)return 'B3'; if(n>=60)return 'C4'; if(n>=55)return 'C5'; if(n>=50)return 'C6'; if(n>=45)return 'D7'; if(n>=40)return 'E8'; return 'F9'; };
+    const formatBytes = (n) => { if(!n)return '0 B'; if(n<1024)return `${n} B`; if(n<1024*1024)return `${(n/1024).toFixed(1)} KB`; return `${(n/1024/1024).toFixed(1)} MB`; };
+    const setProgress = (p) => { document.getElementById('printProgress').style.width = `${Math.max(0, Math.min(100,p))}%`; };
+
+    function reportSubjects(student) {
+      return (sectionSubjects[student.section] || []).filter(base =>
+        Object.prototype.hasOwnProperty.call(student, `${base}_mtt`) ||
+        Object.prototype.hasOwnProperty.call(student, `${base}_exam`)
+      );
     }
-    function setProgress(p){document.getElementById('printProgress').style.width=p+'%';}
-    async function loadPreview(){
-      cancelled=false;pageImages=[];const cancel=document.getElementById('cancelPreview'),refresh=document.getElementById('refreshPreview'),download=document.getElementById('downloadAll'),preview=document.getElementById('printPreview');cancel.classList.remove('hidden');refresh.disabled=true;download.disabled=true;preview.innerHTML='<div class="preview-empty">Fetching student records…</div>';document.getElementById('printReady').textContent='Fetching records…';setProgress(3);
-      try{const token=sessionStorage.getItem('gotegs_admin_token')||'';const r=await fetch('/api/admin-students',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({action:'export-results'})});const d=await r.json();if(!r.ok)throw new Error(d.error||'Could not load results.');const students=d.students||[];document.getElementById('printCount').textContent=`${students.length} student${students.length===1?'':'s'}`;if(!students.length){preview.innerHTML='<div class="preview-empty">No student results found.</div>';document.getElementById('printReady').textContent='Nothing to preview';return;}
-        preview.innerHTML=students.map((s,i)=>buildReport(s,i,d.year||'')).join('');const pages=[...preview.querySelectorAll('.report-card')];let bytes=0;
-        for(let i=0;i<pages.length;i++){if(cancelled)break;document.getElementById('printReady').textContent=`Preparing preview ${i+1} of ${pages.length}…`;try{const canvas=await html2canvas(pages[i],{scale:1.6,useCORS:true,backgroundColor:'#fff',logging:false,width:850,height:950});const dataUrl=canvas.toDataURL('image/jpeg',0.92);pageImages.push(dataUrl);bytes+=Math.ceil(dataUrl.length*0.75);document.getElementById('printSize').textContent='~'+formatBytes(bytes);setProgress(Math.round((i+1)/pages.length*100));}catch(e){console.error(e);pageImages.push(null);}await new Promise(requestAnimationFrame);}
-        if(cancelled){preview.innerHTML='<div class="preview-empty">Preview cancelled.</div>';document.getElementById('printReady').textContent='Preview cancelled';setProgress(0);}
-        else if(pageImages.length===pages.length&&pageImages.every(Boolean)){download.disabled=false;document.getElementById('printReady').textContent=`Preview ready · ${pages.length} pages`;}else{document.getElementById('printReady').textContent='Some pages could not be prepared. Refresh preview and try again.';}
-      }catch(e){preview.innerHTML=`<div class="preview-empty">${esc(e.message||'Could not load results.')}</div>`;document.getElementById('printReady').textContent='Preview failed';setProgress(0);}finally{cancel.classList.add('hidden');refresh.disabled=false;}
+
+    // Same report structure/classes used by the normal student result page.
+    // We capture the complete natural-height card and then fit the image onto
+    // one A4 PDF page, so rows are never cropped or forced onto a second page.
+    function buildReport(student, year) {
+      const subjects = reportSubjects(student);
+      let total = 0, count = 0;
+      const rows = subjects.map(base => {
+        const m = student[`${base}_mtt`], e = student[`${base}_exam`];
+        const has = (m!==null && m!==undefined && m!=='') || (e!==null && e!==undefined && e!=='');
+        const t = has ? Number(m||0) + Number(e||0) : null;
+        if(t !== null){ total += t; count++; }
+        return `<tr><td>${esc(subjectNames[base] || base.replace(/_/g,' '))}</td><td style="text-align:center;">${display(m)}</td><td style="text-align:center;">${display(e)}</td><td style="text-align:center;font-weight:bold;">${t===null?'—':t}</td><td style="text-align:center;">${t===null?'—':t+'%'}</td><td style="text-align:center;font-weight:bold;">${t===null?'—':grade(t)}</td></tr>`;
+      }).join('');
+      const mean = count ? (total/count).toFixed(1) : '0.0';
+      const opened = Number(student.opened)||0;
+      const present = Number(student.present)||0;
+      const absent = Math.max(0, opened-present);
+
+      return `<div class="report-card">
+        <div class="unofficial-overlay" style="display:${student.is_paid===true?'none':'block'}">UNOFFICIAL COPY</div>
+        <div class="report-header">
+          <img class="school-logo" src="/assets/img/logo.png" alt="Go-Tegs logo" />
+          <div class="header-text">
+            <h1 class="school-name">Go-Tegs International School</h1>
+            <div class="motto">Motto: Training the Leaders of Tomorrow</div>
+            <div class="address">15, Ayesanmi Street, GloryLand Estate, Powerline Bus Stop, Isheri Olofin, Alimosho, Lagos</div>
+            <div class="address">Tel: 08066525319, 08106958638</div>
+          </div>
+        </div>
+        <div class="report-title">${esc(year || 'Current School Year')} Report</div>
+        <div class="info-grid">
+          <div class="info-item"><span class="info-label">Name:</span> ${esc(student.full_name || '')}</div>
+          <div class="info-item"><span class="info-label">School Opened:</span> ${display(student.opened)}</div>
+          <div class="info-item"><span class="info-label">Date of Birth:</span> ${display(student.dob)}</div>
+          <div class="info-item"><span class="info-label">Times Present:</span> ${display(student.present)}</div>
+          <div class="info-item"><span class="info-label">Class:</span> ${esc(student.class || '')}${student.dept ? ` (${esc(student.dept)})` : ''}</div>
+          <div class="info-item"><span class="info-label">Times Absent:</span> ${absent}</div>
+        </div>
+        <table class="report-table">
+          <thead><tr><th>Subject</th><th style="text-align:center;">MTT</th><th style="text-align:center;">Examination</th><th style="text-align:center;">TMB</th><th style="text-align:center;">Percentage</th><th style="text-align:center;">Grade</th></tr></thead>
+          <tbody>${rows || '<tr><td colspan="6" style="text-align:center;">No result marks entered yet.</td></tr>'}</tbody>
+        </table>
+        <p style="font-size:10.5px;color:var(--slate);margin-top:4px;"><strong>Guide:</strong> MTT = Mid-Term Test (out of 40) &nbsp;|&nbsp; Examination (out of 60) &nbsp;|&nbsp; TMB = Total Mark Obtained (out of 100)</p>
+        <div class="bottom-wrap">
+          <table class="comments-table">
+            <tr><td><strong>Class Teacher's Remark:</strong><br />${esc(student.teacher_remark || '---')}</td></tr>
+            <tr><td><strong>Principal's Remark:</strong><br />${esc(student.principal_remark || '')}</td></tr>
+          </table>
+          <table class="summary-table">
+            <tr><td>Total Mark Obtainable</td><td style="text-align:center;">${count*100}</td></tr>
+            <tr><td>Total Mark Obtained</td><td style="text-align:center;">${total}</td></tr>
+            <tr><td>Mean Percentage</td><td style="text-align:center;">${mean}%</td></tr>
+            <tr><td>Overall Grade</td><td style="text-align:center;">${grade(mean)}</td></tr>
+          </table>
+        </div>
+        <div class="report-footer">
+          <div class="timestamp">Generated: ${new Date().toLocaleString()}</div>
+          <div class="sig-space">
+            <img src="/assets/img/signature.png" style="width:110px;display:block;margin-left:30px;margin-bottom:2px;" alt="Signature" onerror="this.style.display='none'" />
+            <div class="sig-line"></div>
+            <strong style="text-transform:uppercase;font-size:12px;">School Principal</strong>
+          </div>
+        </div>
+      </div>`;
     }
-    function formatBytes(n){if(!n)return'0 B';if(n<1024)return`${n} B`;if(n<1024*1024)return`${(n/1024).toFixed(1)} KB`;return`${(n/1024/1024).toFixed(1)} MB`;}
-    document.getElementById('cancelPreview').addEventListener('click',()=>{cancelled=true;document.getElementById('cancelPreview').classList.add('hidden');});
-    document.getElementById('refreshPreview').addEventListener('click',loadPreview);
-    document.getElementById('downloadAll').addEventListener('click',async()=>{const btn=document.getElementById('downloadAll');if(!pageImages.length||pageImages.some(img=>!img))return;btn.disabled=true;btn.textContent='Building PDF…';try{const PDF=window.jspdf?.jsPDF;if(!PDF)throw new Error('PDF engine did not load.');const pdf=new PDF('p','mm','a4');pageImages.forEach((img,i)=>{if(i)pdf.addPage();pdf.addImage(img,'JPEG',0,0,210,297,`gotegs-${i}`,'FAST');});pdf.save(`Go-Tegs-Results-${new Date().toISOString().slice(0,10)}.pdf`);}catch(e){alert(e.message||'Could not create PDF.');}finally{btn.disabled=false;btn.textContent='Download All Results PDF';}});
+
+    let pageImages = [];
+    let previewRun = 0;
+    let activeController = null;
+
+    async function loadPreview() {
+      const run = ++previewRun;
+      activeController?.abort();
+      activeController = new AbortController();
+      pageImages = [];
+
+      const cancelBtn = document.getElementById('cancelPreview');
+      const previewBtn = document.getElementById('previewAll');
+      const downloadBtn = document.getElementById('downloadAll');
+      const preview = document.getElementById('printPreview');
+      const stage = document.getElementById('captureStage');
+
+      cancelBtn.classList.remove('hidden');
+      previewBtn.disabled = true;
+      downloadBtn.disabled = true;
+      preview.innerHTML = '<div class="preview-empty">Connecting to the results service…</div>';
+      stage.replaceChildren();
+      document.getElementById('printReady').textContent = 'Connecting…';
+      document.getElementById('printSize').textContent = 'Calculating…';
+      setProgress(2);
+
+      try {
+        if (document.fonts?.ready) await document.fonts.ready;
+        const token = sessionStorage.getItem('gotegs_admin_token') || '';
+        const response = await fetch('/api/admin-students', {
+          method:'POST',
+          headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+          body:JSON.stringify({action:'export-results'}),
+          signal:activeController.signal
+        });
+        const raw = await response.text();
+        let data;
+        try { data = JSON.parse(raw); } catch { throw new Error('Could not read the results response from the server.'); }
+        if(!response.ok) throw new Error(data.error || 'Could not load results.');
+
+        const students = Array.isArray(data.students) ? data.students : [];
+        document.getElementById('printCount').textContent = `${students.length} student${students.length===1?'':'s'}`;
+        if(!students.length){
+          preview.innerHTML = '<div class="preview-empty">No student results found.</div>';
+          document.getElementById('printReady').textContent = 'Nothing to preview';
+          setProgress(100);
+          return;
+        }
+
+        preview.innerHTML = '';
+        let bytes = 0;
+
+        for(let i=0;i<students.length;i++){
+          if(run !== previewRun) throw new DOMException('Preview cancelled','AbortError');
+          document.getElementById('printReady').textContent = `Preparing result ${i+1} of ${students.length}…`;
+          setProgress(Math.max(3, Math.round((i/students.length)*100)));
+
+          stage.innerHTML = buildReport(students[i], data.year || '');
+          const card = stage.querySelector('.report-card');
+          if(!card) throw new Error('Could not create the result page.');
+          await new Promise(requestAnimationFrame);
+          if(document.fonts?.ready) await document.fonts.ready;
+
+          const width = Math.max(850, card.scrollWidth);
+          const height = Math.max(950, card.scrollHeight);
+          const canvas = await html2canvas(card, {
+            scale:2,
+            useCORS:true,
+            backgroundColor:'#ffffff',
+            logging:false,
+            width,
+            height,
+            windowWidth:width
+          });
+          const dataUrl = canvas.toDataURL('image/jpeg',0.96);
+          pageImages.push({ dataUrl, width: canvas.width, height: canvas.height });
+          bytes += Math.ceil(dataUrl.length * 0.75);
+
+          const label = document.createElement('div');
+          label.className = 'preview-number';
+          label.textContent = `Student ${i+1} of ${students.length} · ${students[i].full_name || 'Student'}`;
+          const sheet = document.createElement('div');
+          sheet.className = 'preview-sheet';
+          sheet.appendChild(Object.assign(document.createElement('img'), { src:dataUrl, alt:`Result for ${students[i].full_name || 'student'}` }));
+          preview.append(label, sheet);
+
+          document.getElementById('printSize').textContent = '~' + formatBytes(bytes);
+          setProgress(Math.round(((i+1)/students.length)*100));
+          await new Promise(requestAnimationFrame);
+        }
+
+        if(run !== previewRun) throw new DOMException('Preview cancelled','AbortError');
+        downloadBtn.disabled = false;
+        document.getElementById('printReady').textContent = `Preview ready · ${students.length} pages · one student per page`;
+      } catch(error) {
+        if(error?.name === 'AbortError') {
+          preview.innerHTML = '<div class="preview-empty">Preview cancelled. Nothing was downloaded.</div>';
+          document.getElementById('printReady').textContent = 'Preview cancelled';
+          document.getElementById('printSize').textContent = 'Not complete';
+          setProgress(0);
+          pageImages = [];
+        } else {
+          console.error('Result preview failed:', error);
+          preview.innerHTML = `<div class="preview-empty">${esc(error?.message || 'Could not prepare the results.')}</div>`;
+          document.getElementById('printReady').textContent = 'Preview failed';
+          setProgress(0);
+          pageImages = [];
+        }
+      } finally {
+        if(run === previewRun){
+          cancelBtn.classList.add('hidden');
+          previewBtn.disabled = false;
+          stage.replaceChildren();
+          activeController = null;
+        }
+      }
+    }
+
+    document.getElementById('previewAll').addEventListener('click', loadPreview);
+    document.getElementById('cancelPreview').addEventListener('click', () => {
+      previewRun += 1;
+      activeController?.abort();
+      pageImages = [];
+      document.getElementById('cancelPreview').classList.add('hidden');
+      document.getElementById('previewAll').disabled = false;
+      document.getElementById('downloadAll').disabled = true;
+      document.getElementById('printReady').textContent = 'Preview cancelled';
+      document.getElementById('printSize').textContent = 'Not complete';
+      document.getElementById('printPreview').innerHTML = '<div class="preview-empty">Preview cancelled. Tap “Preview All Results” to start again.</div>';
+      document.getElementById('printProgress').style.width = '0%';
+      document.getElementById('captureStage').replaceChildren();
+    });
+
+    document.getElementById('downloadAll').addEventListener('click', () => {
+      if(!pageImages.length || pageImages.some(page => !page?.dataUrl)) return;
+      const btn = document.getElementById('downloadAll');
+      btn.disabled = true;
+      btn.textContent = 'Building PDF…';
+      try {
+        const PDF = window.jspdf?.jsPDF;
+        if(!PDF) throw new Error('PDF engine did not load.');
+        const pdf = new PDF({orientation:'portrait',unit:'mm',format:'a4',compress:true});
+        const pageW = 210, pageH = 297, margin = 5;
+        pageImages.forEach((img,i) => {
+          if(i) pdf.addPage();
+          const page = pageImages[i];
+          const iw = page.width || 1, ih = page.height || 1;
+          const ratio = Math.min((pageW-margin*2)/iw,(pageH-margin*2)/ih);
+          const w = iw*ratio, h = ih*ratio;
+          pdf.addImage(page.dataUrl,'JPEG',(pageW-w)/2,(pageH-h)/2,w,h,`gotegs-result-${i}`,'FAST');
+        });
+        pdf.save(`Go-Tegs-Results-${new Date().toISOString().slice(0,10)}.pdf`);
+      } catch(error) {
+        alert(error?.message || 'Could not create the PDF.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Download All Results PDF';
+      }
+    });
   </script>
 </body>
 </html>
