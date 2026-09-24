@@ -77,27 +77,40 @@ function mountStudentMobileControls(){
 }
 
 function initStudentMobileNavigation(){
-  if(document.documentElement.dataset.gotegsMobileNav==='1') return;
-  document.documentElement.dataset.gotegsMobileNav='1';
-  let isOpen=false;
-  const setOpen=open=>{
-    const drawer=document.getElementById('portalMobileDrawer'),scrim=document.getElementById('portalMobileScrim'),toggle=document.getElementById('portalMobileToggle');
-    if(!drawer||!scrim||!toggle){console.error('[Go-Tegs] Mobile menu controls missing during toggle.');return;}
-    isOpen=!!open;
-    drawer.classList.toggle('open',isOpen);
-    scrim.classList.toggle('open',isOpen);
-    toggle.setAttribute('aria-expanded',String(isOpen));
-    toggle.setAttribute('aria-label',isOpen?'Close student portal menu':'Open student portal menu');
-    document.body.style.overflow=isOpen?'hidden':'';
+  const mobileMenu=document.getElementById('portalMobileMenu');
+  const toggle=document.getElementById('portalMobileToggle');
+  const drawer=document.getElementById('portalMobileDrawer');
+  const scrim=document.getElementById('portalMobileScrim');
+  const close=document.getElementById('portalMobileClose');
+  if(!mobileMenu||!toggle||!drawer||!scrim){
+    console.error('[Go-Tegs] Student mobile navigation controls are missing from the mounted shell.');
+    return false;
+  }
+  if(mobileMenu.dataset.bound==='1') return true;
+  mobileMenu.dataset.bound='1';
+
+  const sync=()=>{
+    const open=!!mobileMenu.open;
+    drawer.classList.toggle('open',open);
+    scrim.classList.toggle('open',open);
+    drawer.setAttribute('aria-hidden',String(!open));
+    scrim.setAttribute('aria-hidden',String(!open));
+    toggle.setAttribute('aria-expanded',String(open));
+    toggle.setAttribute('aria-label',open?'Close student portal menu':'Open student portal menu');
+    toggle.setAttribute('aria-controls','portalMobileDrawer');
+    document.body.style.overflow=open?'hidden':'';
   };
-  document.addEventListener('click',e=>{
-    const el=e.target instanceof Element?e.target:null;
-    if(el?.closest('#portalMobileToggle')){e.preventDefault();e.stopPropagation();setOpen(!isOpen);return;}
-    if(el?.closest('#portalMobileClose,#portalMobileScrim')){e.preventDefault();setOpen(false);return;}
-    if(el?.closest('#portalMobileDrawer a'))setOpen(false);
-  });
-  document.addEventListener('keydown',e=>{if(e.key==='Escape')setOpen(false);});
-  window.addEventListener('resize',()=>{if(window.innerWidth>899)setOpen(false);},{passive:true});
+
+  // The summary element must keep its native <details> behaviour.
+  // Do not intercept/cancel its click event: doing so prevents <details> from toggling.
+  mobileMenu.addEventListener('toggle',sync);
+  close?.addEventListener('click',()=>{mobileMenu.open=false;});
+  scrim.addEventListener('click',()=>{mobileMenu.open=false;});
+  drawer.querySelectorAll('a').forEach(link=>link.addEventListener('click',()=>{mobileMenu.open=false;}));
+  document.addEventListener('keydown',event=>{if(event.key==='Escape'&&mobileMenu.open)mobileMenu.open=false;});
+  window.addEventListener('resize',()=>{if(window.innerWidth>899&&mobileMenu.open)mobileMenu.open=false;},{passive:true});
+  sync();
+  return true;
 }
 
 async function loadNotesScriptsIfNeeded(){
@@ -111,7 +124,12 @@ async function loadNotesScriptsIfNeeded(){
 }
 
 async function ensureStudentShell(){
-  if(!document.getElementById('portalMobileToggle')) await injectPartial('/partials/student-shell.html','navbar-placeholder');
+  const root=document.getElementById('navbar-placeholder');
+  const canonical=root?.querySelector('#portalMobileMenu');
+  const hasControls=!!(root?.querySelector('#portalMobileToggle')&&root?.querySelector('#portalMobileDrawer')&&root?.querySelector('#portalMobileScrim'));
+  if(!canonical||!hasControls){
+    await injectPartial('/partials/student-shell.html?v=mobile-native-final','navbar-placeholder');
+  }
   return mountStudentMobileControls();
 }
 
