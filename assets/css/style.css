@@ -600,3 +600,75 @@ p { color: var(--slate); margin-bottom: 1rem; }
   color: var(--slate);
   margin-top: 1.5rem;
 }
+
+
+/* FINAL PUBLIC MOBILE NAVIGATION — fade in/out with explicit close button. */
+@media (max-width:899px){
+  .site-topbar{position:sticky!important;top:0!important;z-index:210!important;}
+  .nav-toggle{
+    display:grid!important;
+    place-items:center!important;
+    position:relative!important;
+    z-index:230!important;
+    cursor:pointer!important;
+    touch-action:manipulation!important;
+    -webkit-tap-highlight-color:transparent!important;
+  }
+  .nav-scrim{
+    position:fixed!important;
+    inset:0!important;
+    z-index:300!important;
+    display:block!important;
+    opacity:0!important;
+    visibility:hidden!important;
+    pointer-events:none!important;
+    background:rgba(12,14,20,.50)!important;
+    transition:opacity .28s ease,visibility 0s linear .28s!important;
+  }
+  .nav-scrim.open{
+    opacity:1!important;
+    visibility:visible!important;
+    pointer-events:auto!important;
+    transition-delay:0s!important;
+  }
+  .nav-drawer{
+    position:fixed!important;
+    top:0!important;
+    right:0!important;
+    bottom:0!important;
+    z-index:310!important;
+    display:flex!important;
+    width:min(86vw,360px)!important;
+    max-width:360px!important;
+    opacity:0!important;
+    visibility:hidden!important;
+    pointer-events:none!important;
+    transform:translateY(6px) scale(.985)!important;
+    transform-origin:top right!important;
+    transition:opacity .28s ease,transform .28s ease,visibility 0s linear .28s!important;
+  }
+  .nav-drawer.open{
+    opacity:1!important;
+    visibility:visible!important;
+    pointer-events:auto!important;
+    transform:none!important;
+    transition-delay:0s!important;
+  }
+  .nav-drawer-close{
+    display:grid!important;
+    place-items:center!important;
+    width:42px!important;
+    height:42px!important;
+    flex:0 0 42px!important;
+    border:1px solid rgba(255,255,255,.22)!important;
+    border-radius:50%!important;
+    background:rgba(255,255,255,.07)!important;
+    color:#fff!important;
+    font-size:1.45rem!important;
+    line-height:1!important;
+    cursor:pointer!important;
+    touch-action:manipulation!important;
+    -webkit-tap-highlight-color:transparent!important;
+  }
+  .nav-drawer-head{align-items:center!important;}
+}

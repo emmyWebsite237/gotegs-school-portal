@@ -366,10 +366,74 @@ body.student-shell-page .notes-table td{
   }
 }
 
-/* Mobile portal robustness: keep the menu inside the viewport and make the trigger touch-safe. */
-html.student-portal-page,body.student-shell-page{max-width:100%;overflow-x:hidden;}
-body.student-shell-page{overscroll-behavior-x:none;}
-body.student-shell-page .portal-mobile-bar{width:100%;box-sizing:border-box;}
-body.student-shell-page .portal-mobile-toggle{position:relative;z-index:120;display:grid;place-items:center;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;}
-body.student-shell-page .portal-mobile-drawer{max-width:100vw;box-sizing:border-box;}
-body.student-shell-page .portal-mobile-scrim{width:100vw;max-width:100vw;}
+
+/* FINAL MOBILE NAVIGATION — single button + explicit close, fade only.
+   This override intentionally supersedes older slide/details experiments. */
+@media (max-width:899px){
+  .portal-mobile-bar{
+    position:sticky!important;
+    top:0!important;
+    z-index:210!important;
+  }
+  .portal-mobile-toggle{
+    position:relative!important;
+    z-index:230!important;
+    display:grid!important;
+    place-items:center!important;
+    width:44px!important;
+    height:44px!important;
+    cursor:pointer!important;
+    -webkit-tap-highlight-color:transparent!important;
+    touch-action:manipulation!important;
+  }
+  .portal-mobile-scrim{
+    position:fixed!important;
+    inset:0!important;
+    z-index:300!important;
+    display:block!important;
+    opacity:0!important;
+    visibility:hidden!important;
+    pointer-events:none!important;
+    background:rgba(12,14,20,.54)!important;
+    transition:opacity .28s ease,visibility 0s linear .28s!important;
+  }
+  .portal-mobile-scrim.open{
+    opacity:1!important;
+    visibility:visible!important;
+    pointer-events:auto!important;
+    transition-delay:0s!important;
+  }
+  .portal-mobile-drawer{
+    position:fixed!important;
+    top:0!important;
+    right:0!important;
+    bottom:0!important;
+    z-index:310!important;
+    display:flex!important;
+    width:min(88vw,360px)!important;
+    max-width:360px!important;
+    opacity:0!important;
+    visibility:hidden!important;
+    pointer-events:none!important;
+    transform:translateY(6px) scale(.985)!important;
+    transform-origin:top right!important;
+    transition:opacity .28s ease,transform .28s ease,visibility 0s linear .28s!important;
+  }
+  .portal-mobile-drawer.open{
+    opacity:1!important;
+    visibility:visible!important;
+    pointer-events:auto!important;
+    transform:none!important;
+    transition-delay:0s!important;
+  }
+  .portal-mobile-drawer-head>button#portalMobileClose{
+    display:grid!important;
+    place-items:center!important;
+    width:42px!important;
+    height:42px!important;
+    flex:0 0 42px!important;
+    cursor:pointer!important;
+    touch-action:manipulation!important;
+    -webkit-tap-highlight-color:transparent!important;
+  }
+}
