@@ -45,7 +45,10 @@
 /* ---------- Reset ---------- */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; overflow-x: clip; }
+
+html, body { max-width: 100%; }
+@supports not (overflow: clip) { html { overflow-x: hidden; } body { overflow-x: hidden; } }
 
 body {
   font-family: var(--font-body);
