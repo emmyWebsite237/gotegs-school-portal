@@ -77,43 +77,20 @@ function setPortalAvatar(img, initialsEl, session){const fallbackLogo='/assets/i
 function initStudentPortalShell(){const session=getValidStudentSession();if(!session)return;const name=String(session.full_name||'Student');const classLine=`${session.class||'Student'}${session.dept?' · '+session.dept:''}`;document.querySelectorAll('[data-portal-name]').forEach(el=>el.textContent=name);document.querySelectorAll('[data-portal-class]').forEach(el=>el.textContent=classLine);document.querySelectorAll('[data-portal-initials]').forEach(el=>el.textContent=studentInitials(name));document.querySelectorAll('[data-portal-profile-image],[data-profile-image]').forEach(img=>setPortalAvatar(img,img.closest('.portal-profile-avatar,.portal-orbit-core,.profile-avatar-xl')?.querySelector('[data-portal-initials]'),session));
   const path=window.location.pathname;let activeKey='';if(path==='/student/dashboard.html'||path==='/student/'||path==='/student/index.html')activeKey='dashboard';else if(path==='/student/profile.html')activeKey='profile';else if(path.startsWith('/student/result/'))activeKey='results';else if(path.startsWith('/student/lesson-notes/'))activeKey='notes';else if(path.startsWith('/student/quiz/'))activeKey='quiz';else if(path.startsWith('/student/quiz-code/'))activeKey='quiz-code';else if(path.startsWith('/student/store/'))activeKey='store';document.querySelectorAll('[data-portal-link]').forEach(link=>link.classList.toggle('is-active',link.dataset.portalLink===activeKey));
   document.querySelectorAll('#portalLogout,#portalLogoutMobile').forEach(button=>button.addEventListener('click',()=>{localStorage.removeItem(STUDENT_SESSION_KEY);sessionStorage.removeItem('gotegs_result_data');window.location.replace('/student/index.html');}));
-  const toggle=document.getElementById('portalMobileToggle'),drawer=document.getElementById('portalMobileDrawer'),scrim=document.getElementById('portalMobileScrim'),close=document.getElementById('portalMobileClose');
-  if(toggle&&drawer&&scrim&&!toggle.dataset.portalBound){
-    toggle.dataset.portalBound='1';
-    let restoreOverflow='';
-    let lastTouchToggleAt=0;
-    const setOpen=open=>{
-      if(open && !drawer.classList.contains('open')) restoreOverflow=document.body.style.overflow||'';
-      drawer.classList.toggle('open',open);
-      scrim.classList.toggle('open',open);
-      toggle.setAttribute('aria-expanded',String(open));
-      drawer.setAttribute('aria-hidden',String(!open));
-      scrim.setAttribute('aria-hidden',String(!open));
-      document.body.style.overflow=open?'hidden':restoreOverflow;
-    };
-    const toggleMenu=e=>{
-      e?.preventDefault();
-      e?.stopPropagation();
-      setOpen(!drawer.classList.contains('open'));
-    };
-    toggle.addEventListener('pointerup',e=>{
-      if(e.pointerType==='touch'||e.pointerType==='pen'){
-        lastTouchToggleAt=Date.now();
-        toggleMenu(e);
+  // Mobile navigation is a native <details>/<summary> control in student-shell.html.
+  // The menu therefore works even if a secondary page script is delayed or unavailable.
+  const mobileMenu=document.getElementById('portalMobileMenu');
+  if(mobileMenu){
+    mobileMenu.addEventListener('toggle',()=>{
+      const open=mobileMenu.open;
+      const toggle=document.getElementById('portalMobileToggle');
+      const scrim=document.getElementById('portalMobileScrim');
+      if(toggle){
+        toggle.setAttribute('aria-label',open?'Close student portal menu':'Open student portal menu');
+        toggle.setAttribute('aria-expanded',String(open));
       }
+      if(scrim) scrim.setAttribute('aria-hidden',String(!open));
     });
-    toggle.addEventListener('click',e=>{
-      if(Date.now()-lastTouchToggleAt<650) return;
-      toggleMenu(e);
-    });
-    scrim.addEventListener('click',()=>setOpen(false));
-    close?.addEventListener('pointerup',e=>{if(e.pointerType==='touch'||e.pointerType==='pen'){e.preventDefault();e.stopPropagation();setOpen(false);}});
-    close?.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();setOpen(false);});
-    drawer.querySelectorAll('a[href]').forEach(a=>a.addEventListener('click',()=>setOpen(false)));
-    document.addEventListener('keydown',e=>{if(e.key==='Escape')setOpen(false);});
-    window.addEventListener('resize',()=>{if(window.innerWidth>=900)setOpen(false);},{passive:true});
-    window.addEventListener('pageshow',()=>setOpen(false));
-    setOpen(false);
   }
 }
 

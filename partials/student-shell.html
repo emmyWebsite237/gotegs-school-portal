@@ -1,4 +1,4 @@
-<!-- Private student portal shell: no public site navbar/footer inside the authenticated workspace. -->
+<!-- Private student portal shell: public navbar/footer are never used inside the authenticated workspace. -->
 <aside class="portal-rail" aria-label="Student portal navigation">
   <div class="portal-brand"><a class="portal-brand-mark" href="/student/dashboard.html" aria-label="Go-Tegs student dashboard"><img src="/assets/img/logo.png" alt="Go-Tegs logo" /></a><div class="portal-brand-copy"><strong>Go-Tegs</strong><span>Student Portal</span></div></div>
   <div class="portal-profile-mini"><div class="portal-profile-avatar"><img src="/assets/img/logo.png" data-portal-profile-image alt="Go-Tegs logo" /><span class="portal-profile-initials" data-portal-initials aria-hidden="true"></span></div><div><strong data-portal-name>Student</strong><span data-portal-class>Portal account</span></div></div>
@@ -11,13 +11,35 @@
     <a class="portal-nav-link" data-portal-link="quiz" href="/student/quiz/"><span>✦</span>Quiz &amp; Practice</a>
     <a class="portal-nav-link" data-portal-link="quiz-code" href="/student/quiz-code/"><span>⌘</span>Quiz Code</a>
     <a class="portal-nav-link" data-portal-link="store" href="/student/store/"><span>◫</span>Store</a>
-    
     <span class="portal-nav-label portal-nav-label--spaced">Coming next</span>
     <span class="portal-nav-link portal-nav-link--disabled" aria-disabled="true"><span>♜</span>Tournaments<em>Coming Soon</em></span>
     <span class="portal-nav-link portal-nav-link--disabled" aria-disabled="true"><span>▣</span>School Leaving Testimonial<em>Coming Soon</em></span>
   </nav>
   <button class="portal-logout" id="portalLogout" type="button"><span>↪</span>Log Out</button>
 </aside>
-<header class="portal-mobile-bar"><a class="portal-mobile-brand" href="/student/dashboard.html"><img src="/assets/img/logo.png" alt="Go-Tegs logo" /><span>Go-Tegs <small>Student Portal</small></span></a><button class="portal-mobile-toggle" id="portalMobileToggle" type="button" aria-label="Open student portal menu" aria-controls="portalMobileDrawer" aria-expanded="false">☰</button></header>
-<div class="portal-mobile-scrim" id="portalMobileScrim" aria-hidden="true"></div>
-<aside class="portal-mobile-drawer" id="portalMobileDrawer" aria-label="Mobile student portal menu" aria-hidden="true"><div class="portal-mobile-drawer-head"><div class="portal-profile-mini"><div class="portal-profile-avatar"><img src="/assets/img/logo.png" data-portal-profile-image alt="Go-Tegs logo" /><span class="portal-profile-initials" data-portal-initials aria-hidden="true"></span></div><div><strong data-portal-name>Student</strong><span data-portal-class>Portal account</span></div></div><button id="portalMobileClose" type="button" aria-label="Close menu">×</button></div><nav class="portal-nav" aria-label="Mobile student workspace"><a class="portal-nav-link" data-portal-link="dashboard" href="/student/dashboard.html"><span>⌂</span>Dashboard</a><a class="portal-nav-link" data-portal-link="profile" href="/student/profile.html"><span>◉</span>Profile</a><a class="portal-nav-link" data-portal-link="results" href="/student/result/index.html"><span>▥</span>Results</a><a class="portal-nav-link" data-portal-link="notes" href="/student/lesson-notes/index.html"><span>▤</span>Lesson Notes</a><a class="portal-nav-link" data-portal-link="quiz" href="/student/quiz/"><span>✦</span>Quiz &amp; Practice</a><a class="portal-nav-link" data-portal-link="quiz-code" href="/student/quiz-code/"><span>⌘</span>Quiz Code</a><a class="portal-nav-link" data-portal-link="store" href="/student/store/"><span>◫</span>Store</a><span class="portal-nav-link portal-nav-link--disabled" aria-disabled="true"><span>♜</span>Tournaments<em>Coming Soon</em></span><span class="portal-nav-link portal-nav-link--disabled" aria-disabled="true"><span>▣</span>School Leaving Testimonial<em>Coming Soon</em></span></nav><button class="portal-logout" id="portalLogoutMobile" type="button"><span>↪</span>Log Out</button></aside>
+
+<header class="portal-mobile-bar">
+  <a class="portal-mobile-brand" href="/student/dashboard.html" aria-label="Go-Tegs student dashboard"><img src="/assets/img/logo.png" alt="Go-Tegs logo" /><span>Go-Tegs <small>Student Portal</small></span></a>
+  <details class="portal-mobile-menu" id="portalMobileMenu">
+    <summary class="portal-mobile-toggle" id="portalMobileToggle" aria-label="Open student portal menu">☰</summary>
+    <div class="portal-mobile-scrim" id="portalMobileScrim" aria-hidden="true" onclick="this.closest('details').open=false"></div>
+    <aside class="portal-mobile-drawer" id="portalMobileDrawer" aria-label="Mobile student portal menu">
+      <div class="portal-mobile-drawer-head">
+        <div class="portal-profile-mini"><div class="portal-profile-avatar"><img src="/assets/img/logo.png" data-portal-profile-image alt="Go-Tegs logo" /><span class="portal-profile-initials" data-portal-initials aria-hidden="true"></span></div><div><strong data-portal-name>Student</strong><span data-portal-class>Portal account</span></div></div>
+        <button id="portalMobileClose" type="button" aria-label="Close menu" onclick="this.closest('details').open=false">×</button>
+      </div>
+      <nav class="portal-nav" aria-label="Mobile student workspace">
+        <a class="portal-nav-link" data-portal-link="dashboard" href="/student/dashboard.html"><span>⌂</span>Dashboard</a>
+        <a class="portal-nav-link" data-portal-link="profile" href="/student/profile.html"><span>◉</span>Profile</a>
+        <a class="portal-nav-link" data-portal-link="results" href="/student/result/index.html"><span>▥</span>Results</a>
+        <a class="portal-nav-link" data-portal-link="notes" href="/student/lesson-notes/index.html"><span>▤</span>Lesson Notes</a>
+        <a class="portal-nav-link" data-portal-link="quiz" href="/student/quiz/"><span>✦</span>Quiz &amp; Practice</a>
+        <a class="portal-nav-link" data-portal-link="quiz-code" href="/student/quiz-code/"><span>⌘</span>Quiz Code</a>
+        <a class="portal-nav-link" data-portal-link="store" href="/student/store/"><span>◫</span>Store</a>
+        <span class="portal-nav-link portal-nav-link--disabled" aria-disabled="true"><span>♜</span>Tournaments<em>Coming Soon</em></span>
+        <span class="portal-nav-link portal-nav-link--disabled" aria-disabled="true"><span>▣</span>School Leaving Testimonial<em>Coming Soon</em></span>
+      </nav>
+      <button class="portal-logout" id="portalLogoutMobile" type="button"><span>↪</span>Log Out</button>
+    </aside>
+  </details>
+</header>
