@@ -46,7 +46,7 @@ function showAdminGate(){
 }
 function adminGatePassedOrNotNeeded(){return !isAdminPage()||hasAdminAuthSession();}
 
-async function injectPartial(url,targetId){const target=document.getElementById(targetId);if(!target)return;try{const r=await fetch(url);if(!r.ok)throw new Error(`Failed to load ${url}`);target.innerHTML=await r.text();}catch(err){console.error('Partial load error:',err);}}
+async function injectPartial(url,targetId){let target=document.getElementById(targetId);if(!target&&targetId==='navbar-placeholder'){target=document.createElement('div');target.id=targetId;document.body.prepend(target);}if(!target)return false;try{const r=await fetch(url,{cache:'no-store',credentials:'same-origin'});if(!r.ok)throw new Error(`Failed to load ${url} (${r.status})`);const html=await r.text();if(!html.trim())throw new Error(`Empty partial response from ${url}`);target.innerHTML=html;return true;}catch(err){console.error('Partial load error:',err);return false;}}
 function highlightActiveLink(){const path=window.location.pathname;document.querySelectorAll('.nav-links a').forEach(link=>{const href=link.getAttribute('href');if(!href)return;const home=href==='/index.html'&&(path==='/'||path==='/index.html');const section=href!=='/index.html'&&path.startsWith(href.replace('index.html',''));if(home||section)link.classList.add('active');});}
 function wireMobileToggle(){const toggle=document.getElementById('nav-toggle'),links=document.getElementById('nav-links');if(!toggle||!links)return;toggle.addEventListener('click',()=>{const open=links.classList.toggle('open');toggle.setAttribute('aria-expanded',String(open));});}
 function wireNavGroups(){document.querySelectorAll('.nav-group').forEach(group=>{const btn=group.querySelector('.nav-group-toggle');if(!btn)return;if(group.querySelector('a.active')){group.classList.add('open');btn.setAttribute('aria-expanded','true');}btn.addEventListener('click',()=>{const open=group.classList.toggle('open');btn.setAttribute('aria-expanded',String(open));});});}
@@ -61,6 +61,45 @@ function ensurePortalStyles(){
   document.head.appendChild(link);
 }
 
+const STUDENT_SHELL_FALLBACK="<!-- Private student portal shell: no public site navbar/footer inside the authenticated workspace. -->\n<aside class=\"portal-rail\" aria-label=\"Student portal navigation\">\n  <div class=\"portal-brand\"><a class=\"portal-brand-mark\" href=\"/student/dashboard.html\" aria-label=\"Go-Tegs student dashboard\"><img src=\"/assets/img/logo.png\" alt=\"Go-Tegs logo\" /></a><div class=\"portal-brand-copy\"><strong>Go-Tegs</strong><span>Student Portal</span></div></div>\n  <div class=\"portal-profile-mini\"><div class=\"portal-profile-avatar\"><img src=\"/assets/img/logo.png\" data-portal-profile-image alt=\"Go-Tegs logo\" /><span class=\"portal-profile-initials\" data-portal-initials aria-hidden=\"true\"></span></div><div><strong data-portal-name>Student</strong><span data-portal-class>Portal account</span></div></div>\n  <nav class=\"portal-nav\" aria-label=\"Student workspace\">\n    <span class=\"portal-nav-label\">Workspace</span>\n    <a class=\"portal-nav-link\" data-portal-link=\"dashboard\" href=\"/student/dashboard.html\"><span>\u2302</span>Dashboard</a>\n    <a class=\"portal-nav-link\" data-portal-link=\"profile\" href=\"/student/profile.html\"><span>\u25c9</span>Profile</a>\n    <a class=\"portal-nav-link\" data-portal-link=\"results\" href=\"/student/result/index.html\"><span>\u25a5</span>Results</a>\n    <a class=\"portal-nav-link\" data-portal-link=\"notes\" href=\"/student/lesson-notes/index.html\"><span>\u25a4</span>Lesson Notes</a>\n    <a class=\"portal-nav-link\" data-portal-link=\"quiz\" href=\"/student/quiz/\"><span>\u2726</span>Quiz &amp; Practice</a>\n    <a class=\"portal-nav-link\" data-portal-link=\"quiz-code\" href=\"/student/quiz-code/\"><span>\u2318</span>Quiz Code</a>\n    <a class=\"portal-nav-link\" data-portal-link=\"store\" href=\"/student/store/\"><span>\u25eb</span>Store</a>\n    \n    <span class=\"portal-nav-label portal-nav-label--spaced\">Coming next</span>\n    <span class=\"portal-nav-link portal-nav-link--disabled\" aria-disabled=\"true\"><span>\u265c</span>Tournaments<em>Coming Soon</em></span>\n    <span class=\"portal-nav-link portal-nav-link--disabled\" aria-disabled=\"true\"><span>\u25a3</span>School Leaving Testimonial<em>Coming Soon</em></span>\n  </nav>\n  <button class=\"portal-logout\" id=\"portalLogout\" type=\"button\"><span>\u21aa</span>Log Out</button>\n</aside>\n<header class=\"portal-mobile-bar\"><a class=\"portal-mobile-brand\" href=\"/student/dashboard.html\"><img src=\"/assets/img/logo.png\" alt=\"Go-Tegs logo\" /><span>Go-Tegs <small>Student Portal</small></span></a><button class=\"portal-mobile-toggle\" id=\"portalMobileToggle\" type=\"button\" aria-label=\"Open student portal menu\" aria-expanded=\"false\">\u2630</button></header>\n<div class=\"portal-mobile-scrim\" id=\"portalMobileScrim\"></div>\n<aside class=\"portal-mobile-drawer\" id=\"portalMobileDrawer\" aria-label=\"Mobile student portal menu\"><div class=\"portal-mobile-drawer-head\"><div class=\"portal-profile-mini\"><div class=\"portal-profile-avatar\"><img src=\"/assets/img/logo.png\" data-portal-profile-image alt=\"Go-Tegs logo\" /><span class=\"portal-profile-initials\" data-portal-initials aria-hidden=\"true\"></span></div><div><strong data-portal-name>Student</strong><span data-portal-class>Portal account</span></div></div><button id=\"portalMobileClose\" type=\"button\" aria-label=\"Close menu\">\u00d7</button></div><nav class=\"portal-nav\" aria-label=\"Mobile student workspace\"><a class=\"portal-nav-link\" data-portal-link=\"dashboard\" href=\"/student/dashboard.html\"><span>\u2302</span>Dashboard</a><a class=\"portal-nav-link\" data-portal-link=\"profile\" href=\"/student/profile.html\"><span>\u25c9</span>Profile</a><a class=\"portal-nav-link\" data-portal-link=\"results\" href=\"/student/result/index.html\"><span>\u25a5</span>Results</a><a class=\"portal-nav-link\" data-portal-link=\"notes\" href=\"/student/lesson-notes/index.html\"><span>\u25a4</span>Lesson Notes</a><a class=\"portal-nav-link\" data-portal-link=\"quiz\" href=\"/student/quiz/\"><span>\u2726</span>Quiz &amp; Practice</a><a class=\"portal-nav-link\" data-portal-link=\"quiz-code\" href=\"/student/quiz-code/\"><span>\u2318</span>Quiz Code</a><a class=\"portal-nav-link\" data-portal-link=\"store\" href=\"/student/store/\"><span>\u25eb</span>Store</a><span class=\"portal-nav-link portal-nav-link--disabled\" aria-disabled=\"true\"><span>\u265c</span>Tournaments<em>Coming Soon</em></span><span class=\"portal-nav-link portal-nav-link--disabled\" aria-disabled=\"true\"><span>\u25a3</span>School Leaving Testimonial<em>Coming Soon</em></span></nav><button class=\"portal-logout\" id=\"portalLogoutMobile\" type=\"button\"><span>\u21aa</span>Log Out</button></aside>";
+const STUDENT_MOBILE_FALLBACK="<header class=\"portal-mobile-bar\"><a class=\"portal-mobile-brand\" href=\"/student/dashboard.html\"><img src=\"/assets/img/logo.png\" alt=\"Go-Tegs logo\" /><span>Go-Tegs <small>Student Portal</small></span></a><button class=\"portal-mobile-toggle\" id=\"portalMobileToggle\" type=\"button\" aria-label=\"Open student portal menu\" aria-expanded=\"false\">\u2630</button></header>\n<div class=\"portal-mobile-scrim\" id=\"portalMobileScrim\"></div>\n<aside class=\"portal-mobile-drawer\" id=\"portalMobileDrawer\" aria-label=\"Mobile student portal menu\"><div class=\"portal-mobile-drawer-head\"><div class=\"portal-profile-mini\"><div class=\"portal-profile-avatar\"><img src=\"/assets/img/logo.png\" data-portal-profile-image alt=\"Go-Tegs logo\" /><span class=\"portal-profile-initials\" data-portal-initials aria-hidden=\"true\"></span></div><div><strong data-portal-name>Student</strong><span data-portal-class>Portal account</span></div></div><button id=\"portalMobileClose\" type=\"button\" aria-label=\"Close menu\">\u00d7</button></div><nav class=\"portal-nav\" aria-label=\"Mobile student workspace\"><a class=\"portal-nav-link\" data-portal-link=\"dashboard\" href=\"/student/dashboard.html\"><span>\u2302</span>Dashboard</a><a class=\"portal-nav-link\" data-portal-link=\"profile\" href=\"/student/profile.html\"><span>\u25c9</span>Profile</a><a class=\"portal-nav-link\" data-portal-link=\"results\" href=\"/student/result/index.html\"><span>\u25a5</span>Results</a><a class=\"portal-nav-link\" data-portal-link=\"notes\" href=\"/student/lesson-notes/index.html\"><span>\u25a4</span>Lesson Notes</a><a class=\"portal-nav-link\" data-portal-link=\"quiz\" href=\"/student/quiz/\"><span>\u2726</span>Quiz &amp; Practice</a><a class=\"portal-nav-link\" data-portal-link=\"quiz-code\" href=\"/student/quiz-code/\"><span>\u2318</span>Quiz Code</a><a class=\"portal-nav-link\" data-portal-link=\"store\" href=\"/student/store/\"><span>\u25eb</span>Store</a><span class=\"portal-nav-link portal-nav-link--disabled\" aria-disabled=\"true\"><span>\u265c</span>Tournaments<em>Coming Soon</em></span><span class=\"portal-nav-link portal-nav-link--disabled\" aria-disabled=\"true\"><span>\u25a3</span>School Leaving Testimonial<em>Coming Soon</em></span></nav><button class=\"portal-logout\" id=\"portalLogoutMobile\" type=\"button\"><span>\u21aa</span>Log Out</button></aside>";
+
+function mountStudentMobileControls(){
+  let target=document.getElementById('navbar-placeholder');
+  if(!target){target=document.createElement('div');target.id='navbar-placeholder';document.body.prepend(target);}
+  const hasRail=!!target.querySelector('.portal-rail');
+  const hasToggle=!!document.getElementById('portalMobileToggle');
+  if(!hasRail) target.innerHTML=STUDENT_SHELL_FALLBACK;
+  else if(!hasToggle) target.insertAdjacentHTML('beforeend',STUDENT_MOBILE_FALLBACK);
+  const ready=!!(document.getElementById('portalMobileToggle')&&document.getElementById('portalMobileDrawer')&&document.getElementById('portalMobileScrim'));
+  if(!ready) console.error('[Go-Tegs] Student mobile navigation could not be mounted.');
+  return ready;
+}
+
+function initStudentMobileNavigation(){
+  if(document.documentElement.dataset.gotegsMobileNav==='1') return;
+  document.documentElement.dataset.gotegsMobileNav='1';
+  let isOpen=false;
+  const setOpen=open=>{
+    const drawer=document.getElementById('portalMobileDrawer'),scrim=document.getElementById('portalMobileScrim'),toggle=document.getElementById('portalMobileToggle');
+    if(!drawer||!scrim||!toggle){console.error('[Go-Tegs] Mobile menu controls missing during toggle.');return;}
+    isOpen=!!open;
+    drawer.classList.toggle('open',isOpen);
+    scrim.classList.toggle('open',isOpen);
+    toggle.setAttribute('aria-expanded',String(isOpen));
+    toggle.setAttribute('aria-label',isOpen?'Close student portal menu':'Open student portal menu');
+    document.body.style.overflow=isOpen?'hidden':'';
+  };
+  document.addEventListener('click',e=>{
+    const el=e.target instanceof Element?e.target:null;
+    if(el?.closest('#portalMobileToggle')){e.preventDefault();e.stopPropagation();setOpen(!isOpen);return;}
+    if(el?.closest('#portalMobileClose,#portalMobileScrim')){e.preventDefault();setOpen(false);return;}
+    if(el?.closest('#portalMobileDrawer a'))setOpen(false);
+  });
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')setOpen(false);});
+  window.addEventListener('resize',()=>{if(window.innerWidth>899)setOpen(false);},{passive:true});
+}
+
 async function loadNotesScriptsIfNeeded(){
   const needsNotes=!!document.querySelector('.note-file,.admin-notes-table,#export-all-notes');
   if(!needsNotes)return;
@@ -71,27 +110,18 @@ async function loadNotesScriptsIfNeeded(){
   }catch(err){console.error('Failed to load lesson notes scripts:',err);}
 }
 
+async function ensureStudentShell(){
+  if(!document.getElementById('portalMobileToggle')) await injectPartial('/partials/student-shell.html','navbar-placeholder');
+  return mountStudentMobileControls();
+}
+
 function studentInitials(name){return String(name||'Student').split(/\s+/).filter(Boolean).slice(0,2).map(p=>p[0]).join('').toUpperCase()||'GT';}
 function setPortalAvatar(img, initialsEl, session){const fallbackLogo='/assets/img/logo.png';if(img){if(session.profile_pic_url){img.src=session.profile_pic_url;img.alt=`${session.full_name||'Student'} profile picture`;}else{img.src=fallbackLogo;img.alt='Go-Tegs logo';}}if(initialsEl)initialsEl.textContent=studentInitials(session.full_name);const holder=img?.closest('.portal-profile-avatar,.portal-card-avatar,.portal-orbit-core,.profile-avatar-xl');if(holder){holder.classList.toggle('has-photo',!!session.profile_pic_url);holder.classList.toggle('show-initials',!!session.profile_pic_removed&&!session.profile_pic_url);}}
 
 function initStudentPortalShell(){const session=getValidStudentSession();if(!session)return;const name=String(session.full_name||'Student');const classLine=`${session.class||'Student'}${session.dept?' · '+session.dept:''}`;document.querySelectorAll('[data-portal-name]').forEach(el=>el.textContent=name);document.querySelectorAll('[data-portal-class]').forEach(el=>el.textContent=classLine);document.querySelectorAll('[data-portal-initials]').forEach(el=>el.textContent=studentInitials(name));document.querySelectorAll('[data-portal-profile-image],[data-profile-image]').forEach(img=>setPortalAvatar(img,img.closest('.portal-profile-avatar,.portal-orbit-core,.profile-avatar-xl')?.querySelector('[data-portal-initials]'),session));
   const path=window.location.pathname;let activeKey='';if(path==='/student/dashboard.html'||path==='/student/'||path==='/student/index.html')activeKey='dashboard';else if(path==='/student/profile.html')activeKey='profile';else if(path.startsWith('/student/result/'))activeKey='results';else if(path.startsWith('/student/lesson-notes/'))activeKey='notes';else if(path.startsWith('/student/quiz/'))activeKey='quiz';else if(path.startsWith('/student/quiz-code/'))activeKey='quiz-code';else if(path.startsWith('/student/store/'))activeKey='store';document.querySelectorAll('[data-portal-link]').forEach(link=>link.classList.toggle('is-active',link.dataset.portalLink===activeKey));
   document.querySelectorAll('#portalLogout,#portalLogoutMobile').forEach(button=>button.addEventListener('click',()=>{localStorage.removeItem(STUDENT_SESSION_KEY);sessionStorage.removeItem('gotegs_result_data');window.location.replace('/student/index.html');}));
-  // Mobile navigation is a native <details>/<summary> control in student-shell.html.
-  // The menu therefore works even if a secondary page script is delayed or unavailable.
-  const mobileMenu=document.getElementById('portalMobileMenu');
-  if(mobileMenu){
-    mobileMenu.addEventListener('toggle',()=>{
-      const open=mobileMenu.open;
-      const toggle=document.getElementById('portalMobileToggle');
-      const scrim=document.getElementById('portalMobileScrim');
-      if(toggle){
-        toggle.setAttribute('aria-label',open?'Close student portal menu':'Open student portal menu');
-        toggle.setAttribute('aria-expanded',String(open));
-      }
-      if(scrim) scrim.setAttribute('aria-hidden',String(!open));
-    });
-  }
+  initStudentMobileNavigation();
 }
 
 function initPortalPointer(){if(window.matchMedia('(pointer: fine)').matches===false||window.matchMedia('(prefers-reduced-motion: reduce)').matches||document.querySelector('.portal-pointer'))return;const dot=document.createElement('div'),ring=document.createElement('div');dot.className='portal-pointer';ring.className='portal-pointer-ring';document.body.append(dot,ring);document.body.classList.add('portal-pointer-enabled');let tx=window.innerWidth/2,ty=window.innerHeight/2,rx=tx,ry=ty,raf=0;const setActive=target=>{const active=!!target;dot.classList.toggle('is-active',active);ring.classList.toggle('is-active',active);};const render=()=>{rx+=(tx-rx)*.22;ry+=(ty-ry)*.22;dot.style.transform=`translate3d(${tx}px,${ty}px,0) translate(-50%,-50%)`;ring.style.transform=`translate3d(${rx}px,${ry}px,0) translate(-50%,-50%)`;raf=requestAnimationFrame(render);};raf=requestAnimationFrame(render);
@@ -116,7 +146,7 @@ async function initShell(){const adminPage=isAdminPage(),studentPage=isStudentPr
     if(session)touchStudentSession(session);
     document.body.classList.add('student-shell-page');
     ensurePortalStyles();
-    await injectPartial('/partials/student-shell.html','navbar-placeholder');
+    await ensureStudentShell();
     initStudentPortalShell();
     initPortalPointer();
     initPortalTilt();
