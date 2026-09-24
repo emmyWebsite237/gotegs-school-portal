@@ -34,7 +34,8 @@ export default async function handler(req, res) {
       .eq('student_id', student_id);
 
     if (countError) throw countError;
-    if (count >= quiz.attempts_allowed) {
+    // NULL means unlimited attempts for practice-library quizzes.
+    if (quiz.attempts_allowed != null && count >= quiz.attempts_allowed) {
       return res.status(403).json({ error: "You've already used all your attempts for this quiz." });
     }
 

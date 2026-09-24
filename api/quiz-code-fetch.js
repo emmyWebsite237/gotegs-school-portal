@@ -16,7 +16,7 @@ export default async function handler(req, res) {
     if (String(library || '') === '1') {
       const { data: quizzes, error } = await supabase
         .from('quiz_codes')
-        .select('id,title,class_restriction,time_limit_minutes,attempts_allowed,expires_at,created_at,library_visible')
+        .select('id,title,subject,class_restriction,time_limit_minutes,time_limit_seconds,attempts_allowed,expires_at,created_at,library_visible')
         .eq('library_visible', true)
         .order('created_at', { ascending: false });
       if (error) throw error;
@@ -24,18 +24,22 @@ export default async function handler(req, res) {
       const available = [];
       for (const q of quizzes || []) {
         if (q.expires_at && new Date(q.expires_at) < now) continue;
-        if (q.class_restriction && q.class_restriction !== cleanClass) continue;
+        // Practice-library quizzes are explicitly open to every class.
+        if (q.library_visible !== true && q.class_restriction && q.class_restriction !== cleanClass) continue;
         const { count, error: countError } = await supabase.from('quiz_code_attempts').select('*', { count: 'exact', head: true }).eq('quiz_code_id', q.id).eq('student_id', cleanStudentId);
         if (countError) throw countError;
-        if ((count || 0) >= Number(q.attempts_allowed || 1)) continue;
+        // A null attempts_allowed means unlimited practice attempts.
+        if (q.attempts_allowed != null && (count || 0) >= Number(q.attempts_allowed)) continue;
         const { count: questionCount, error: qCountError } = await supabase.from('quiz_code_questions').select('*', { count: 'exact', head: true }).eq('quiz_code_id', q.id);
         if (qCountError) throw qCountError;
         available.push({
           id: q.id,
           title: q.title,
+          subject: q.subject || 'General Practice',
           class_restriction: q.class_restriction,
           time_limit_minutes: q.time_limit_minutes,
-          attempts_remaining: Number(q.attempts_allowed || 1) - Number(count || 0),
+          time_limit_seconds: q.time_limit_seconds ?? (q.time_limit_minutes != null ? Number(q.time_limit_minutes) * 60 : null),
+          attempts_remaining: q.attempts_allowed == null ? null : Number(q.attempts_allowed) - Number(count || 0),
           question_count: Number(questionCount || 0),
           expires_at: q.expires_at,
           created_at: q.created_at,
@@ -58,7 +62,7 @@ export default async function handler(req, res) {
 
     const { count, error: countError } = await supabase.from('quiz_code_attempts').select('*', { count: 'exact', head: true }).eq('quiz_code_id', quiz.id).eq('student_id', cleanStudentId);
     if (countError) throw countError;
-    if (count >= quiz.attempts_allowed) return res.status(403).json({ error: `You've used all ${quiz.attempts_allowed} of your attempts for this quiz.` });
+    if (quiz.attempts_allowed != null && count >= quiz.attempts_allowed) return res.status(403).json({ error: `You've used all ${quiz.attempts_allowed} of your attempts for this quiz.` });
 
     const { data: questions, error: qError } = await supabase
       .from('quiz_code_questions')
@@ -71,9 +75,11 @@ export default async function handler(req, res) {
       quiz_id: quiz.id,
       code: code ? String(code).trim().toUpperCase() : null,
       title: quiz.title,
+      subject: quiz.subject || 'General Practice',
       class_restriction: quiz.class_restriction,
       time_limit_minutes: quiz.time_limit_minutes,
-      attempts_remaining: quiz.attempts_allowed - count,
+      time_limit_seconds: quiz.time_limit_seconds ?? (quiz.time_limit_minutes != null ? Number(quiz.time_limit_minutes) * 60 : null),
+      attempts_remaining: quiz.attempts_allowed == null ? null : quiz.attempts_allowed - count,
       expires_at: quiz.expires_at,
       questions,
     });

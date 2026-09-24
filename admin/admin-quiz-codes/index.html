@@ -25,6 +25,7 @@
     .qc-editor-actions{display:flex;justify-content:flex-end;gap:.6rem;flex-wrap:wrap;margin-top:1rem}.qc-editor-actions button{border:0;border-radius:10px;padding:.7rem 1rem;font-weight:800;cursor:pointer}.qc-cancel{background:#eef1f4;color:#203040}.qc-save{background:#0f63c9;color:#fff}
     .qc-status{min-height:1.1rem;font-size:.85rem;font-weight:700}
     .qc-empty{padding:1rem;border:1px dashed var(--border);border-radius:14px;color:var(--slate)}
+    .qc-disabled{opacity:.55}.qc-form input:disabled{background:#f2f4f7;color:#667085;cursor:not-allowed}
   
     .qc-help{padding:.85rem 1rem;border:1px solid #d9e8f7;border-radius:13px;background:#f3f8ff;color:#52677d;font-size:.78rem;line-height:1.5}
     .qc-editor-preview{margin-top:1rem;padding:1rem;border-radius:15px;background:#fff;border:1px dashed #cad9ea;color:#4b6075;font-size:.8rem}
@@ -43,10 +44,13 @@
         <h2 style="margin-top:0">Create a new test</h2><div class="qc-help">Build the test here. Students will only see the questions after they preview the test and start the countdown.</div>
         <label for="qTitle">Quiz Title</label>
         <input type="text" id="qTitle" placeholder="e.g. Mid-Term Mathematics Practice" required />
+        <label for="qSubject">Subject</label>
+        <input type="text" id="qSubject" placeholder="e.g. English Language" required />
+        <div class="qc-help" style="margin-top:.65rem">Practice Library rules: any class, unlimited attempts. Every non-Mathematics practice quiz gets 15 seconds per question automatically. Mathematics keeps the time you set below.</div>
         <div class="qc-settings-grid">
-          <div><label for="qClass">Restrict to Class (optional)</label><input type="text" id="qClass" placeholder="e.g. JSS 1 (leave blank for any)" /></div>
-          <div><label for="qTimeLimit">Time Limit (minutes, optional)</label><input type="number" id="qTimeLimit" min="1" placeholder="No limit" /></div>
-          <div><label for="qAttempts">Attempts Allowed</label><input type="number" id="qAttempts" min="1" value="1" /></div>
+          <div><label for="qClass">Restrict to Class (code-only tests)</label><input type="text" id="qClass" placeholder="Leave blank for any class" /></div>
+          <div><label for="qTimeLimit">Time Limit (minutes) — Mathematics / code-only</label><input type="number" id="qTimeLimit" min="1" placeholder="15 sec/question for library" /></div>
+          <div><label for="qAttempts">Attempts Allowed (code-only)</label><input type="number" id="qAttempts" min="1" value="1" /></div>
           <div><label for="qShowAnswers">Show Answers After Submitting?</label><select id="qShowAnswers"><option value="true">Yes</option><option value="false">No</option></select></div><div><label for="qLibraryVisible">Practice Library</label><select id="qLibraryVisible"><option value="true">Visible to students</option><option value="false">Code-only / prescribed</option></select></div>
           <div><label for="qExpires">Expiry (optional)</label><input type="datetime-local" id="qExpires" /></div>
         </div>
@@ -66,10 +70,12 @@
         <form id="editForm">
           <input type="hidden" id="editId" />
           <label for="editTitle">Quiz Title</label><input type="text" id="editTitle" required />
+          <label for="editSubject">Subject</label><input type="text" id="editSubject" required />
+          <div class="qc-help" style="margin-top:.65rem">Practice Library rules: any class, unlimited attempts. Every non-Mathematics practice quiz gets 15 seconds per question automatically. Mathematics keeps the time you set.</div>
           <div class="qc-settings-grid">
-            <div><label for="editClass">Restrict to Class</label><input type="text" id="editClass" /></div>
-            <div><label for="editTime">Time Limit (minutes)</label><input type="number" id="editTime" min="1" /></div>
-            <div><label for="editAttempts">Attempts Allowed</label><input type="number" id="editAttempts" min="1" required /></div>
+            <div><label for="editClass">Restrict to Class (code-only tests)</label><input type="text" id="editClass" /></div>
+            <div><label for="editTime">Time Limit (minutes) — Mathematics / code-only</label><input type="number" id="editTime" min="1" /></div>
+            <div><label for="editAttempts">Attempts Allowed (code-only)</label><input type="number" id="editAttempts" min="1" /></div>
             <div><label for="editShowAnswers">Show Answers After Submitting?</label><select id="editShowAnswers"><option value="true">Yes</option><option value="false">No</option></select></div><div><label for="editLibraryVisible">Practice Library</label><select id="editLibraryVisible"><option value="true">Visible to students</option><option value="false">Code-only / prescribed</option></select></div>
             <div><label for="editExpires">Expiry</label><input type="datetime-local" id="editExpires" /></div>
           </div>
@@ -94,6 +100,15 @@
     const authHeaders = () => { const t = sessionStorage.getItem('gotegs_admin_token'); return t ? { Authorization: 'Bearer ' + t } : {}; };
     async function responseJson(res){ const text=await res.text(); try{return text?JSON.parse(text):{};}catch{throw new Error(res.ok?'Server returned an invalid response.':`Request failed (${res.status}). The admin API did not return JSON.`);} }
     let createQuestionCount = 0, editQuestionCount = 0;
+
+    function syncLibraryFields(prefix){
+      const visible=el(prefix+'LibraryVisible').value==='true';
+      const classInput=el(prefix+'Class'), timeInput=el(prefix+'Time'), attemptsInput=el(prefix+'Attempts');
+      [classInput, attemptsInput].forEach(i=>{if(!i)return;i.disabled=visible;i.closest('div')?.classList.toggle('qc-disabled',visible);});
+      if(timeInput){timeInput.disabled=false; timeInput.closest('div')?.classList.toggle('qc-disabled',visible && el(prefix+'Subject').value.trim().toLowerCase()!=='mathematics');}
+      if(visible){classInput.value='';attemptsInput.value=''; if(el(prefix+'Subject').value.trim().toLowerCase()!=='mathematics') timeInput.value='';}
+    }
+    ['q','edit'].forEach(prefix=>{el(prefix+'LibraryVisible')?.addEventListener('change',()=>syncLibraryFields(prefix));el(prefix+'Subject')?.addEventListener('input',()=>syncLibraryFields(prefix));});
 
     function optionValue(block, cls){ return block.querySelector(cls)?.value.trim() || ''; }
     function addQuestionBlock(container, mode, q = null){
@@ -120,7 +135,7 @@
       });
     }
     function formPayload(container, mode, prefix){
-      const qs=collectQuestions(container, mode); return {title:el(prefix+'Title').value.trim(),class_restriction:el(prefix+'Class').value.trim()||null,time_limit_minutes:el(prefix+'Time').value?Number(el(prefix+'Time').value):null,attempts_allowed:Number(el(prefix+'Attempts').value)||1,show_answers_after:el(prefix+'ShowAnswers').value==='true',library_visible:el(prefix+'LibraryVisible').value==='true',expires_at:el(prefix+'Expires').value?new Date(el(prefix+'Expires').value).toISOString():null,questions:qs};
+      const qs=collectQuestions(container, mode); return {title:el(prefix+'Title').value.trim(),subject:el(prefix+'Subject').value.trim(),class_restriction:el(prefix+'Class').value.trim()||null,time_limit_minutes:el(prefix+'Time').value?Number(el(prefix+'Time').value):null,time_limit_seconds:null,attempts_allowed:Number(el(prefix+'Attempts').value)||1,show_answers_after:el(prefix+'ShowAnswers').value==='true',library_visible:el(prefix+'LibraryVisible').value==='true',expires_at:el(prefix+'Expires').value?new Date(el(prefix+'Expires').value).toISOString():null,questions:qs};
     }
     function toLocalInputValue(iso){ if(!iso) return ''; const d=new Date(iso); const pad=n=>String(n).padStart(2,'0'); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`; }
 
@@ -147,7 +162,7 @@
     }
     async function openEditor(id){
       const msg=el('editMsg');msg.textContent='Loading test…';el('editEditor').style.display='block';el('editEditor').setAttribute('aria-hidden','false');el('editId').value=id;
-      try{const res=await fetch('/api/list-quiz-codes?id='+encodeURIComponent(id),{headers:authHeaders()});const data=await responseJson(res);if(!res.ok)throw new Error(data.error||'Could not load test.');el('editCode').textContent=data.quiz.code;el('editTitle').value=data.quiz.title||'';el('editClass').value=data.quiz.class_restriction||'';el('editTime').value=data.quiz.time_limit_minutes??'';el('editAttempts').value=data.quiz.attempts_allowed??1;el('editShowAnswers').value=String(data.quiz.show_answers_after!==false);el('editLibraryVisible').value=String(data.quiz.library_visible!==false);el('editExpires').value=toLocalInputValue(data.quiz.expires_at);el('editSummary').innerHTML=`<strong>${escapeHtml(data.quiz.title||'Untitled test')}</strong> · ${escapeHtml(data.quiz.code||'')}<br>${(data.questions||[]).length} question${(data.questions||[]).length===1?'':'s'} · ${data.quiz.time_limit_minutes?escapeHtml(String(data.quiz.time_limit_minutes))+' minute limit':'No time limit'} · ${data.quiz.attempts_allowed||1} attempt${(data.quiz.attempts_allowed||1)===1?'':'s'} allowed`;el('editQuestionsContainer').innerHTML='';editQuestionCount=0;(data.questions||[]).forEach(q=>addQuestionBlock(el('editQuestionsContainer'),'edit',q));msg.textContent='';window.scrollTo({top:el('editEditor').offsetTop-20,behavior:'smooth'});
+      try{const res=await fetch('/api/list-quiz-codes?id='+encodeURIComponent(id),{headers:authHeaders()});const data=await responseJson(res);if(!res.ok)throw new Error(data.error||'Could not load test.');el('editCode').textContent=data.quiz.code;el('editTitle').value=data.quiz.title||'';el('editSubject').value=data.quiz.subject||'General Practice';el('editClass').value=data.quiz.class_restriction||'';el('editTime').value=data.quiz.time_limit_minutes??'';el('editAttempts').value=data.quiz.attempts_allowed??1;el('editShowAnswers').value=String(data.quiz.show_answers_after!==false);el('editLibraryVisible').value=String(data.quiz.library_visible!==false);el('editExpires').value=toLocalInputValue(data.quiz.expires_at);syncLibraryFields('edit');el('editSummary').innerHTML=`<strong>${escapeHtml(data.quiz.title||'Untitled test')}</strong> · ${escapeHtml(data.quiz.code||'')}<br>${(data.questions||[]).length} question${(data.questions||[]).length===1?'':'s'} · ${data.quiz.time_limit_seconds!=null?escapeHtml(String(data.quiz.time_limit_seconds))+' second limit':'No time limit'} · ${data.quiz.attempts_allowed==null?'Unlimited attempts':data.quiz.attempts_allowed+' attempt'+(data.quiz.attempts_allowed===1?'':'s')+' allowed'}`;el('editQuestionsContainer').innerHTML='';editQuestionCount=0;(data.questions||[]).forEach(q=>addQuestionBlock(el('editQuestionsContainer'),'edit',q));msg.textContent='';window.scrollTo({top:el('editEditor').offsetTop-20,behavior:'smooth'});
       }catch(err){msg.style.color='#dc2626';msg.textContent=err.message;}
     }
     function closeEditor(){el('editEditor').style.display='none';el('editEditor').setAttribute('aria-hidden','true');el('editQuestionsContainer').innerHTML='';}

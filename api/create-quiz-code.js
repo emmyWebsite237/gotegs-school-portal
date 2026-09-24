@@ -35,7 +35,7 @@ export default async function handler(req, res) {
     const token = String(req.headers.authorization || '').replace(/^Bearer\s+/i, '');
     if (!verifyToken(token)) return res.status(401).json({ error: 'Admin session expired. Log in again.' });
     const {
-      title, class_restriction, time_limit_minutes, attempts_allowed,
+      title, subject, class_restriction, time_limit_minutes, time_limit_seconds, attempts_allowed,
       show_answers_after, expires_at, library_visible, questions,
     } = req.body || {};
 
@@ -57,17 +57,38 @@ export default async function handler(req, res) {
       code = randomCode();
     }
 
+    const isLibrary = library_visible !== false;
+    const cleanSubject = String(subject || '').trim() || 'General Practice';
+    let storedClass = class_restriction || null;
+    let storedAttempts = Number(attempts_allowed) || 1;
+    let storedSeconds = time_limit_seconds == null || time_limit_seconds === '' ? null : Number(time_limit_seconds);
+    let storedMinutes = time_limit_minutes == null || time_limit_minutes === '' ? null : Number(time_limit_minutes);
+
+    if (isLibrary) {
+      // Practice-library quizzes are open to every class and can be repeated without limit.
+      storedClass = null;
+      storedAttempts = null;
+      if (cleanSubject.toLowerCase() !== 'mathematics') {
+        storedSeconds = questions.length * 15;
+        storedMinutes = Math.ceil(storedSeconds / 60);
+      } else if (storedSeconds == null && storedMinutes != null) {
+        storedSeconds = storedMinutes * 60;
+      }
+    }
+
     const { data: quiz, error: quizError } = await supabase
       .from('quiz_codes')
       .insert({
         code,
         title,
-        class_restriction: class_restriction || null,
-        time_limit_minutes: time_limit_minutes || null,
-        attempts_allowed: attempts_allowed || 1,
+        subject: cleanSubject,
+        class_restriction: storedClass,
+        time_limit_minutes: storedMinutes,
+        time_limit_seconds: storedSeconds,
+        attempts_allowed: storedAttempts,
         show_answers_after: show_answers_after !== false,
         expires_at: expires_at || null,
-        library_visible: library_visible !== false,
+        library_visible: isLibrary,
       })
       .select()
       .single();

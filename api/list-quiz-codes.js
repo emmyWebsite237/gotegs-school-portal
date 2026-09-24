@@ -31,8 +31,10 @@ function cleanQuestion(q, orderIndex) {
 
 function validateQuizPayload(body) {
   const title = String(body?.title || '').trim();
+  const subject = String(body?.subject || '').trim();
   const questions = Array.isArray(body?.questions) ? body.questions : [];
   if (!title || !questions.length) return 'A title and at least one question are required.';
+  if (!subject) return 'A subject is required.';
   for (const q of questions) {
     if (!String(q?.question || '').trim() || !String(q?.option_a || '').trim() || !String(q?.option_b || '').trim() || !['a','b','c','d'].includes(q?.correct_option)) {
       return 'Every question needs text, options A and B, and a valid correct answer.';
@@ -113,15 +115,35 @@ export default async function handler(req, res) {
 
       const { data: quiz, error: updateError } = await supabase
         .from('quiz_codes')
-        .update({
-          title: String(body.title).trim(),
-          class_restriction: String(body.class_restriction || '').trim() || null,
-          time_limit_minutes: body.time_limit_minutes == null || body.time_limit_minutes === '' ? null : Number(body.time_limit_minutes),
-          attempts_allowed: Number(body.attempts_allowed) || 1,
-          show_answers_after: body.show_answers_after !== false,
-          expires_at: body.expires_at || null,
-          library_visible: body.library_visible !== false,
-        })
+        .update((() => {
+          const isLibrary = body.library_visible !== false;
+          const cleanSubject = String(body.subject || '').trim() || 'General Practice';
+          let storedClass = String(body.class_restriction || '').trim() || null;
+          let storedAttempts = Number(body.attempts_allowed) || 1;
+          let storedSeconds = body.time_limit_seconds == null || body.time_limit_seconds === '' ? null : Number(body.time_limit_seconds);
+          let storedMinutes = body.time_limit_minutes == null || body.time_limit_minutes === '' ? null : Number(body.time_limit_minutes);
+          if (isLibrary) {
+            storedClass = null;
+            storedAttempts = null;
+            if (cleanSubject.toLowerCase() !== 'mathematics') {
+              storedSeconds = body.questions.length * 15;
+              storedMinutes = Math.ceil(storedSeconds / 60);
+            } else if (storedSeconds == null && storedMinutes != null) {
+              storedSeconds = storedMinutes * 60;
+            }
+          }
+          return {
+            title: String(body.title).trim(),
+            subject: cleanSubject,
+            class_restriction: storedClass,
+            time_limit_minutes: storedMinutes,
+            time_limit_seconds: storedSeconds,
+            attempts_allowed: storedAttempts,
+            show_answers_after: body.show_answers_after !== false,
+            expires_at: body.expires_at || null,
+            library_visible: isLibrary,
+          };
+        })())
         .eq('id', targetId)
         .select()
         .single();
