@@ -141,7 +141,7 @@ function ensurePortalStyles(){
 }
 
 async function loadNotesScriptsIfNeeded(){
-  const needsNotes=!!document.querySelector('.note-file,.admin-notes-table,#export-all-notes');
+  const needsNotes=!!document.querySelector('.note-file,.admin-notes-table');
   if(!needsNotes)return;
   try{
     if(!window.supabase) await loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2');

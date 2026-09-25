@@ -437,3 +437,19 @@ body.student-shell-page .notes-table td{
     -webkit-tap-highlight-color:transparent!important;
   }
 }
+
+/* Long lesson-note strings (e.g. dotted leader lines) must wrap inside the reading surface. */
+body.student-shell-page .note-body,
+body.student-shell-page .note-body *{
+  max-width:100%;
+  min-width:0;
+  overflow-wrap:anywhere;
+  word-break:normal;
+}
+body.student-shell-page .note-body{overflow-x:hidden;box-sizing:border-box;}
+body.student-shell-page .note-body table{width:100%!important;max-width:100%!important;table-layout:fixed;}
+body.student-shell-page .note-body img,
+body.student-shell-page .note-body video,
+body.student-shell-page .note-body iframe{max-width:100%;height:auto;}
+body.student-shell-page .note-body pre,
+body.student-shell-page .note-body code{white-space:pre-wrap;overflow-wrap:anywhere;}

@@ -1,6 +1,6 @@
 // Go-Tegs Lesson Notes runtime
-// Former paste/type editor is restored. Notes are stored as HTML in Supabase.
-// The same file powers admin note editing and student/public note links.
+// Former paste/type editor. Notes are stored as HTML in Supabase.
+// This file is shared by admin note-editing tables and student/public note links.
 
 (function () {
   if (window.__gotegsNotesBooted) return;
@@ -32,12 +32,10 @@
 
   function parsePathContext() {
     const parts = window.location.pathname.split('/').filter(Boolean);
-    return { section: parts.includes('sss') ? 'sss' : 'jss', dept: null };
+    const section = parts.includes('sss') ? 'sss' : parts.includes('jss') ? 'jss' : null;
+    return { section, dept: null };
   }
 
-  // IMPORTANT: supabase-js v2 requires .select() before filters such as .eq().
-  // The previous export patch accidentally called .eq() directly on .from(),
-  // which caused: "supabaseClient.from(...).eq is not a function".
   function buildNoteQuery(table, className, term, subject, dept, columns = 'id,content,uploaded_at') {
     let query = supabaseClient
       .from(table)
@@ -49,14 +47,14 @@
   }
 
   async function latestNote(className, term, subject, dept) {
-    let query = buildNoteQuery('lesson_notes', className, term, subject, dept);
-    let result = await query.order('uploaded_at', { ascending: false }).limit(1);
+    let result = await buildNoteQuery('lesson_notes', className, term, subject, dept)
+      .order('uploaded_at', { ascending: false })
+      .limit(1);
 
-    // Older content may have been stored with a department value even though
-    // the current site uses a flat SSS/JSS structure. If there is no flat row,
-    // gracefully fall back to the newest matching note regardless of dept.
-    if (!result.error && (!result.data || result.data.length === 0) && !dept) {
-      result = await supabaseClient
+    // Existing deployments may contain notes with department values while the
+    // current student note index is department-neutral. Fall back gracefully.
+    if (!result.error && (!result.data || result.data.length === 0)) {
+      let fallback = supabaseClient
         .from('lesson_notes')
         .select('id,content,uploaded_at,dept')
         .eq('class_name', className)
@@ -64,13 +62,38 @@
         .eq('subject', subject)
         .order('uploaded_at', { ascending: false })
         .limit(1);
+      if (dept) {
+        // Prefer an exact department first; if absent, fall back to the newest
+        // matching note so existing notes remain discoverable.
+        fallback = supabaseClient
+          .from('lesson_notes')
+          .select('id,content,uploaded_at,dept')
+          .eq('class_name', className)
+          .eq('term', term)
+          .eq('subject', subject)
+          .eq('dept', dept)
+          .order('uploaded_at', { ascending: false })
+          .limit(1);
+        const exact = await fallback;
+        if (!exact.error && exact.data?.length) return exact;
+        fallback = supabaseClient
+          .from('lesson_notes')
+          .select('id,content,uploaded_at,dept')
+          .eq('class_name', className)
+          .eq('term', term)
+          .eq('subject', subject)
+          .order('uploaded_at', { ascending: false })
+          .limit(1);
+      }
+      result = await fallback;
     }
     return result;
   }
 
   async function findExisting(className, term, subject, dept) {
-    let result = await buildNoteQuery('lesson_notes', className, term, subject, dept, 'id,uploaded_at').order('uploaded_at', { ascending: false });
-    if (!result.error && (!result.data || result.data.length === 0) && !dept) {
+    let result = await buildNoteQuery('lesson_notes', className, term, subject, dept, 'id,uploaded_at,dept')
+      .order('uploaded_at', { ascending: false });
+    if (!result.error && (!result.data || result.data.length === 0)) {
       result = await supabaseClient
         .from('lesson_notes')
         .select('id,uploaded_at,dept')
@@ -83,7 +106,10 @@
   }
 
   function hasText(html) {
-    return !!html && String(html).replace(/<[^>]*>/g, '').trim().length > 0;
+    if (!html) return false;
+    const temp = document.createElement('div');
+    temp.innerHTML = String(html);
+    return (temp.textContent || '').trim().length > 0;
   }
 
   function wireAdminNotesTable() {
@@ -92,6 +118,9 @@
     const { dept, section } = parsePathContext();
 
     rows.forEach((row) => {
+      if (row.dataset.notesWired === '1') return;
+      row.dataset.notesWired = '1';
+
       const subject = row.dataset.subject || '';
       const className = row.dataset.class || '';
       const term = row.dataset.term || '';
@@ -102,18 +131,17 @@
       if (!noteCell || !actionCell || !statusCell) return;
 
       noteCell.innerHTML = `
-        <div class="note-toolbar" style="margin-bottom:4px;display:flex;gap:4px;flex-wrap:wrap;">
-          <button type="button" data-cmd="bold" style="font-weight:700;padding:2px 8px;">B</button>
-          <button type="button" data-cmd="italic" style="font-style:italic;padding:2px 8px;">I</button>
-          <button type="button" data-cmd="underline" style="text-decoration:underline;padding:2px 8px;">U</button>
+        <div class="note-toolbar" role="toolbar" aria-label="Formatting for ${subject}">
+          <button type="button" data-cmd="bold" aria-label="Bold"><strong>B</strong></button>
+          <button type="button" data-cmd="italic" aria-label="Italic"><em>I</em></button>
+          <button type="button" data-cmd="underline" aria-label="Underline"><u>U</u></button>
         </div>
-        <div class="note-editor" contenteditable="true" role="textbox" aria-label="${subject} lesson note"
-          style="min-height:90px;max-height:260px;overflow-y:auto;border:1px solid #d7e1ea;border-radius:8px;padding:9px;background:#fff;font-size:.86rem;line-height:1.55;">
-        </div>`;
+        <div class="note-editor" contenteditable="true" role="textbox" aria-multiline="true" aria-label="${subject} lesson note"></div>`;
 
       const editor = noteCell.querySelector('.note-editor');
       noteCell.querySelectorAll('.note-toolbar button').forEach((button) => {
-        button.addEventListener('click', () => {
+        button.addEventListener('click', (event) => {
+          event.preventDefault();
           document.execCommand(button.dataset.cmd, false, null);
           editor.focus();
         });
@@ -128,7 +156,7 @@
           const result = await latestNote(className, term, subject, dept);
           if (result.error) throw result.error;
           const latest = result.data?.[0];
-          if (latest?.content) {
+          if (latest?.content && hasText(latest.content)) {
             editor.innerHTML = latest.content;
             statusCell.textContent = 'Saved ' + (latest.uploaded_at ? new Date(latest.uploaded_at).toLocaleDateString() : '');
           } else {
@@ -158,17 +186,29 @@
           const now = new Date().toISOString();
 
           if (existing.length) {
-            const keepId = existing[0].id;
+            const keep = existing[0];
+            const update = { content: html, uploaded_at: now };
+            // Preserve a pre-existing department value when the current page
+            // does not specify one, rather than silently erasing metadata.
+            if (dept || keep.dept == null) update.dept = dept;
             const { error } = await supabaseClient
               .from('lesson_notes')
-              .update({ content: html, uploaded_at: now, dept: dept })
-              .eq('id', keepId);
+              .update(update)
+              .eq('id', keep.id);
             if (error) throw error;
+
             if (existing.length > 1) {
               const duplicateIds = existing.slice(1).map((r) => r.id).filter(Boolean);
-              if (duplicateIds.length) await supabaseClient.from('lesson_notes').delete().in('id', duplicateIds);
+              if (duplicateIds.length) {
+                const { error: duplicateError } = await supabaseClient
+                  .from('lesson_notes')
+                  .delete()
+                  .in('id', duplicateIds);
+                if (duplicateError) console.warn('Could not remove duplicate note rows:', duplicateError);
+              }
             }
           } else {
+            if (!section) throw new Error('Could not determine the lesson-note section from this page.');
             const { error } = await supabaseClient.from('lesson_notes').insert({
               section,
               class_name: className,
@@ -180,6 +220,7 @@
             });
             if (error) throw error;
           }
+
           statusCell.textContent = 'Saved ' + new Date().toLocaleDateString();
         } catch (error) {
           statusCell.textContent = 'Error: ' + (error?.message || 'Could not save note.');
@@ -198,6 +239,8 @@
     const { dept } = parsePathContext();
 
     cells.forEach((cell) => {
+      if (cell.dataset.notesWired === '1') return;
+      cell.dataset.notesWired = '1';
       const subject = cell.dataset.subject || '';
       const className = cell.dataset.class || '';
       const term = cell.dataset.term || '';
@@ -226,147 +269,11 @@
     });
   }
 
-  function setupExport() {
-    const button = document.getElementById('export-all-notes');
-    if (!button || button.dataset.wired === '1') return;
-    button.dataset.wired = '1';
-    const status = document.getElementById('notes-export-status');
-    const bar = document.getElementById('notes-export-progress-bar');
-    const overlay = document.getElementById('notes-export-overlay');
-    const bigBar = document.getElementById('notes-export-big-bar');
-    const percent = document.getElementById('notes-export-percent');
-    const message = document.getElementById('notes-export-progress-message');
-    const count = document.getElementById('notes-export-count');
-    const setProgress = (p, msg, detail) => {
-      const value = Math.max(0, Math.min(100, Math.round(p)));
-      if (bar) bar.style.width = value + '%';
-      if (bigBar) bigBar.style.width = value + '%';
-      if (percent) percent.textContent = value + '%';
-      if (message && msg) message.textContent = msg;
-      if (count && detail) count.textContent = detail;
-    };
-    const pause = () => new Promise(requestAnimationFrame);
-    const safeName = (v) => String(v || 'Untitled').replace(/[\\/:*?"<>|]+/g, '-').replace(/\s+/g, ' ').trim() || 'Untitled';
-    const sectionLabel = (v) => String(v || '').toLowerCase().includes('sss') ? 'Senior Arm' : 'Junior Arm';
-
-    async function getMetadataPage(afterId, size) {
-      let query = supabaseClient.from('lesson_notes')
-        .select('id,section,class_name,dept,term,subject,uploaded_at')
-        .order('id', { ascending: true }).limit(size);
-      if (afterId !== null) query = query.gt('id', afterId);
-      return query;
-    }
-
-    async function getContentBatch(ids) {
-      if (!ids.length) return [];
-      const result = await supabaseClient.from('lesson_notes').select('id,content').in('id', ids);
-      if (!result.error) return result.data || [];
-      if (ids.length === 1) throw result.error;
-      const rows = [];
-      for (const id of ids) {
-        const one = await supabaseClient.from('lesson_notes').select('id,content').eq('id', id).maybeSingle();
-        if (one.error) throw one.error;
-        if (one.data) rows.push(one.data);
-      }
-      return rows;
-    }
-
-    button.addEventListener('click', async () => {
-      button.disabled = true;
-      button.textContent = 'Preparing…';
-      if (overlay) overlay.hidden = false;
-      setProgress(2, 'Connecting to Supabase…', 'Starting…');
-      try {
-        await ensureSupabase();
-        await loadScript('https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js');
-        await loadScript('https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.js');
-        if (!window.JSZip || !window.htmlDocx) throw new Error('Document download tools could not be loaded.');
-
-        const pageSize = 10;
-        const metadata = [];
-        let afterId = null;
-        while (true) {
-          const { data, error } = await getMetadataPage(afterId, pageSize);
-          if (error) throw new Error(`Could not read lesson-note records: ${error.message}`);
-          const rows = data || [];
-          if (!rows.length) break;
-          metadata.push(...rows);
-          afterId = rows[rows.length - 1].id;
-          setProgress(Math.min(20, 5 + metadata.length / 10), 'Reading lesson-note index…', `Indexed ${metadata.length} records`);
-          if (rows.length < pageSize) break;
-          await pause();
-        }
-
-        if (!metadata.length) {
-          setProgress(100, 'No saved lesson notes found.', 'Nothing to download.');
-          if (status) status.textContent = 'No saved lesson notes were found.';
-          return;
-        }
-
-        const selected = new Map();
-        const zip = new JSZip();
-        for (let start = 0; start < metadata.length; start += pageSize) {
-          const chunk = metadata.slice(start, start + pageSize);
-          const contents = await getContentBatch(chunk.map((row) => row.id));
-          const byId = new Map(contents.map((row) => [String(row.id), row.content]));
-          chunk.forEach((meta) => {
-            const content = byId.get(String(meta.id));
-            if (!hasText(content)) return;
-            const key = [meta.section, meta.class_name, meta.dept, meta.term, meta.subject].map((v) => String(v ?? '').toLowerCase().trim()).join('|');
-            const old = selected.get(key);
-            if (!old || new Date(meta.uploaded_at || 0).getTime() >= new Date(old.uploaded_at || 0).getTime()) selected.set(key, { ...meta, content });
-          });
-          setProgress(20 + Math.round((Math.min(start + chunk.length, metadata.length) / metadata.length) * 25), 'Pulling lesson-note content…', `${Math.min(start + chunk.length, metadata.length)} of ${metadata.length} records`);
-          await pause();
-        }
-
-        const notes = [...selected.values()].sort((a, b) => new Date(b.uploaded_at || 0) - new Date(a.uploaded_at || 0));
-        if (!notes.length) {
-          setProgress(100, 'No saved lesson notes with content were found.', 'Nothing to download.');
-          if (status) status.textContent = 'No saved lesson notes with content were found.';
-          return;
-        }
-
-        notes.forEach((note, index) => {
-          const parts = ['Lesson Notes', sectionLabel(note.section), safeName(note.class_name || 'Class'), note.dept ? safeName(note.dept) : null, safeName(note.term || 'Term')].filter(Boolean);
-          const subject = safeName(note.subject || 'Lesson Note');
-          const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${subject}</title></head><body>${note.content}</body></html>`;
-          zip.file(`${parts.join('/')}/${subject}.docx`, window.htmlDocx.asBlob(html, { orientation: 'portrait', margins: { top: 720, right: 720, bottom: 720, left: 720 } }));
-          setProgress(45 + Math.round(((index + 1) / notes.length) * 35), 'Preparing Word documents…', `${index + 1} of ${notes.length} · ${subject}`);
-        });
-
-        const blob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 6 } }, (meta) => {
-          setProgress(80 + Math.round(meta.percent * 0.2), 'Compressing the ZIP…', `Compressing ${Math.round(meta.percent)}%`);
-        });
-
-        setProgress(100, 'Download ready.', `${notes.length} lesson notes prepared.`);
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `Go-Tegs-Lesson-Notes-${new Date().toISOString().slice(0, 10)}.zip`;
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-        setTimeout(() => URL.revokeObjectURL(url), 30000);
-        if (status) status.textContent = `Done — ${notes.length} lesson notes packaged and downloaded.`;
-      } catch (error) {
-        console.error('Lesson notes export failed:', error);
-        setProgress(0, 'Export failed.', error?.message || String(error));
-        if (status) status.textContent = 'Export failed: ' + (error?.message || String(error));
-      } finally {
-        if (overlay) overlay.hidden = true;
-        button.disabled = false;
-        button.textContent = '↓ Download lesson notes ZIP';
-      }
-    });
-  }
-
   async function init() {
     try {
       await ensureSupabase();
       wireAdminNotesTable();
       wirePublicNoteCells();
-      setupExport();
     } catch (error) {
       console.error('Lesson notes failed to initialise:', error);
     }

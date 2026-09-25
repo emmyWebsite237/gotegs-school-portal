@@ -675,3 +675,10 @@ p { color: var(--slate); margin-bottom: 1rem; }
   }
   .nav-drawer-head{align-items:center!important;}
 }
+
+/* Lesson-note content must stay inside its box, including long unbroken dot/character runs. */
+.notes-table{table-layout:fixed;}
+.notes-table th,.notes-table td{min-width:0;overflow-wrap:anywhere;word-break:normal;}
+.note-file,.note-file a,.note-file em{max-width:100%;overflow-wrap:anywhere;word-break:normal;}
+.note-editor{min-width:0;max-width:100%;overflow-wrap:anywhere;word-break:normal;white-space:normal;}
+.note-editor *{max-width:100%;overflow-wrap:anywhere;word-break:normal;}

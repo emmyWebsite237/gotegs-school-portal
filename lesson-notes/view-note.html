@@ -7,11 +7,17 @@
   <link rel="stylesheet" href="/assets/css/style.css" />
   <link rel="stylesheet" href="/assets/css/portal.css" />
   <style>
-    .note-body {
-      background: var(--paper); border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 1.75rem; margin-top: 1.5rem; line-height: 1.7;
+    .note-body{
+      background:var(--paper);border:1px solid var(--border);border-radius:var(--radius);
+      padding:clamp(1rem,3vw,1.75rem);margin-top:1.5rem;line-height:1.7;
+      min-width:0;max-width:100%;overflow-x:hidden;overflow-wrap:anywhere;word-break:normal;
+      box-sizing:border-box;
     }
-    .note-body img { max-width: 100%; height: auto; border-radius: 6px; }
+    .note-body *{max-width:100%;box-sizing:border-box;overflow-wrap:anywhere;word-break:normal;}
+    .note-body img,.note-body video,.note-body iframe{max-width:100%;height:auto;border-radius:6px;}
+    .note-body table{width:100%!important;max-width:100%!important;table-layout:fixed;}
+    .note-body th,.note-body td{overflow-wrap:anywhere;word-break:normal;}
+    .note-body pre,.note-body code{white-space:pre-wrap;overflow-wrap:anywhere;word-break:normal;}
   </style>
 </head>
 <body class="student-shell-page">
@@ -22,8 +28,6 @@
     <h1 id="noteTitle">Loading note...</h1>
     <div class="note-body" id="noteBody" oncontextmenu="return false;">Loading...</div>
   </main>
-
-  <div id="footer-placeholder"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/assets/js/main.js"></script>
@@ -38,36 +42,29 @@
     document.getElementById('noteTitle').textContent = `${subject || 'Note'} — ${className || ''} — ${term || ''}`;
     document.getElementById('noteBreadcrumb').textContent = `Home / Lesson Notes / ${className || ''} / ${term || ''}`;
 
-    async function loadNote() {
-      const body = document.getElementById('noteBody');
-      if (!className || !term || !subject) {
-        body.textContent = 'Missing note details in the link.';
-        return;
-      }
-
-      try {
-        let query = supabaseClient
-          .from('lesson_notes')
-          .select('content')
-          .eq('class_name', className)
-          .eq('term', term)
-          .eq('subject', subject);
-        query = dept ? query.eq('dept', dept) : query.is('dept', null);
-
-        const { data, error } = await query.maybeSingle();
-
-        if (error) throw error;
-        if (!data || !data.content) {
-          body.innerHTML = '<em>No note has been added for this subject yet.</em>';
-          return;
+    async function loadNote(){
+      const body=document.getElementById('noteBody');
+      if(!className||!term||!subject){body.textContent='Missing note details in the link.';return;}
+      try{
+        let query=supabaseClient.from('lesson_notes').select('id,content,uploaded_at,dept')
+          .eq('class_name',className).eq('term',term).eq('subject',subject);
+        if(dept) query=query.eq('dept',dept); else query=query.is('dept',null);
+        let result=await query.order('uploaded_at',{ascending:false}).limit(1).maybeSingle();
+        if(!result.error && !result.data){
+          let fallback=supabaseClient.from('lesson_notes').select('id,content,uploaded_at,dept')
+            .eq('class_name',className).eq('term',term).eq('subject',subject)
+            .order('uploaded_at',{ascending:false}).limit(1);
+          result=await fallback.maybeSingle();
         }
-
-        body.innerHTML = data.content;
-      } catch (err) {
-        body.textContent = 'Could not load this note: ' + err.message;
+        const {data,error}=result;
+        if(error) throw error;
+        if(!data||!data.content){body.innerHTML='<em>No note has been added for this subject yet.</em>';return;}
+        body.innerHTML=data.content;
+      }catch(err){
+        console.error('Could not load lesson note:',err);
+        body.textContent='Could not load this note: '+(err?.message||String(err));
       }
     }
-
     loadNote();
   </script>
 </body>
