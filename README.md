@@ -11,14 +11,9 @@ This repository is the canonical website source. Keep one README and update it w
 - Two Supabase projects are used: `gotegs-portal` for the public/browser-side setup and `gotegs-school-portal` for the server-side school/result data, as configured in the project environment/API design.
 
 ## Lesson Notes
-- Lesson Notes use static DOCX files stored in the repository under `/lesson-notes/documents/`.
-- Student navigation remains `Class → Term → Subject → View Note`.
-- The View Note page builds a same-site document URL; it does not expose a GitHub raw-file URL.
-- Document folders are organised as `/lesson-notes/documents/jss/jss1/term1/`, `/jss/jss2/`, `/jss/jss3/`, and `/ss/ss1/`, `/ss/ss2/`, `/ss/ss3/`, each with `term1`, `term2`, and `term3`.
-- Subject filenames should match the subject label exactly, followed by `.docx` (for example `Mathematics.docx`).
-- The student View Note page uses Microsoft Office Online to render the same-site DOCX URL in a preview.
-- Supabase is no longer used for lesson-note content.
-- Upload a class/term's DOCX files to the matching repository folder and test them one by one.
+The active editor is the former paste/type HTML editor. Document-upload lesson notes are not yet active. The old general “download all lesson notes” panel was intentionally removed.
+
+Long unbroken note strings (including dotted leader lines) are contained with `overflow-wrap: anywhere` and fixed-width table/content rules so they do not extend beyond the reading box on mobile.
 
 ## Quiz
 - Practice Library quizzes: unlimited attempts, no class restriction, and non-Maths timing of 15 seconds per question.
