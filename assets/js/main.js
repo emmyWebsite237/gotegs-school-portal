@@ -144,9 +144,8 @@ async function loadNotesScriptsIfNeeded(){
   const needsNotes=!!document.querySelector('.note-file,.admin-notes-table');
   if(!needsNotes)return;
   try{
-    if(!window.supabase) await loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2');
-    if(typeof supabaseClient==='undefined') await loadScript('/assets/js/supabase-config.js');
     if(!window.__gotegsNotesLoaded) await loadScript('/assets/js/notes.js');
+    window.__gotegsNotesLoaded=true;
   }catch(err){console.error('Failed to load lesson notes scripts:',err);}
 }
 

@@ -1,16 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>View Lesson Note | Go-Tegs International School</title>
-<link rel="stylesheet" href="/assets/css/style.css"/><link rel="stylesheet" href="/assets/css/portal.css"/>
-<style>body{background:#f5f9fd}.viewer-wrap{max-width:1200px;margin:auto}.note-head{display:flex;justify-content:space-between;gap:1rem;align-items:flex-end;flex-wrap:wrap}.note-head h1{margin:.25rem 0}.note-actions{display:flex;gap:.6rem;flex-wrap:wrap}.pill{display:inline-flex;padding:.65rem 1rem;border-radius:999px;text-decoration:none;font-weight:700;border:1px solid #d7e3ee;background:#fff;color:#123f80}.doc-frame{margin-top:1.25rem;border:1px solid #d8e3ed;border-radius:18px;background:#fff;overflow:hidden;box-shadow:0 12px 30px rgba(20,41,66,.07)}#viewer{width:100%;height:min(78vh,900px);border:0;display:block}.notice{padding:1rem 1.1rem;border-radius:14px;background:#fff9df;border:1px solid #ffc93c;color:#5f4b00;margin-top:1rem}.error{background:#fff0f0;border-color:#f2b8b8;color:#8a1c1c}.loading{padding:2rem;text-align:center;color:#667b8e}</style>
-</head><body class="student-shell-page"><div id="navbar-placeholder"></div><main class="page-container viewer-wrap"><nav class="breadcrumb" id="crumb">Home / Lesson Notes</nav><div class="note-head"><div><div class="portal-section-label">Lesson Note</div><h1 id="title">Loading note...</h1><p id="meta">Opening document...</p></div><div class="note-actions"><a class="pill" id="githubLink" target="_blank" rel="noopener">Open on GitHub</a><a class="pill" id="downloadLink" target="_blank" rel="noopener">Open document</a></div></div><div id="message" class="loading">Loading document preview...</div><div class="doc-frame" id="frameWrap" hidden><iframe id="viewer" title="Lesson note document preview"></iframe></div></main><div id="footer-placeholder"></div><script src="/assets/js/main.js"></script><script src="/assets/js/github-notes-config.js"></script><script>
-const p=new URLSearchParams(location.search), cls=p.get('class')||'',term=p.get('term')||'',subject=p.get('subject')||'',section=p.get('section')||'jss';
-const cfg=window.GOTEGS_GITHUB_NOTES||{},raw=String(cfg.RAW_BASE_URL||'').replace(/\/$/,'');
-const sf=section==='sss'?'ss':'jss', slug=v=>String(v).trim().toLowerCase().replace(/\s+/g,'').replace(/[^a-z0-9_-]/g,'');
-const file=raw+'/'+sf+'/'+slug(cls)+'/'+slug(term)+'/'+encodeURIComponent(subject)+'.docx';
-document.title=subject+' | '+cls+' | Go-Tegs'; document.getElementById('title').textContent=subject;document.getElementById('meta').textContent=cls+' · '+term;document.getElementById('crumb').textContent='Home / Lesson Notes / '+cls+' / '+term+' / '+subject;document.getElementById('downloadLink').href=file;document.getElementById('githubLink').href=String(cfg.WEB_BASE_URL||'').replace(/\/$/,'')+'/'+sf+'/'+slug(cls)+'/'+slug(term);
-const msg=document.getElementById('message'),frame=document.getElementById('frameWrap'),viewer=document.getElementById('viewer');
-if(!raw||raw.includes('YOUR-USERNAME')){msg.className='notice error';msg.innerHTML='<strong>GitHub is not connected yet.</strong><br>Set the repository in <code>/assets/js/github-notes-config.js</code> first.';}else{const preview='https://docs.google.com/gview?embedded=1&url='+encodeURIComponent(file);viewer.src=preview;frame.hidden=false;msg.hidden=true;}
-</script></body></html>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson Note | Go-Tegs International School</title>
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <link rel="stylesheet" href="/assets/css/portal.css" />
+  <style>
+    .document-preview{margin-top:1.25rem;background:var(--paper,#fff);border:1px solid var(--border,#e5e7eb);border-radius:var(--radius,18px);overflow:hidden;box-shadow:0 10px 30px rgba(15,23,42,.06)}
+    .document-preview-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.9rem 1rem;border-bottom:1px solid var(--border,#e5e7eb);background:#fff;flex-wrap:wrap}
+    .document-preview-head small{color:#667085}
+    .document-preview-frame{display:block;width:100%;height:min(78vh,900px);min-height:600px;border:0;background:#f3f4f6}
+    .document-fallback{padding:1.25rem;text-align:center;color:#667085}
+    .document-fallback a{display:inline-flex;margin-top:.75rem;padding:.65rem 1rem;border-radius:999px;text-decoration:none;background:#123f80;color:#fff;font-weight:700}
+    @media(max-width:700px){.document-preview-frame{min-height:70vh;height:70vh}.document-preview-head{align-items:flex-start}}
+  </style>
+</head>
+<body class="student-shell-page">
+  <div id="navbar-placeholder"></div>
+
+  <main class="page-container">
+    <nav class="breadcrumb" id="noteBreadcrumb">Home / Lesson Notes</nav>
+    <h1 id="noteTitle">Loading note...</h1>
+    <p id="noteMeta">Loading document...</p>
+
+    <section class="document-preview" aria-label="Lesson note document preview">
+      <div class="document-preview-head">
+        <small id="documentName">Lesson note</small>
+        <a id="openDocument" href="#" target="_blank" rel="noopener">Open document</a>
+      </div>
+      <iframe id="documentFrame" class="document-preview-frame" title="Lesson note preview" allowfullscreen></iframe>
+      <div id="documentFallback" class="document-fallback" hidden>
+        The document preview could not be displayed here. You can open the original document instead.
+        <br><a id="fallbackLink" href="#" target="_blank" rel="noopener">Open lesson note</a>
+      </div>
+    </section>
+  </main>
+
+  <div id="footer-placeholder"></div>
+  <script src="/assets/js/main.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const className = params.get('class') || '';
+    const term = params.get('term') || '';
+    const subject = params.get('subject') || '';
+
+    function slug(value){
+      return String(value || '').trim().toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
+    }
+
+    function sectionForClass(value){
+      const c = String(value || '').toLowerCase();
+      return c.startsWith('jss') ? 'jss' : 'ss';
+    }
+
+    function classFolder(value){
+      const c = String(value || '').trim().toLowerCase();
+      const match = c.match(/(jss|sss|ss)\s*([1-3])/i);
+      return match ? `${match[1].toLowerCase() === 'jss' ? 'jss' : 'ss'}${match[2]}` : slug(c);
+    }
+
+    function termFolder(value){
+      const match = String(value || '').match(/(1|2|3)/);
+      return match ? `term${match[1]}` : slug(value);
+    }
+
+    function documentUrl(){
+      const section = sectionForClass(className);
+      const klass = classFolder(className);
+      const termFolderName = termFolder(term);
+      const file = `${subject.trim()}.docx`;
+      return `/lesson-notes/documents/${section}/${klass}/${termFolderName}/${encodeURIComponent(file)}`;
+    }
+
+    const title = `${subject || 'Lesson Note'} — ${className} — ${term}`;
+    const url = documentUrl();
+    document.title = `${subject || 'Lesson Note'} | Go-Tegs International School`;
+    document.getElementById('noteTitle').textContent = title;
+    document.getElementById('noteMeta').textContent = 'Lesson note document';
+    document.getElementById('noteBreadcrumb').textContent = `Home / Lesson Notes / ${className} / ${term} / ${subject}`;
+    document.getElementById('documentName').textContent = `${subject}.docx`;
+    document.getElementById('openDocument').href = url;
+    document.getElementById('fallbackLink').href = url;
+
+    // The DOCX is hosted by the same deployed site. Microsoft Office Online renders
+    // the document without exposing the GitHub raw-file URL to students.
+    const viewer = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(window.location.origin + url)}`;
+    const frame = document.getElementById('documentFrame');
+    const fallback = document.getElementById('documentFallback');
+    frame.src = viewer;
+    frame.addEventListener('error', () => { frame.hidden = true; fallback.hidden = false; });
+  </script>
+</body>
+</html>
