@@ -1,34 +1,48 @@
-<header class="site-header-new">
-  <div class="site-header-inner">
-    <a href="/index.html" class="site-brand-new" aria-label="Go-Tegs International School home">
-      <img src="/assets/img/logo.png" alt="Go-Tegs International School logo" />
-      <span><strong>Go-Tegs</strong><small>International School · Lagos</small></span>
-    </a>
-    <nav class="site-nav-new nav-links" aria-label="Main navigation">
-      <a href="/about.html">About</a>
-      <a href="/updates.html">Updates &amp; Events</a>
-      <a href="/gallery.html">Gallery</a>
-      <a href="/enrolment.html">Enrolment</a>
-      <a href="/faq.html">FAQ</a>
-      <a href="/contact.html">Contact</a>
-    </nav>
-    <div class="site-actions-new">
-      <a class="site-pill" href="/student/index.html">Student Portal</a>
-      <a class="site-pill site-pill--solid" href="/enrolment.html">Enrol now ↗</a>
-    </div>
-    <button class="site-menu-button" id="nav-toggle" aria-label="Open site menu" aria-expanded="false">☰</button>
-  </div>
-</header>
-<div class="nav-scrim" id="nav-scrim" aria-hidden="true"></div>
-<aside class="nav-drawer" id="nav-drawer" aria-hidden="true">
-  <div class="nav-drawer-head"><span>Menu</span><button class="nav-drawer-close" id="nav-drawer-close" aria-label="Close menu">×</button></div>
-  <nav class="nav-links" aria-label="Mobile navigation">
-    <a href="/about.html"><span>01</span>About</a>
-    <a href="/updates.html"><span>02</span>Updates &amp; Events</a>
-    <a href="/gallery.html"><span>03</span>Gallery</a>
-    <a href="/enrolment.html"><span>04</span>Enrolment</a>
-    <a href="/faq.html"><span>05</span>FAQ</a>
-    <a href="/contact.html"><span>06</span>Contact</a>
+<!-- Public-site navigation. This shell is intentionally not injected into authenticated student pages. -->
+<aside class="site-sidebar">
+  <a href="/index.html" class="nav-brand">
+    <img src="/assets/img/logo.png" alt="Go-Tegs International School logo" />
+    <span>Go-Tegs<small>International School</small></span>
+  </a>
+
+  <nav class="nav-links" aria-label="Main">
+    <a href="/index.html">Home</a>
+    <a href="/about.html">About</a>
+    <a href="/updates.html">Updates &amp; Events</a>
+    <a href="/gallery.html">Gallery</a>
+    <a href="/enrolment.html">Enrolment</a>
+    <a href="/student/index.html">Student Portal</a>
+    
+    <a href="/contact.html">Contact</a>
   </nav>
-  <a class="site-pill site-pill--solid" href="/student/index.html" style="margin-top:22px">Enter Student Portal</a>
+
+  <p class="nav-foot">Training the Leaders of Tomorrow</p>
+</aside>
+
+<header class="site-topbar">
+  <a href="/index.html" class="nav-brand">
+    <img src="/assets/img/logo.png" alt="Go-Tegs International School logo" />
+    <span>Go-Tegs<small>International School</small></span>
+  </a>
+  <button class="nav-toggle" id="nav-toggle" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+</header>
+
+<div class="nav-scrim" id="nav-scrim"></div>
+
+<aside class="nav-drawer" id="nav-drawer">
+  <div class="nav-drawer-head">
+    <span>Menu</span>
+    <button class="nav-drawer-close" id="nav-drawer-close" aria-label="Close menu">&times;</button>
+  </div>
+
+  <nav class="nav-links" aria-label="Mobile">
+    <a href="/index.html">Home</a>
+    <a href="/about.html">About</a>
+    <a href="/updates.html">Updates &amp; Events</a>
+    <a href="/gallery.html">Gallery</a>
+    <a href="/enrolment.html">Enrolment</a>
+    <a href="/student/index.html">Student Portal</a>
+    
+    <a href="/contact.html">Contact</a>
+  </nav>
 </aside>
