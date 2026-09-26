@@ -30,3 +30,7 @@ These files are not referenced by the active application and may be deleted afte
 `admin/admin-result/index.html` is a compatibility redirect and can be deleted only after you are comfortable abandoning old bookmarks/links to the former Results admin path.
 
 The SQL files under `/supabase/` are migration/history files and are not loaded by the website. Keep them until the live database schema is backed up in a known master migration; then they can be consolidated rather than deleted piecemeal.
+
+
+## Lesson Notes — GitHub document mode
+Lesson notes are now sourced from public GitHub DOCX files instead of Supabase. Configure the repository once in `assets/js/github-notes-config.js`. Upload documents under `lesson-documents/jss/...` or `lesson-documents/ss/...` using the subject name as the filename. The student flow remains Class → Term → Subject → View Note; View Note opens a document preview. The GitHub repository must be public for the preview URL to be reachable.
