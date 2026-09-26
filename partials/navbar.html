@@ -1,48 +1,40 @@
-<!-- Public-site navigation. This shell is intentionally not injected into authenticated student pages. -->
-<aside class="site-sidebar">
-  <a href="/index.html" class="nav-brand">
+<!-- Public navigation styled to match the current Go-Tegs Lovable preview. -->
+<aside class="site-sidebar" aria-hidden="true"></aside>
+<header class="site-topbar">
+  <a href="/index.html" class="nav-brand" aria-label="Go-Tegs International School home">
     <img src="/assets/img/logo.png" alt="Go-Tegs International School logo" />
-    <span>Go-Tegs<small>International School</small></span>
+    <span>Go-Tegs<small>International School · Lagos</small></span>
   </a>
 
-  <nav class="nav-links" aria-label="Main">
-    <a href="/index.html">Home</a>
-    <a href="/about.html">About</a>
-    <a href="/updates.html">Updates &amp; Events</a>
-    <a href="/gallery.html">Gallery</a>
-    <a href="/enrolment.html">Enrolment</a>
-    <a href="/student/index.html">Student Portal</a>
-    
-    <a href="/contact.html">Contact</a>
+  <nav class="public-desktop-links" aria-label="Main navigation">
+    <a href="/about.html">01 About</a>
+    <a href="/updates.html">02 Updates &amp; Events</a>
+    <a href="/gallery.html">03 Gallery</a>
+    <a href="/enrolment.html">04 Enrolment</a>
+    <a href="/faq.html">05 FAQ</a>
+    <a href="/contact.html">06 Contact</a>
   </nav>
 
-  <p class="nav-foot">Training the Leaders of Tomorrow</p>
-</aside>
-
-<header class="site-topbar">
-  <a href="/index.html" class="nav-brand">
-    <img src="/assets/img/logo.png" alt="Go-Tegs International School logo" />
-    <span>Go-Tegs<small>International School</small></span>
-  </a>
-  <button class="nav-toggle" id="nav-toggle" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+  <div class="public-nav-actions">
+    <a href="/student/index.html">Student Portal</a>
+    <a class="primary" href="/enrolment.html">Enrol now ↗</a>
+  </div>
+  <button class="nav-toggle" id="nav-toggle" aria-label="Open menu" aria-expanded="false">☰</button>
 </header>
 
 <div class="nav-scrim" id="nav-scrim"></div>
-
-<aside class="nav-drawer" id="nav-drawer">
+<aside class="nav-drawer" id="nav-drawer" aria-hidden="true">
   <div class="nav-drawer-head">
     <span>Menu</span>
     <button class="nav-drawer-close" id="nav-drawer-close" aria-label="Close menu">&times;</button>
   </div>
-
   <nav class="nav-links" aria-label="Mobile">
-    <a href="/index.html">Home</a>
-    <a href="/about.html">About</a>
-    <a href="/updates.html">Updates &amp; Events</a>
-    <a href="/gallery.html">Gallery</a>
-    <a href="/enrolment.html">Enrolment</a>
-    <a href="/student/index.html">Student Portal</a>
-    
-    <a href="/contact.html">Contact</a>
+    <a href="/about.html">01 About</a>
+    <a href="/updates.html">02 Updates &amp; Events</a>
+    <a href="/gallery.html">03 Gallery</a>
+    <a href="/enrolment.html">04 Enrolment</a>
+    <a href="/faq.html">05 FAQ</a>
+    <a href="/contact.html">06 Contact</a>
+    <a href="/student/index.html">Enter Student Portal</a>
   </nav>
 </aside>

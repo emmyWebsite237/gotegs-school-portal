@@ -5,72 +5,49 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Enrolment | Go-Tegs International School</title>
   <link rel="stylesheet" href="/assets/css/style.css" />
-  <style>
-    .enrol-form {
-      max-width: 560px; margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem;
-      padding: 1.75rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--paper);
-    }
-    .enrol-form label { font-family: var(--font-display); font-weight: 600; font-size: 0.85rem; margin-top: 0.5rem; }
-    .enrol-form input, .enrol-form select, .enrol-form textarea {
-      font-family: var(--font-body); font-size: 0.95rem; padding: 0.7rem 0.8rem;
-      border: 1px solid var(--border); border-radius: 8px;
-    }
-    .enrol-form textarea { resize: vertical; min-height: 100px; }
-    .enrol-form .btn { margin-top: 1rem; }
-    #enrolMsg { margin-top: 0.9rem; font-size: 0.88rem; font-weight: 600; }
-    .thank-you-note {
-      background: var(--teal-light); border-left: 3px solid var(--teal);
-      padding: 1rem 1.2rem; border-radius: 0 8px 8px 0; margin-top: 1.25rem; font-size: 0.92rem;
-    }
-  </style>
+  <link rel="stylesheet" href="/assets/css/public-lovable.css" />
 </head>
-<body>
+<body class="public-lovable-page-body">
   <div id="navbar-placeholder"></div>
 
-  <main class="page-container">
-    <nav class="breadcrumb">Home / Enrolment</nav>
-    <h1>Enrolment</h1>
-    <p>Fill the form below to enrol your child. We'll review it and get in touch to arrange class screening before full registration.</p>
+  <main class="public-lovable-page">
+    <section class="public-page-hero">
+      <span class="public-page-kicker">04 · Start your journey</span>
+      <h1>Enrolment</h1>
+      <p>Fill the form below to enrol your child. We’ll review it and get in touch to arrange class screening before full registration.</p>
+    </section>
 
-    <form class="enrol-form" id="enrolForm">
-      <label for="parentName">Your Name (Parent/Guardian)</label>
-      <input type="text" id="parentName" name="Parent Name" required />
-
-      <label for="childName">Child's Name</label>
-      <input type="text" id="childName" name="Child's Name" required />
-
-      <label for="email">Email</label>
-      <input type="email" id="email" name="Email" required />
-
-      <label for="phone">Phone</label>
-      <input type="tel" id="phone" name="Phone" required />
-
-      <label for="heard">How did you hear about us?</label>
-      <select id="heard" name="How did you hear about us?">
-        <option value="">Select one option</option>
-        <option>Search Engine</option>
-        <option>Social Media</option>
-        <option>TV</option>
-        <option>Radio</option>
-        <option>Friend or Family</option>
-        <option>Other</option>
-      </select>
-
-      <label for="details">Other Details</label>
-      <textarea id="details" name="Other Details" placeholder="Anything else we should know (intended class, age, etc.)"></textarea>
-
-      <button type="submit" class="btn" id="enrolBtn">Send</button>
-      <p id="enrolMsg"></p>
-    </form>
-
-    <div class="thank-you-note">
-      Thank you for your interest in Go-Tegs International School. We'll review your child's enrolment request and reach out to schedule class screening before full registration is completed.
-    </div>
+    <section class="enrol-public-grid">
+      <form class="enrol-form" id="enrolForm">
+        <label for="parentName">Your Name (Parent/Guardian)</label>
+        <input type="text" id="parentName" name="Parent Name" required />
+        <label for="childName">Child's Name</label>
+        <input type="text" id="childName" name="Child's Name" required />
+        <label for="email">Email</label>
+        <input type="email" id="email" name="Email" required />
+        <label for="phone">Phone</label>
+        <input type="tel" id="phone" name="Phone" required />
+        <label for="heard">How did you hear about us?</label>
+        <select id="heard" name="How did you hear about us?">
+          <option value="">Select one option</option><option>Search Engine</option><option>Social Media</option><option>TV</option><option>Radio</option><option>Friend or Family</option><option>Other</option>
+        </select>
+        <label for="details">Other Details</label>
+        <textarea id="details" name="Other Details" placeholder="Anything else we should know (intended class, age, etc.)"></textarea>
+        <button type="submit" class="btn" id="enrolBtn">Send Enrolment Request ↗</button>
+        <p id="enrolMsg"></p>
+      </form>
+      <aside>
+        <div class="public-section-label">What happens next</div>
+        <div class="public-list">
+          <div class="public-list-item"><span class="num">01</span><div><strong>Submit your details</strong><span>Tell us about the parent/guardian and learner.</span></div></div>
+          <div class="public-list-item"><span class="num">02</span><div><strong>School review</strong><span>We’ll review your enrolment request and the information provided.</span></div></div>
+          <div class="public-list-item"><span class="num">03</span><div><strong>Class screening</strong><span>We’ll reach out to arrange the next step before full registration.</span></div></div>
+        </div>
+        <div class="thank-you-note">Thank you for your interest in Go-Tegs International School. We’ll review your child’s enrolment request and reach out to schedule class screening before full registration is completed.</div>
+      </aside>
+    </section>
   </main>
 
-  <div id="footer-placeholder"></div>
-
-  <script src="/assets/js/main.js"></script>
   <script>
     const form = document.getElementById('enrolForm');
     const msg = document.getElementById('enrolMsg');
