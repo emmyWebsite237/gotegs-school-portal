@@ -10,7 +10,7 @@
     .qc-wrap{display:grid;gap:1.25rem}
     .qc-form,.qc-editor{padding:1.35rem;border:1px solid var(--border);border-radius:var(--radius);background:var(--paper);box-shadow:0 10px 30px rgba(16,36,60,.05)}
     .qc-form label,.qc-editor label{font-family:var(--font-display);font-weight:700;font-size:.82rem;display:block;margin-top:.75rem}
-    .qc-form input,.qc-form select,.qc-editor input,.qc-editor select{width:100%;font-size:.9rem;padding:.62rem .72rem;border:1px solid var(--border);border-radius:10px;margin-top:.35rem;box-sizing:border-box;background:#fff;color:inherit}
+    .qc-form input,.qc-form select,.qc-form textarea,.qc-editor input,.qc-editor select,.qc-editor textarea{width:100%;font-size:.9rem;padding:.62rem .72rem;border:1px solid var(--border);border-radius:10px;margin-top:.35rem;box-sizing:border-box;background:#fff;color:inherit}
     .qc-settings-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem}
     .qc-question-block{border:1px solid var(--border);border-radius:16px;padding:1rem;margin-top:.85rem;background:#f8fbff}
     .qc-option-row{display:flex;align-items:center;gap:.55rem;margin-top:.5rem}.qc-option-row input[type=text]{flex:1;margin:0}
@@ -30,14 +30,13 @@
     .qc-help{padding:.85rem 1rem;border:1px solid #d9e8f7;border-radius:13px;background:#f3f8ff;color:#52677d;font-size:.78rem;line-height:1.5}
     .qc-editor-preview{margin-top:1rem;padding:1rem;border-radius:15px;background:#fff;border:1px dashed #cad9ea;color:#4b6075;font-size:.8rem}
 
-    .qc-import-panel{background:linear-gradient(180deg,#ffffff,#f7fbff)}
-    .qc-import-panel textarea:focus{outline:none;border-color:#0f63c9;box-shadow:0 0 0 3px rgba(15,99,201,.10)}
-    .import-preview-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.55rem;margin:.75rem 0}
-    .import-preview-stat{padding:.7rem;border-radius:12px;background:#f3f7fb;border:1px solid #e0e8ef}
-    .import-preview-stat small{display:block;color:#7b8794;font-size:.58rem;text-transform:uppercase;letter-spacing:.08em}
-    .import-preview-stat strong{display:block;margin-top:.2rem;color:#213246}
-    .import-q{padding:.8rem 0;border-top:1px solid #edf1f5}
-    @media(max-width:700px){.import-preview-grid{grid-template-columns:1fr 1fr}}
+    .qc-import{padding:1.35rem;border:1px solid #d9dcf2;border-radius:20px;background:linear-gradient(135deg,#fbfbff,#fff7f3);box-shadow:0 12px 32px rgba(51,47,105,.06)}
+    .qc-import-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(280px,.95fr);gap:1rem;align-items:stretch}
+    .qc-import textarea{width:100%;min-height:360px;box-sizing:border-box;resize:vertical;border:1px solid #dfe1ea;border-radius:14px;padding:1rem;font:500 .78rem/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;background:#161922;color:#eef1ff}
+    .qc-import-preview{min-height:360px;max-height:620px;overflow:auto;border:1px solid #e4e5ed;border-radius:14px;background:#fff;padding:1rem}
+    .qc-import-actions{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.7rem}.qc-import-actions button{border:0;border-radius:11px;padding:.7rem .9rem;font-weight:800;cursor:pointer}.qc-import-run{background:linear-gradient(135deg,#6b5cff,#ff7a59);color:#fff}.qc-import-clear{background:#f2f3f7;color:#303340}.qc-import-publish{background:#16845b;color:#fff}.qc-import-question{padding:.8rem 0;border-bottom:1px solid #ececf3}.qc-import-question:last-child{border-bottom:0}.qc-import-option{padding:.38rem .5rem;border-radius:8px;margin-top:.28rem;background:#f7f7fb}.qc-import-option.correct{background:#eaf9f1;border:1px solid #b6dfc6}.qc-import-explanation{margin-top:.5rem;padding:.55rem .65rem;border-left:3px solid #ff7a59;background:#fff5f1;color:#5c5962;font-size:.78rem}
+    .qc-code-label{display:inline-flex;align-items:center;gap:.4rem;padding:.34rem .55rem;border-radius:999px;background:#efeeff;color:#5147b9;font-weight:800;font-size:.68rem}
+    @media(max-width:900px){.qc-import-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -49,29 +48,18 @@
     </div>
 
     <div class="qc-wrap">
-      <section class="qc-form qc-import-panel" id="quizImportPanel">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;">
-          <div>
-            <h2 style="margin:0">Run Quiz Code &amp; Preview</h2>
-            <p style="margin:.35rem 0 0;color:var(--slate)">Paste a validated quiz JSON, preview it here, then save it as a Practice Library quiz or a Code Prescribed quiz. This uses the existing quiz API.</p>
-          </div>
-          <span class="qc-code-tag">Quick Import</span>
+      <section class="qc-import" aria-labelledby="quickImportTitle">
+        <div style="display:flex;justify-content:space-between;gap:1rem;align-items:flex-end;flex-wrap:wrap;">
+          <div><div class="qc-code-label">QUICK IMPORT</div><h2 id="quickImportTitle" style="margin:.45rem 0 .25rem;">Paste quiz code → preview → publish</h2><p style="margin:0;color:#667085;max-width:720px;">Use structured JSON instead of entering questions one by one. Run Preview first, review every question, then publish it as a Practice Library quiz or a Code Prescribed quiz.</p></div>
         </div>
-        <label for="importCode" style="margin-top:1rem">Quiz Code / JSON</label>
-        <textarea id="importCode" spellcheck="false" style="width:100%;min-height:260px;margin-top:.35rem;padding:.9rem;border:1px solid var(--border);border-radius:12px;background:#101827;color:#e8eef7;font:500 .8rem/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;box-sizing:border-box;" placeholder="Paste your quiz JSON here…"></textarea>
-        <div class="qc-editor-actions" style="justify-content:flex-start">
-          <button type="button" class="qc-copy-btn" id="importSampleBtn">Load 20-question English sample</button>
-          <button type="button" class="qc-edit-btn" id="importPreviewBtn">Preview Quiz Code</button>
-          <button type="button" class="qc-cancel" id="importClearBtn">Clear</button>
-        </div>
-        <div id="importPreview" class="qc-editor-preview" style="display:none"></div>
-        <div id="importSaveBox" style="display:none;margin-top:1rem;padding-top:1rem;border-top:1px solid #dbe4ec">
-          <strong>Save this preview as:</strong>
-          <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.65rem">
-            <button type="button" class="qc-save" id="saveImportLibrary">Practice Library</button>
-            <button type="button" class="qc-edit-btn" id="saveImportCodeOnly">Code Prescribed</button>
+        <div class="qc-import-grid" style="margin-top:1rem;">
+          <div><textarea id="quizImportCode" spellcheck="false" placeholder='Paste quiz JSON here...
+
+Example: {"title":"SSS1 Physics","subject":"Physics","class_restriction":"SSS 1","department_restriction":"Science","library_visible":false,"questions":[...]}'></textarea>
+            <div class="qc-import-actions"><button type="button" class="qc-import-run" id="runImportPreview">▶ Run Preview</button><button type="button" class="qc-import-clear" id="clearImport">Clear</button><button type="button" class="qc-import-publish" id="publishImport">Publish this quiz</button></div>
+            <p id="importStatus" class="qc-status" style="margin:.65rem 0 0"></p>
           </div>
-          <p id="importStatus" class="qc-status"></p>
+          <div class="qc-import-preview" id="importPreview"><div style="color:#788092;text-align:center;padding:4rem 1rem;">Run Preview to inspect the quiz before publishing.</div></div>
         </div>
       </section>
 
@@ -83,7 +71,7 @@
         <input type="text" id="qSubject" placeholder="e.g. English Language" required />
         <div class="qc-help" style="margin-top:.65rem">Practice Library rules: any class, unlimited attempts. Every non-Mathematics practice quiz gets 15 seconds per question automatically. Mathematics keeps the time you set below.</div>
         <div class="qc-settings-grid">
-          <div><label for="qClass">Restrict to Class (code-only tests)</label><input type="text" id="qClass" placeholder="Leave blank for any class" /></div>
+          <div><label for="qClass">Restrict to Class (code-only tests)</label><input type="text" id="qClass" placeholder="e.g. SSS 1" /></div><div><label for="qDepartment">Restrict to Department (code-only)</label><input type="text" id="qDepartment" placeholder="e.g. Science" /></div>
           <div><label for="qTimeLimit">Time Limit (minutes) — Mathematics / code-only</label><input type="number" id="qTimeLimit" min="1" placeholder="15 sec/question for library" /></div>
           <div><label for="qAttempts">Attempts Allowed (code-only)</label><input type="number" id="qAttempts" min="1" value="1" /></div>
           <div><label for="qShowAnswers">Show Answers After Submitting?</label><select id="qShowAnswers"><option value="true">Yes</option><option value="false">No</option></select></div><div><label for="qLibraryVisible">Practice Library</label><select id="qLibraryVisible"><option value="true">Visible to students</option><option value="false">Code-only / prescribed</option></select></div>
@@ -108,7 +96,7 @@
           <label for="editSubject">Subject</label><input type="text" id="editSubject" required />
           <div class="qc-help" style="margin-top:.65rem">Practice Library rules: any class, unlimited attempts. Every non-Mathematics practice quiz gets 15 seconds per question automatically. Mathematics keeps the time you set.</div>
           <div class="qc-settings-grid">
-            <div><label for="editClass">Restrict to Class (code-only tests)</label><input type="text" id="editClass" /></div>
+            <div><label for="editClass">Restrict to Class (code-only tests)</label><input type="text" id="editClass" /></div><div><label for="editDepartment">Restrict to Department (code-only)</label><input type="text" id="editDepartment" /></div>
             <div><label for="editTime">Time Limit (minutes) — Mathematics / code-only</label><input type="number" id="editTime" min="1" /></div>
             <div><label for="editAttempts">Attempts Allowed (code-only)</label><input type="number" id="editAttempts" min="1" /></div>
             <div><label for="editShowAnswers">Show Answers After Submitting?</label><select id="editShowAnswers"><option value="true">Yes</option><option value="false">No</option></select></div><div><label for="editLibraryVisible">Practice Library</label><select id="editLibraryVisible"><option value="true">Visible to students</option><option value="false">Code-only / prescribed</option></select></div>
@@ -138,10 +126,10 @@
 
     function syncLibraryFields(prefix){
       const visible=el(prefix+'LibraryVisible').value==='true';
-      const classInput=el(prefix+'Class'), timeInput=el(prefix+'Time'), attemptsInput=el(prefix+'Attempts');
-      [classInput, attemptsInput].forEach(i=>{if(!i)return;i.disabled=visible;i.closest('div')?.classList.toggle('qc-disabled',visible);});
+      const classInput=el(prefix+'Class'), deptInput=el(prefix+'Department'), timeInput=el(prefix+'Time'), attemptsInput=el(prefix+'Attempts');
+      [classInput, deptInput, attemptsInput].forEach(i=>{if(!i)return;i.disabled=visible;i.closest('div')?.classList.toggle('qc-disabled',visible);});
       if(timeInput){timeInput.disabled=false; timeInput.closest('div')?.classList.toggle('qc-disabled',visible && el(prefix+'Subject').value.trim().toLowerCase()!=='mathematics');}
-      if(visible){classInput.value='';attemptsInput.value=''; if(el(prefix+'Subject').value.trim().toLowerCase()!=='mathematics') timeInput.value='';}
+      if(visible){classInput.value='';deptInput.value='';attemptsInput.value=''; if(el(prefix+'Subject').value.trim().toLowerCase()!=='mathematics') timeInput.value='';}
     }
     ['q','edit'].forEach(prefix=>{el(prefix+'LibraryVisible')?.addEventListener('change',()=>syncLibraryFields(prefix));el(prefix+'Subject')?.addEventListener('input',()=>syncLibraryFields(prefix));});
 
@@ -158,6 +146,8 @@
         <div class="qc-option-row"><input type="radio" name="${prefix}correct-${id}" value="b" ${(q?.correct_option || '')==='b'?'checked':''} /><input type="text" class="q-opt-b" placeholder="Option B" required value="${escapeAttr(q?.option_b || '')}" /></div>
         <div class="qc-option-row"><input type="radio" name="${prefix}correct-${id}" value="c" ${(q?.correct_option || '')==='c'?'checked':''} /><input type="text" class="q-opt-c" placeholder="Option C (optional)" value="${escapeAttr(q?.option_c || '')}" /></div>
         <div class="qc-option-row"><input type="radio" name="${prefix}correct-${id}" value="d" ${(q?.correct_option || '')==='d'?'checked':''} /><input type="text" class="q-opt-d" placeholder="Option D (optional)" value="${escapeAttr(q?.option_d || '')}" /></div>
+        <label>Explanation (shown after submission when answers are enabled)</label>
+        <textarea class="q-explanation" rows="3" placeholder="Briefly explain why the correct answer is correct.">${escapeAttr(q?.explanation || '')}</textarea>
         <button type="button" class="qc-remove-q">Remove this question</button>`;
       block.querySelector('.qc-remove-q').addEventListener('click',()=>block.remove());
       container.appendChild(block);
@@ -166,11 +156,11 @@
     function collectQuestions(container, mode){
       return [...container.querySelectorAll('.qc-question-block')].map(block => {
         const id=block.dataset.id; const p=mode==='edit'?'edit-':''; const correct=block.querySelector(`input[name="${p}correct-${id}"]:checked`);
-        return {question:optionValue(block,'.q-text'), option_a:optionValue(block,'.q-opt-a'), option_b:optionValue(block,'.q-opt-b'), option_c:optionValue(block,'.q-opt-c')||null, option_d:optionValue(block,'.q-opt-d')||null, correct_option:correct?.value||null};
+        return {question:optionValue(block,'.q-text'), option_a:optionValue(block,'.q-opt-a'), option_b:optionValue(block,'.q-opt-b'), option_c:optionValue(block,'.q-opt-c')||null, option_d:optionValue(block,'.q-opt-d')||null, correct_option:correct?.value||null, explanation:optionValue(block,'.q-explanation')||null};
       });
     }
     function formPayload(container, mode, prefix){
-      const qs=collectQuestions(container, mode); return {title:el(prefix+'Title').value.trim(),subject:el(prefix+'Subject').value.trim(),class_restriction:el(prefix+'Class').value.trim()||null,time_limit_minutes:el(prefix+'Time').value?Number(el(prefix+'Time').value):null,time_limit_seconds:null,attempts_allowed:Number(el(prefix+'Attempts').value)||1,show_answers_after:el(prefix+'ShowAnswers').value==='true',library_visible:el(prefix+'LibraryVisible').value==='true',expires_at:el(prefix+'Expires').value?new Date(el(prefix+'Expires').value).toISOString():null,questions:qs};
+      const qs=collectQuestions(container, mode); return {title:el(prefix+'Title').value.trim(),subject:el(prefix+'Subject').value.trim(),class_restriction:el(prefix+'Class').value.trim()||null,department_restriction:el(prefix+'Department').value.trim()||null,time_limit_minutes:el(prefix+'Time').value?Number(el(prefix+'Time').value):null,time_limit_seconds:null,attempts_allowed:Number(el(prefix+'Attempts').value)||1,show_answers_after:el(prefix+'ShowAnswers').value==='true',library_visible:el(prefix+'LibraryVisible').value==='true',expires_at:el(prefix+'Expires').value?new Date(el(prefix+'Expires').value).toISOString():null,questions:qs};
     }
     function toLocalInputValue(iso){ if(!iso) return ''; const d=new Date(iso); const pad=n=>String(n).padStart(2,'0'); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`; }
 
@@ -189,7 +179,7 @@
     async function loadQuizzes(){
       const list=el('quizList');list.innerHTML='<p class="qc-empty">Loading tests…</p>';
       try{const res=await fetch('/api/list-quiz-codes',{headers:authHeaders()});const data=await responseJson(res);if(!res.ok)throw new Error(data.error||'Could not load tests.');el('quizCountLabel').textContent=`${data.quizzes.length} test${data.quizzes.length===1?'':'s'}`;if(!data.quizzes.length){list.innerHTML='<p class="qc-empty">No quiz codes created yet.</p>';return;}
-        list.innerHTML=data.quizzes.map(q=>`<article class="qc-list-item"><div class="qc-list-main"><div><span class="qc-code-tag">${escapeHtml(q.code)}</span><strong style="margin-left:.6rem;">${escapeHtml(q.title)}</strong></div><span class="qc-list-meta">${escapeHtml(q.class_restriction||'Any class')} • ${q.question_count||0} question${(q.question_count||0)===1?'':'s'} • ${q.attempts_allowed} attempt${q.attempts_allowed===1?'':'s'} allowed • ${q.attempt_count||0} taken • ${q.library_visible===false?'Code only':'Practice library'}</span></div><div class="qc-actions"><button class="qc-copy-btn" data-copy="${escapeAttr(q.code)}">Copy code</button><button class="qc-edit-btn" data-edit="${q.id}">Edit test</button><button class="qc-delete-btn" data-delete="${q.id}" data-title="${escapeAttr(q.title)}">Delete</button></div></article>`).join('');
+        list.innerHTML=data.quizzes.map(q=>`<article class="qc-list-item"><div class="qc-list-main"><div><span class="qc-code-tag">${escapeHtml(q.code)}</span><strong style="margin-left:.6rem;">${escapeHtml(q.title)}</strong></div><span class="qc-list-meta">${escapeHtml(q.class_restriction||'Any class')}${q.department_restriction?' · '+escapeHtml(q.department_restriction):''} • ${q.question_count||0} question${(q.question_count||0)===1?'':'s'} • ${q.attempts_allowed==null?'Unlimited attempts':q.attempts_allowed+' attempt'+(q.attempts_allowed===1?'':'s')+' allowed'} • ${q.attempt_count||0} taken • ${q.library_visible===false?'Code only':'Practice library'}</span></div><div class="qc-actions"><button class="qc-copy-btn" data-copy="${escapeAttr(q.code)}">Copy code</button><button class="qc-edit-btn" data-edit="${q.id}">Edit test</button><button class="qc-delete-btn" data-delete="${q.id}" data-title="${escapeAttr(q.title)}">Delete</button></div></article>`).join('');
         list.querySelectorAll('[data-copy]').forEach(b=>b.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(b.dataset.copy);b.textContent='Copied';setTimeout(()=>b.textContent='Copy code',1000)}catch{}}));
         list.querySelectorAll('[data-edit]').forEach(b=>b.addEventListener('click',()=>openEditor(b.dataset.edit)));
         list.querySelectorAll('[data-delete]').forEach(b=>b.addEventListener('click',()=>deleteQuiz(b.dataset.delete,b.dataset.title)));
@@ -197,7 +187,7 @@
     }
     async function openEditor(id){
       const msg=el('editMsg');msg.textContent='Loading test…';el('editEditor').style.display='block';el('editEditor').setAttribute('aria-hidden','false');el('editId').value=id;
-      try{const res=await fetch('/api/list-quiz-codes?id='+encodeURIComponent(id),{headers:authHeaders()});const data=await responseJson(res);if(!res.ok)throw new Error(data.error||'Could not load test.');el('editCode').textContent=data.quiz.code;el('editTitle').value=data.quiz.title||'';el('editSubject').value=data.quiz.subject||'General Practice';el('editClass').value=data.quiz.class_restriction||'';el('editTime').value=data.quiz.time_limit_minutes??'';el('editAttempts').value=data.quiz.attempts_allowed??1;el('editShowAnswers').value=String(data.quiz.show_answers_after!==false);el('editLibraryVisible').value=String(data.quiz.library_visible!==false);el('editExpires').value=toLocalInputValue(data.quiz.expires_at);syncLibraryFields('edit');el('editSummary').innerHTML=`<strong>${escapeHtml(data.quiz.title||'Untitled test')}</strong> · ${escapeHtml(data.quiz.code||'')}<br>${(data.questions||[]).length} question${(data.questions||[]).length===1?'':'s'} · ${data.quiz.time_limit_seconds!=null?escapeHtml(String(data.quiz.time_limit_seconds))+' second limit':'No time limit'} · ${data.quiz.attempts_allowed==null?'Unlimited attempts':data.quiz.attempts_allowed+' attempt'+(data.quiz.attempts_allowed===1?'':'s')+' allowed'}`;el('editQuestionsContainer').innerHTML='';editQuestionCount=0;(data.questions||[]).forEach(q=>addQuestionBlock(el('editQuestionsContainer'),'edit',q));msg.textContent='';window.scrollTo({top:el('editEditor').offsetTop-20,behavior:'smooth'});
+      try{const res=await fetch('/api/list-quiz-codes?id='+encodeURIComponent(id),{headers:authHeaders()});const data=await responseJson(res);if(!res.ok)throw new Error(data.error||'Could not load test.');el('editCode').textContent=data.quiz.code;el('editTitle').value=data.quiz.title||'';el('editSubject').value=data.quiz.subject||'General Practice';el('editDepartment').value=data.quiz.department_restriction||'';el('editClass').value=data.quiz.class_restriction||'';el('editTime').value=data.quiz.time_limit_minutes??'';el('editAttempts').value=data.quiz.attempts_allowed??1;el('editShowAnswers').value=String(data.quiz.show_answers_after!==false);el('editLibraryVisible').value=String(data.quiz.library_visible!==false);el('editExpires').value=toLocalInputValue(data.quiz.expires_at);syncLibraryFields('edit');el('editSummary').innerHTML=`<strong>${escapeHtml(data.quiz.title||'Untitled test')}</strong> · ${escapeHtml(data.quiz.code||'')}<br>${(data.questions||[]).length} question${(data.questions||[]).length===1?'':'s'} · ${data.quiz.time_limit_seconds!=null?escapeHtml(String(data.quiz.time_limit_seconds))+' second limit':'No time limit'} · ${data.quiz.attempts_allowed==null?'Unlimited attempts':data.quiz.attempts_allowed+' attempt'+(data.quiz.attempts_allowed===1?'':'s')+' allowed'}`;el('editQuestionsContainer').innerHTML='';editQuestionCount=0;(data.questions||[]).forEach(q=>addQuestionBlock(el('editQuestionsContainer'),'edit',q));msg.textContent='';window.scrollTo({top:el('editEditor').offsetTop-20,behavior:'smooth'});
       }catch(err){msg.style.color='#dc2626';msg.textContent=err.message;}
     }
     function closeEditor(){el('editEditor').style.display='none';el('editEditor').setAttribute('aria-hidden','true');el('editQuestionsContainer').innerHTML='';}
@@ -210,79 +200,23 @@
       try{const res=await fetch('/api/list-quiz-codes?id='+encodeURIComponent(id),{method:'DELETE',headers:authHeaders()});const data=await responseJson(res);if(!res.ok)throw new Error(data.error||'Could not delete test.');loadQuizzes();}catch(err){alert(err.message);}
     }
     function escapeHtml(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
-    
-    let importedQuiz = null;
-    const sampleQuizImport = {
-      title:"English Language Practice — 20 Questions",
-      subject:"English Language",
-      class_restriction:null,
-      time_limit_minutes:null,
-      time_limit_seconds:null,
-      attempts_allowed:null,
-      show_answers_after:true,
-      expires_at:null,
-      library_visible:true,
-      questions:[
-        ["Choose the word that is closest in meaning to “rapid”.","Slow","Quick","Weak","Quiet","b"],
-        ["Which sentence is correctly punctuated?","Mary said “I am ready”.","Mary said, “I am ready.”","Mary said “I am ready.”","Mary, said “I am ready.”","b"],
-        ["What is the plural form of “child”?","Childs","Childes","Children","Childrens","c"],
-        ["Identify the adjective in: “The tall boy won the race.”","boy","won","race","tall","d"],
-        ["Choose the correct word: “Neither John nor Peter ___ coming.”","are","were","is","be","c"],
-        ["Which word is an antonym of “ancient”?","Old","Modern","Former","Past","b"],
-        ["Choose the correct spelling.","Definately","Definetely","Definitely","Definatly","c"],
-        ["Which sentence is in the past tense?","She sings every morning.","She is singing now.","She will sing tomorrow.","She sang yesterday.","d"],
-        ["What type of word is “quickly” in “He ran quickly”?","Noun","Adjective","Adverb","Pronoun","c"],
-        ["Choose the correct comparative form of “good”.","Gooder","More good","Best","Better","d"],
-        ["Complete the sentence: “If I ___ enough money, I would buy the laptop.”","have","had","has","having","b"],
-        ["Which word is a pronoun?","Beautiful","Teacher","They","Carefully","c"],
-        ["Choose the correct preposition: “The books are ___ the table.”","on","at","from","by","a"],
-        ["What is the meaning of the idiom “break the ice”?","To destroy something frozen","To start a friendly conversation","To become angry","To end a friendship","b"],
-        ["Choose the sentence with the correct subject–verb agreement.","The boys runs every morning.","The boy run every morning.","The boys run every morning.","The boys running every morning.","c"],
-        ["Which word contains a silent letter?","Table","Knife","Paper","Window","b"],
-        ["Choose the correct question tag: “You are coming, ___?”","aren't you","are you","isn't it","won't you","a"],
-        ["Which sentence is written in the passive voice?","The teacher marked the scripts.","The students answered the questions.","The scripts were marked by the teacher.","The teacher is marking the scripts.","c"],
-        ["Choose the word that completes the sentence: “She has ___ finished her homework.”","already","yesterday","tomorrow","last","a"],
-        ["Which of these is a compound word?","Beautiful","Sunflower","Quickly","Honesty","b"]
-      ].map((x,i)=>({question:x[0],option_a:x[1],option_b:x[2],option_c:x[3],option_d:x[4],correct_option:x[5],order_index:i}))
-    };
-    function normalizeImport(raw){
-      if(!raw || typeof raw!=='object' || !Array.isArray(raw.questions) || !String(raw.title||'').trim()) throw new Error('Quiz code needs a title and a questions array.');
-      if(!raw.questions.length) throw new Error('Add at least one question.');
-      const clean={...raw,title:String(raw.title).trim(),subject:String(raw.subject||'General Practice').trim()||'General Practice',questions:raw.questions.map(q=>({question:String(q?.question||'').trim(),option_a:String(q?.option_a||'').trim(),option_b:String(q?.option_b||'').trim(),option_c:q?.option_c?String(q.option_c).trim():null,option_d:q?.option_d?String(q.option_d).trim():null,correct_option:String(q?.correct_option||'').toLowerCase()}))};
-      clean.questions.forEach((q,i)=>{if(!q.question||!q.option_a||!q.option_b||!['a','b','c','d'].includes(q.correct_option))throw new Error(`Question ${i+1} needs text, options A/B and a valid correct answer.`);});
-      return clean;
+    function normalizeImported(raw){
+      if(!raw||typeof raw!=='object') throw new Error('Quiz code must be a JSON object.');
+      if(!String(raw.title||'').trim()) throw new Error('Quiz code needs a title.');
+      if(!String(raw.subject||'').trim()) throw new Error('Quiz code needs a subject.');
+      if(!Array.isArray(raw.questions)||!raw.questions.length) throw new Error('Quiz code needs at least one question.');
+      const questions=raw.questions.map((q,i)=>{const correct=String(q.correct_option||'').toLowerCase();if(!String(q.question||'').trim()||!String(q.option_a||'').trim()||!String(q.option_b||'').trim()||!['a','b','c','d'].includes(correct)) throw new Error(`Question ${i+1} is incomplete or has an invalid correct_option.`);return {...q,correct_option:correct,explanation:String(q.explanation||'').trim()||null};});
+      return {...raw,title:String(raw.title).trim(),subject:String(raw.subject).trim(),class_restriction:raw.library_visible===true?null:(String(raw.class_restriction||'').trim()||null),department_restriction:raw.library_visible===true?null:(String(raw.department_restriction||'').trim()||null),questions};
     }
+    function readImported(){try{return normalizeImported(JSON.parse(el('quizImportCode').value));}catch(err){throw new Error(err?.message||'Invalid quiz code.');}}
     function renderImportPreview(q){
-      importedQuiz=q;
-      const elp=document.getElementById('importPreview'),save=document.getElementById('importSaveBox');
-      const visible=q.library_visible!==false;
-      const totalSeconds=String(q.subject).toLowerCase()==='mathematics' ? (q.time_limit_seconds??(q.time_limit_minutes!=null?Number(q.time_limit_minutes)*60:null)) : (visible?q.questions.length*15:(q.time_limit_seconds??(q.time_limit_minutes!=null?Number(q.time_limit_minutes)*60:null)));
-      elp.style.display='block';
-      elp.innerHTML=`<div><strong>${escapeHtml(q.title)}</strong> · ${escapeHtml(q.subject)}</div><div class="import-preview-grid"><div class="import-preview-stat"><small>Questions</small><strong>${q.questions.length}</strong></div><div class="import-preview-stat"><small>Mode</small><strong>${visible?'Practice Library':'Code Prescribed'}</strong></div><div class="import-preview-stat"><small>Time</small><strong>${totalSeconds==null?'No limit':String(totalSeconds)+' seconds'}</strong></div></div>`+
-        q.questions.map((x,i)=>`<div class="import-q"><strong>${i+1}. ${escapeHtml(x.question)}</strong><div style="margin-top:.45rem;display:grid;gap:.25rem">${[['a',x.option_a],['b',x.option_b],['c',x.option_c],['d',x.option_d]].filter(([,v])=>v).map(([k,v])=>`<span><b>${k.toUpperCase()}.</b> ${escapeHtml(v)}${x.correct_option===k?' ✓':''}</span>`).join('')}</div></div>`).join('');
-      save.style.display='block';document.getElementById('importStatus').textContent='';
+      const time=q.time_limit_seconds!=null?`${q.time_limit_seconds} seconds`:q.time_limit_minutes?`${q.time_limit_minutes} minute${Number(q.time_limit_minutes)===1?'':'s'}`:'No time limit';
+      const scope=q.library_visible===false?`${q.class_restriction||'Any class'}${q.department_restriction?' · '+q.department_restriction:''}`:'Practice Library · Open to all classes';
+      el('importPreview').innerHTML=`<div style="display:flex;justify-content:space-between;gap:.8rem;align-items:flex-start;flex-wrap:wrap;"><div><div class="qc-code-label">READY TO PUBLISH</div><h3 style="margin:.45rem 0 .2rem">${escapeHtml(q.title)}</h3><p style="margin:0;color:#6d7380">${escapeHtml(q.subject)}</p></div><strong>${q.questions.length} questions</strong></div><div class="preview-meta" style="display:flex;flex-wrap:wrap;gap:.45rem;margin:.8rem 0;"><span class="preview-pill">${escapeHtml(scope)}</span><span class="preview-pill">${escapeHtml(time)}</span><span class="preview-pill">${q.library_visible===false?'Code Prescribed':'Practice Library'}</span></div>${q.questions.map((x,i)=>`<div class="qc-import-question"><div style="font-weight:900">${i+1}. ${escapeHtml(x.question)}</div>${[['a',x.option_a],['b',x.option_b],['c',x.option_c],['d',x.option_d]].filter(([,v])=>v).map(([k,v])=>`<div class="qc-import-option ${String(x.correct_option).toLowerCase()===k?'correct':''}"><b>${k.toUpperCase()}.</b> ${escapeHtml(v)}${String(x.correct_option).toLowerCase()===k?' ✓':''}</div>`).join('')}${x.explanation?`<div class="qc-import-explanation"><b>Explanation:</b> ${escapeHtml(x.explanation)}</div>`:''}</div>`).join('')}<div style="margin-top:1rem;padding:.75rem;border-radius:12px;background:#f7f7fb;color:#5d6370;font-size:.78rem;">Correct answers are visible here for admin review only. Students receive answers/explanations only after submission when enabled.</div>`;
     }
-    document.getElementById('importPreviewBtn')?.addEventListener('click',()=>{
-      try{const raw=JSON.parse(document.getElementById('importCode').value);renderImportPreview(normalizeImport(raw));document.getElementById('importStatus').textContent='Preview generated. Choose how this quiz should be published.';document.getElementById('importStatus').style.color='#155eaa';}
-      catch(e){document.getElementById('importPreview').style.display='block';document.getElementById('importPreview').textContent=e.message;document.getElementById('importPreview').style.color='#b42318';document.getElementById('importSaveBox').style.display='none';}
-    });
-    document.getElementById('importSampleBtn')?.addEventListener('click',()=>{document.getElementById('importCode').value=JSON.stringify(sampleQuizImport,null,2);document.getElementById('importPreviewBtn').click();});
-    document.getElementById('importClearBtn')?.addEventListener('click',()=>{document.getElementById('importCode').value='';document.getElementById('importPreview').style.display='none';document.getElementById('importSaveBox').style.display='none';});
-    async function publishImported(asLibrary){
-      if(!importedQuiz)return;
-      const btn=asLibrary?document.getElementById('saveImportLibrary'):document.getElementById('saveImportCodeOnly');
-      const status=document.getElementById('importStatus');btn.disabled=true;btn.textContent='Saving…';status.textContent='';
-      try{
-        const payload={...importedQuiz,library_visible:asLibrary,class_restriction:asLibrary?null:(importedQuiz.class_restriction||null),attempts_allowed:asLibrary?null:(importedQuiz.attempts_allowed??1)};
-        if(asLibrary && String(payload.subject).toLowerCase()!=='mathematics'){payload.time_limit_seconds=payload.questions.length*15;payload.time_limit_minutes=Math.ceil(payload.time_limit_seconds/60);}
-        const r=await fetch('/api/create-quiz-code',{method:'POST',headers:{'Content-Type':'application/json',...authHeaders()},body:JSON.stringify(payload)});const d=await responseJson(r);if(!r.ok)throw new Error(d.error||'Could not create this quiz.');
-        status.style.color='#177a55';status.textContent=`Quiz saved successfully. Generated code: ${d.code}`;loadQuizzes();
-      }catch(e){status.style.color='#b42318';status.textContent=e.message;}
-      finally{btn.disabled=false;btn.textContent=asLibrary?'Practice Library':'Code Prescribed';}
-    }
-    document.getElementById('saveImportLibrary')?.addEventListener('click',()=>publishImported(true));
-    document.getElementById('saveImportCodeOnly')?.addEventListener('click',()=>publishImported(false));
-
+    el('runImportPreview').addEventListener('click',()=>{try{const q=readImported();renderImportPreview(q);el('importStatus').style.color='#16845b';el('importStatus').textContent='Preview generated successfully.';}catch(err){el('importStatus').style.color='#c53030';el('importStatus').textContent=err.message;}});
+    el('clearImport').addEventListener('click',()=>{el('quizImportCode').value='';el('importPreview').innerHTML='<div style="color:#788092;text-align:center;padding:4rem 1rem;">Run Preview to inspect the quiz before publishing.</div>';el('importStatus').textContent='';});
+    el('publishImport').addEventListener('click',async()=>{const btn=el('publishImport');try{const q=readImported();const headers={'Content-Type':'application/json',...authHeaders()};if(!headers.Authorization)throw new Error('Admin session expired. Log in again.');btn.disabled=true;btn.textContent='Publishing…';const res=await fetch('/api/create-quiz-code',{method:'POST',headers,body:JSON.stringify(q)});const data=await responseJson(res);if(!res.ok)throw new Error(data.error||'Could not publish quiz.');el('importStatus').style.color='#16845b';el('importStatus').textContent=`Published successfully. Generated code: ${data.code}`;await loadQuizzes();}catch(err){el('importStatus').style.color='#c53030';el('importStatus').textContent=err.message;}finally{btn.disabled=false;btn.textContent='Publish this quiz';}});
     loadQuizzes();
   </script>
 </body>

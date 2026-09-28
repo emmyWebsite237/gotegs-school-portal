@@ -34,6 +34,20 @@ export default async function handler(req, res) {
       .eq('student_id', student_id);
 
     if (countError) throw countError;
+
+    // Re-check student placement server-side for prescribed quizzes.
+    if (quiz.library_visible === false && (quiz.class_restriction || quiz.department_restriction)) {
+      const { data: jss } = await supabase.from('jss_students').select('class, student_id').eq('student_id', String(student_id).trim()).maybeSingle();
+      let placement = jss || null;
+      if (!placement) {
+        const { data: sss } = await supabase.from('sss_students').select('class, dept, student_id').eq('student_id', String(student_id).trim()).maybeSingle();
+        placement = sss || null;
+      }
+      if (!placement) return res.status(403).json({ error: 'Your student profile could not be verified for this quiz.' });
+      const norm = v => String(v || '').trim().toLowerCase().replace(/\s+/g, ' ');
+      if (quiz.class_restriction && norm(quiz.class_restriction) !== norm(placement.class)) return res.status(403).json({ error: `This quiz is only available to ${quiz.class_restriction} students.` });
+      if (quiz.department_restriction && norm(quiz.department_restriction) !== norm(placement.dept)) return res.status(403).json({ error: `This quiz is only available to ${quiz.department_restriction} students.` });
+    }
     // NULL means unlimited attempts for practice-library quizzes.
     if (quiz.attempts_allowed != null && count >= quiz.attempts_allowed) {
       return res.status(403).json({ error: "You've already used all your attempts for this quiz." });
@@ -61,6 +75,7 @@ export default async function handler(req, res) {
         question: q.question,
         selected,
         correct_option: quiz.show_answers_after ? q.correct_option : undefined,
+        explanation: quiz.show_answers_after ? (q.explanation || null) : undefined,
         is_correct: isCorrect,
       };
     });

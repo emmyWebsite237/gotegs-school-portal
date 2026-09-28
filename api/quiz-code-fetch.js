@@ -7,10 +7,12 @@ export default async function handler(req, res) {
     }
 
     const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
-    const { code, quiz_id, student_id, class: studentClass, library } = req.query;
+    const { code, quiz_id, student_id, class: studentClass, department: studentDepartment, library } = req.query;
     if (!student_id) return res.status(400).json({ error: "Missing student reference." });
     const cleanStudentId = String(student_id).trim();
     const cleanClass = String(studentClass || '').trim();
+    const cleanDepartment = String(studentDepartment || '').trim();
+    const norm = v => String(v || '').trim().toLowerCase().replace(/\s+/g, ' ');
 
     // Student practice library: safe metadata only; answers and codes are never exposed.
     if (String(library || '') === '1') {
@@ -25,7 +27,7 @@ export default async function handler(req, res) {
       for (const q of quizzes || []) {
         if (q.expires_at && new Date(q.expires_at) < now) continue;
         // Practice-library quizzes are explicitly open to every class.
-        if (q.library_visible !== true && q.class_restriction && q.class_restriction !== cleanClass) continue;
+        if (q.library_visible !== true && q.class_restriction && norm(q.class_restriction) !== norm(cleanClass)) continue;
         const { count, error: countError } = await supabase.from('quiz_code_attempts').select('*', { count: 'exact', head: true }).eq('quiz_code_id', q.id).eq('student_id', cleanStudentId);
         if (countError) throw countError;
         // A null attempts_allowed means unlimited practice attempts.
@@ -58,7 +60,8 @@ export default async function handler(req, res) {
     if (!quiz) return res.status(404).json({ error: "That quiz could not be found." });
     if (quiz_id && quiz.library_visible !== true) return res.status(403).json({ error: "That quiz is not available in the practice library." });
     if (quiz.expires_at && new Date(quiz.expires_at) < new Date()) return res.status(403).json({ error: "This quiz has expired." });
-    if (quiz.class_restriction && quiz.class_restriction !== cleanClass) return res.status(403).json({ error: `This quiz is only available to ${quiz.class_restriction} students.` });
+    if (quiz.class_restriction && norm(quiz.class_restriction) !== norm(cleanClass)) return res.status(403).json({ error: `This quiz is only available to ${quiz.class_restriction} students.` });
+    if (quiz.department_restriction && norm(quiz.department_restriction) !== norm(cleanDepartment)) return res.status(403).json({ error: `This quiz is only available to ${quiz.department_restriction} students.` });
 
     const { count, error: countError } = await supabase.from('quiz_code_attempts').select('*', { count: 'exact', head: true }).eq('quiz_code_id', quiz.id).eq('student_id', cleanStudentId);
     if (countError) throw countError;
@@ -77,6 +80,7 @@ export default async function handler(req, res) {
       title: quiz.title,
       subject: quiz.subject || 'General Practice',
       class_restriction: quiz.class_restriction,
+      department_restriction: quiz.department_restriction,
       time_limit_minutes: quiz.time_limit_minutes,
       time_limit_seconds: quiz.time_limit_seconds ?? (quiz.time_limit_minutes != null ? Number(quiz.time_limit_minutes) * 60 : null),
       attempts_remaining: quiz.attempts_allowed == null ? null : quiz.attempts_allowed - count,

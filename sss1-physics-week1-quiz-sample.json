@@ -1,0 +1,464 @@
+{
+  "title": "SSS1 Physics — Week 1 Practice Quiz",
+  "subject": "Physics",
+  "class_restriction": "SSS 1",
+  "department_restriction": "Science",
+  "time_limit_minutes": 20,
+  "attempts_allowed": 1,
+  "show_answers_after": true,
+  "expires_at": null,
+  "library_visible": false,
+  "questions": [
+    {
+      "question": "What is the primary focus of Physics?",
+      "option_a": "Study of living things",
+      "option_b": "Study of matter, energy, and their relationship",
+      "option_c": "Study of chemical reactions",
+      "option_d": "Study of rocks and minerals",
+      "correct_option": "b",
+      "explanation": "Physics examines matter, energy, and how they interact and relate to one another."
+    },
+    {
+      "question": "Which of the following is considered a branch of physics?",
+      "option_a": "Botany",
+      "option_b": "Mechanics",
+      "option_c": "Anatomy",
+      "option_d": "Geology",
+      "correct_option": "b",
+      "explanation": "Mechanics is a branch of physics concerned with motion, forces, and the behaviour of physical bodies."
+    },
+    {
+      "question": "The study of heat and temperature is known as:",
+      "option_a": "Optics",
+      "option_b": "Thermodynamics",
+      "option_c": "Acoustics",
+      "option_d": "Electromagnetism",
+      "correct_option": "b",
+      "explanation": "Thermodynamics deals with heat, temperature, energy, and the transfer or transformation of energy."
+    },
+    {
+      "question": "The branch of physics that deals with light and vision is:",
+      "option_a": "Optics",
+      "option_b": "Electronics",
+      "option_c": "Quantum physics",
+      "option_d": "Mechanics",
+      "correct_option": "a",
+      "explanation": "Optics is the branch of physics that studies light and its interactions, including vision."
+    },
+    {
+      "question": "Which of the following is a fundamental physical quantity?",
+      "option_a": "Area",
+      "option_b": "Speed",
+      "option_c": "Mass",
+      "option_d": "Volume",
+      "correct_option": "c",
+      "explanation": "Mass is one of the SI base quantities; area, speed, and volume are derived quantities."
+    },
+    {
+      "question": "The SI unit of length is:",
+      "option_a": "Centimetre",
+      "option_b": "Metre",
+      "option_c": "Kilometre",
+      "option_d": "Millimetre",
+      "correct_option": "b",
+      "explanation": "The metre (m) is the SI base unit of length."
+    },
+    {
+      "question": "Which of the following is the SI unit of time?",
+      "option_a": "Minute",
+      "option_b": "Hour",
+      "option_c": "Second",
+      "option_d": "Day",
+      "correct_option": "c",
+      "explanation": "The second (s) is the SI base unit of time."
+    },
+    {
+      "question": "The SI unit of electric current is:",
+      "option_a": "Volt",
+      "option_b": "Ampere",
+      "option_c": "Ohm",
+      "option_d": "Watt",
+      "correct_option": "b",
+      "explanation": "The ampere (A) is the SI base unit for electric current."
+    },
+    {
+      "question": "Which quantity has the SI unit Kelvin?",
+      "option_a": "Heat",
+      "option_b": "Temperature",
+      "option_c": "Work",
+      "option_d": "Energy",
+      "correct_option": "b",
+      "explanation": "Kelvin (K) is the SI base unit for thermodynamic temperature."
+    },
+    {
+      "question": "The SI unit for luminous intensity is:",
+      "option_a": "Candela",
+      "option_b": "Lumen",
+      "option_c": "Weber",
+      "option_d": "Tesla",
+      "correct_option": "a",
+      "explanation": "Candela (cd) is the SI base unit of luminous intensity."
+    },
+    {
+      "question": "Amount of substance is measured in which SI unit?",
+      "option_a": "Gram",
+      "option_b": "Kilogram",
+      "option_c": "Mole",
+      "option_d": "Pound",
+      "correct_option": "c",
+      "explanation": "The mole (mol) is the SI base unit for amount of substance."
+    },
+    {
+      "question": "Which of the following is a fundamental unit?",
+      "option_a": "Newton",
+      "option_b": "Kilogram",
+      "option_c": "Joule",
+      "option_d": "Watt",
+      "correct_option": "b",
+      "explanation": "Kilogram is an SI base unit. Newton, joule, and watt are derived units."
+    },
+    {
+      "question": "Which of the following is a derived quantity?",
+      "option_a": "Length",
+      "option_b": "Time",
+      "option_c": "Area",
+      "option_d": "Mass",
+      "correct_option": "c",
+      "explanation": "Area is derived from length multiplied by length, so its SI unit is square metres."
+    },
+    {
+      "question": "The SI unit of area is:",
+      "option_a": "m",
+      "option_b": "m²",
+      "option_c": "m³",
+      "option_d": "cm²",
+      "correct_option": "b",
+      "explanation": "Area is measured in square metres (m²), because it is length multiplied by length."
+    },
+    {
+      "question": "What is the SI unit of volume?",
+      "option_a": "Litre",
+      "option_b": "m²",
+      "option_c": "m³",
+      "option_d": "cm³",
+      "correct_option": "c",
+      "explanation": "The SI derived unit of volume is cubic metre (m³)."
+    },
+    {
+      "question": "Which of the following units is derived?",
+      "option_a": "Second",
+      "option_b": "Metre",
+      "option_c": "Speed (m/s)",
+      "option_d": "Kelvin",
+      "correct_option": "c",
+      "explanation": "Speed has units of metres per second (m/s), derived from length divided by time."
+    },
+    {
+      "question": "Density is defined as mass per unit volume. What is its SI unit?",
+      "option_a": "kg/m³",
+      "option_b": "g/cm³",
+      "option_c": "kg/m²",
+      "option_d": "g/m³",
+      "correct_option": "a",
+      "explanation": "Density equals mass divided by volume, giving the SI unit kg/m³."
+    },
+    {
+      "question": "The derived unit for force is:",
+      "option_a": "Joule",
+      "option_b": "Newton",
+      "option_c": "Pascal",
+      "option_d": "Watt",
+      "correct_option": "b",
+      "explanation": "Force is measured in newtons (N), which is equivalent to kg·m/s²."
+    },
+    {
+      "question": "Which of the following pairs contains only fundamental quantities?",
+      "option_a": "Mass, Length, Force",
+      "option_b": "Time, Temperature, Velocity",
+      "option_c": "Length, Mass, Time",
+      "option_d": "Current, Area, Volume",
+      "correct_option": "c",
+      "explanation": "Length, mass, and time are SI base quantities; force, velocity, area, and volume are derived."
+    },
+    {
+      "question": "Express 0.00045 in standard form:",
+      "option_a": "4.5 × 10^-4",
+      "option_b": "4.5 × 10^4",
+      "option_c": "45 × 10^-4",
+      "option_d": "0.45 × 10^-3",
+      "correct_option": "a",
+      "explanation": "Move the decimal point four places to the right to get 4.5, so the power is 10^-4."
+    },
+    {
+      "question": "Express 54000 in standard form:",
+      "option_a": "5.4 × 10^3",
+      "option_b": "5.4 × 10^4",
+      "option_c": "54 × 10^3",
+      "option_d": "5.4 × 10^5",
+      "correct_option": "b",
+      "explanation": "54000 becomes 5.4 after moving the decimal four places left, giving 5.4 × 10^4."
+    },
+    {
+      "question": "How many significant figures are in the number 0.00507?",
+      "option_a": "6",
+      "option_b": "5",
+      "option_c": "3",
+      "option_d": "4",
+      "correct_option": "c",
+      "explanation": "Leading zeros are not significant; the digits 5, 0, and 7 are significant, giving three significant figures."
+    },
+    {
+      "question": "How many significant figures are in the number 3040?",
+      "option_a": "3",
+      "option_b": "4",
+      "option_c": "2",
+      "option_d": "5",
+      "correct_option": "b",
+      "explanation": "Under the convention used in the source quiz, the interior zero and the terminal zero are counted here, giving four significant figures."
+    },
+    {
+      "question": "Round 0.06847 to two significant figures:",
+      "option_a": "0.06",
+      "option_b": "0.068",
+      "option_c": "0.069",
+      "option_d": "0.07",
+      "correct_option": "b",
+      "explanation": "The first two significant digits are 6 and 8; the next digit is 4, so the value remains 0.068."
+    },
+    {
+      "question": "What is the instrument used for measuring accurate small lengths down to 0.01 mm?",
+      "option_a": "Metre rule",
+      "option_b": "Vernier callipers",
+      "option_c": "Micrometer screw gauge",
+      "option_d": "Measuring tape",
+      "correct_option": "c",
+      "explanation": "A micrometer screw gauge is designed for very small measurements and commonly has a least count of 0.01 mm."
+    },
+    {
+      "question": "A vernier callipers has a precision or least count of:",
+      "option_a": "0.1 cm or 1 mm",
+      "option_b": "0.01 cm or 0.1 mm",
+      "option_c": "0.001 cm",
+      "option_d": "1.0 cm",
+      "correct_option": "b",
+      "explanation": "The stated conventional least count is 0.01 cm, which is equal to 0.1 mm."
+    },
+    {
+      "question": "The least count of a standard micrometer screw gauge is usually:",
+      "option_a": "0.01 mm",
+      "option_b": "0.1 mm",
+      "option_c": "1.0 mm",
+      "option_d": "0.001 mm",
+      "correct_option": "a",
+      "explanation": "A standard micrometer screw gauge commonly measures to a least count of 0.01 mm."
+    },
+    {
+      "question": "Which instrument is best for measuring the internal diameter of a small pipe?",
+      "option_a": "Metre rule",
+      "option_b": "Vernier callipers",
+      "option_c": "Tape measure",
+      "option_d": "Micrometer screw gauge",
+      "correct_option": "b",
+      "explanation": "Vernier callipers can use their inside jaws to measure internal diameters."
+    },
+    {
+      "question": "What is the primary use of a simple pendulum in the laboratory?",
+      "option_a": "Measuring mass",
+      "option_b": "Measuring temperature",
+      "option_c": "Measuring time intervals",
+      "option_d": "Measuring length",
+      "correct_option": "c",
+      "explanation": "A pendulum can be used to determine or measure time intervals through its periodic oscillation."
+    },
+    {
+      "question": "Which of the following is NOT a mechanical instrument for length measurement?",
+      "option_a": "Metre rule",
+      "option_b": "Vernier callipers",
+      "option_c": "Thermometer",
+      "option_d": "Micrometer screw gauge",
+      "correct_option": "c",
+      "explanation": "A thermometer measures temperature, not length."
+    },
+    {
+      "question": "Error in measurement caused by faulty instrument calibration is called:",
+      "option_a": "Random error",
+      "option_b": "Systematic error",
+      "option_c": "Human error",
+      "option_d": "Zero error",
+      "correct_option": "b",
+      "explanation": "A calibration problem introduces a consistent bias, which is a systematic error."
+    },
+    {
+      "question": "Errors that vary unpredictably from one measurement to another are called:",
+      "option_a": "Systematic errors",
+      "option_b": "Random errors",
+      "option_c": "Constant errors",
+      "option_d": "Instrumental errors",
+      "correct_option": "b",
+      "explanation": "Random errors fluctuate unpredictably between repeated measurements."
+    },
+    {
+      "question": "What is the dimension of length?",
+      "option_a": "[M]",
+      "option_b": "[L]",
+      "option_c": "[T]",
+      "option_d": "[A]",
+      "correct_option": "b",
+      "explanation": "Length has the base dimension L."
+    },
+    {
+      "question": "What is the dimensional formula for velocity/speed?",
+      "option_a": "[LT^-1]",
+      "option_b": "[LT^-2]",
+      "option_c": "[MLT^-1]",
+      "option_d": "[L²T^-1]",
+      "correct_option": "a",
+      "explanation": "Velocity is displacement divided by time, giving dimensions L/T or [LT^-1]."
+    },
+    {
+      "question": "The dimensional formula for acceleration is:",
+      "option_a": "[LT^-1]",
+      "option_b": "[LT^-2]",
+      "option_c": "[MLT^-2]",
+      "option_d": "[L^-1T]",
+      "correct_option": "b",
+      "explanation": "Acceleration is change of velocity per unit time, giving L/T² or [LT^-2]."
+    },
+    {
+      "question": "What is the dimension of mass?",
+      "option_a": "[L]",
+      "option_b": "[M]",
+      "option_c": "[T]",
+      "option_d": "[K]",
+      "correct_option": "b",
+      "explanation": "Mass is represented by the base dimension M."
+    },
+    {
+      "question": "Which of the following represents the dimensional representation of force?",
+      "option_a": "[MLT^-2]",
+      "option_b": "[ML²T^-2]",
+      "option_c": "[ML^-1T^-2]",
+      "option_d": "[MT^-2]",
+      "correct_option": "a",
+      "explanation": "From F = ma, force has dimensions mass × acceleration = MLT^-2."
+    },
+    {
+      "question": "Convert 5 kilometres into metres:",
+      "option_a": "50 m",
+      "option_b": "500 m",
+      "option_c": "5000 m",
+      "option_d": "50000 m",
+      "correct_option": "c",
+      "explanation": "One kilometre is 1000 metres, so 5 km = 5 × 1000 = 5000 m."
+    },
+    {
+      "question": "Convert 450 centimetres into metres:",
+      "option_a": "4.5 m",
+      "option_b": "45 m",
+      "option_c": "0.45 m",
+      "option_d": "4500 m",
+      "correct_option": "a",
+      "explanation": "There are 100 centimetres in a metre, so 450 cm ÷ 100 = 4.5 m."
+    },
+    {
+      "question": "What is the prefix 'mega-' equivalent to in standard form multiplier?",
+      "option_a": "10^6",
+      "option_b": "10^3",
+      "option_c": "10^9",
+      "option_d": "10^-6",
+      "correct_option": "a",
+      "explanation": "The SI prefix mega denotes a multiplier of one million, or 10^6."
+    },
+    {
+      "question": "What is the prefix 'micro-' equivalent to?",
+      "option_a": "10^-3",
+      "option_b": "10^-6",
+      "option_c": "10^6",
+      "option_d": "10^3",
+      "correct_option": "b",
+      "explanation": "The SI prefix micro denotes one millionth, or 10^-6."
+    },
+    {
+      "question": "The prefix 'kilo-' represents:",
+      "option_a": "10^3",
+      "option_b": "10^2",
+      "option_c": "10^-3",
+      "option_d": "10^6",
+      "correct_option": "a",
+      "explanation": "The SI prefix kilo denotes a multiplier of one thousand, or 10^3."
+    },
+    {
+      "question": "Which of the following quantities has no dimension (is dimensionless)?",
+      "option_a": "Strain",
+      "option_b": "Velocity",
+      "option_c": "Force",
+      "option_d": "Acceleration",
+      "correct_option": "a",
+      "explanation": "Strain is a ratio of like quantities, so its dimensions cancel out."
+    },
+    {
+      "question": "Why are SI units important in science?",
+      "option_a": "They make calculations harder",
+      "option_b": "They provide a universal standard for communication",
+      "option_c": "They change from country to country",
+      "option_d": "They only apply to physics",
+      "correct_option": "b",
+      "explanation": "SI units provide a common measurement standard so scientists can communicate measurements consistently."
+    },
+    {
+      "question": "Which physical quantity is measured using a beam balance?",
+      "option_a": "Weight",
+      "option_b": "Mass",
+      "option_c": "Volume",
+      "option_d": "Density",
+      "correct_option": "b",
+      "explanation": "A beam balance compares masses and is used to determine mass."
+    },
+    {
+      "question": "The difference between the true value and the measured value is known as:",
+      "option_a": "Precision",
+      "option_b": "Uncertainty / Error",
+      "option_c": "Significant figure",
+      "option_d": "Dimension",
+      "correct_option": "b",
+      "explanation": "The difference between an accepted or true value and a measured value is an error or uncertainty."
+    },
+    {
+      "question": "What do we call the closeness of various measurements for the same quantity?",
+      "option_a": "Accuracy",
+      "option_b": "Precision",
+      "option_c": "Calibration",
+      "option_d": "Dimension",
+      "correct_option": "b",
+      "explanation": "Precision describes how close repeated measurements are to one another."
+    },
+    {
+      "question": "Closeness of a measurement to the true or accepted value is called:",
+      "option_a": "Precision",
+      "option_b": "Accuracy",
+      "option_c": "Scaling",
+      "option_d": "Error",
+      "correct_option": "b",
+      "explanation": "Accuracy describes how close a measurement is to the true or accepted value."
+    },
+    {
+      "question": "Which of the following physical quantities is a scalar derived quantity?",
+      "option_a": "Displacement",
+      "option_b": "Velocity",
+      "option_c": "Work / Energy",
+      "option_d": "Force",
+      "correct_option": "c",
+      "explanation": "Work and energy are derived scalar quantities; displacement, velocity, and force are vector quantities."
+    },
+    {
+      "question": "Who is widely regarded as one of the founding fathers of modern mechanics and experimental physics?",
+      "option_a": "Albert Einstein",
+      "option_b": "Isaac Newton",
+      "option_c": "Galileo Galilei",
+      "option_d": "Michael Faraday",
+      "correct_option": "c",
+      "explanation": "Galileo Galilei is widely associated with the development of experimental methods and early modern mechanics."
+    }
+  ],
+  "_source_note": "Question wording and answer key are derived from the attached SSS1 Physics Week 1 Practice Quiz PDF. Explanations are added for the portal review feature and were not present in the source PDF."
+}
