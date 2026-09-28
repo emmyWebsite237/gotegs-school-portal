@@ -453,3 +453,31 @@ body.student-shell-page .note-body video,
 body.student-shell-page .note-body iframe{max-width:100%;height:auto;}
 body.student-shell-page .note-body pre,
 body.student-shell-page .note-body code{white-space:pre-wrap;overflow-wrap:anywhere;}
+
+
+/* Reduced-screen portal navigation: the menu itself is an independently scrollable workspace. */
+@media (max-width:899px){
+  body.student-shell-page{overflow-x:hidden !important;}
+  .portal-mobile-bar{position:sticky;top:0;}
+  .portal-mobile-drawer{
+    max-height:100dvh !important;
+    height:100dvh !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    overscroll-behavior:contain;
+    -webkit-overflow-scrolling:touch;
+    padding-bottom:1.5rem !important;
+  }
+  .portal-mobile-drawer .portal-nav{min-height:max-content;}
+  .portal-mobile-drawer .portal-nav-link{max-width:100%;}
+}
+
+/* Student portal mobile menu: independent vertical scrolling on short/narrow screens. */
+@media (max-width:899px){
+  html.student-portal-page, body.student-shell-page{width:100%;max-width:100%;overflow-x:hidden!important;}
+  .portal-mobile-bar{width:100%;max-width:100%;}
+  .portal-mobile-drawer{height:100dvh!important;max-height:100dvh!important;overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;}
+  .portal-mobile-drawer .portal-nav{min-height:max-content;padding-bottom:.5rem;}
+  .portal-mobile-drawer .portal-nav-link{min-height:44px;white-space:normal;}
+  .portal-mobile-drawer .portal-logout{margin-top:1rem;flex:0 0 auto;}
+}

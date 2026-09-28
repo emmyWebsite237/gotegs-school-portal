@@ -5,7 +5,7 @@ const ADMIN_AUTH_KEY = 'gotegs_admin_authed';
 const ADMIN_TOKEN_KEY = 'gotegs_admin_token';
 const ADMIN_SESSION_MAX_AGE_MS = 30 * 60 * 1000;
 const STUDENT_SESSION_KEY = 'gotegs_student_session';
-const STUDENT_SESSION_MAX_AGE_MS = 60 * 60 * 1000;
+const STUDENT_SESSION_MAX_AGE_MS = 5 * 60 * 60 * 1000;
 const STUDENT_PROTECTED_PREFIXES = [
   '/student/dashboard.html',
   '/student/profile.html',
@@ -26,11 +26,8 @@ function isStudentProtectedPath(pathname){if(pathname==='/student/index.html'||p
 function getAdminTokenPayload(token){try{const raw=String(token||'').split('.')[0];if(!raw)return null;return JSON.parse(atob(raw.replace(/-/g,'+').replace(/_/g,'/')+'==='.slice((raw.length+3)%4)));}catch{return null;}}
 function hasAdminAuthSession(){if(sessionStorage.getItem(ADMIN_AUTH_KEY)!=='true')return false;const token=sessionStorage.getItem(ADMIN_TOKEN_KEY);if(!token)return false;const p=getAdminTokenPayload(token);if(!p?.exp||Date.now()>=Number(p.exp)*1000){clearAdminSession();return false;}return true;}
 function clearAdminSession(){sessionStorage.removeItem(ADMIN_AUTH_KEY);sessionStorage.removeItem(ADMIN_TOKEN_KEY);sessionStorage.removeItem('gotegs_records_authed');}
-function getValidStudentSession(){const raw=localStorage.getItem(STUDENT_SESSION_KEY);if(!raw)return null;try{const s=JSON.parse(raw);if(!s.lastActivity||Date.now()-Number(s.lastActivity)>STUDENT_SESSION_MAX_AGE_MS){localStorage.removeItem(STUDENT_SESSION_KEY);return null;}return s;}catch{localStorage.removeItem(STUDENT_SESSION_KEY);return null;}}
+function getValidStudentSession(){const raw=localStorage.getItem(STUDENT_SESSION_KEY);if(!raw)return null;try{const s=JSON.parse(raw);if(!s.lastActivity||Date.now()-s.lastActivity>STUDENT_SESSION_MAX_AGE_MS){localStorage.removeItem(STUDENT_SESSION_KEY);return null;}return s;}catch{localStorage.removeItem(STUDENT_SESSION_KEY);return null;}}
 function touchStudentSession(s){s.lastActivity=Date.now();localStorage.setItem(STUDENT_SESSION_KEY,JSON.stringify(s));}
-let studentInactivityTimer=null;
-function expireStudentSession(){if(!getValidStudentSession())return;localStorage.removeItem(STUDENT_SESSION_KEY);sessionStorage.removeItem('gotegs_result_data');window.location.replace('/student/index.html?session=expired');}
-function setupStudentInactivityTimeout(){if(!isStudentProtectedPath(window.location.pathname))return;const schedule=()=>{if(studentInactivityTimer)clearTimeout(studentInactivityTimer);const session=getValidStudentSession();if(!session){window.location.replace('/student/index.html?session=expired');return;}const expiresAt=Number(session.lastActivity)+STUDENT_SESSION_MAX_AGE_MS;studentInactivityTimer=window.setTimeout(expireStudentSession,Math.max(0,expiresAt-Date.now()));};let lastPersist=0;const activity=()=>{const session=getValidStudentSession();if(!session){expireStudentSession();return;}const now=Date.now();if(now-lastPersist>=30000){touchStudentSession(session);lastPersist=now;}schedule();};['pointerdown','touchstart','keydown','click','scroll','input'].forEach(evt=>document.addEventListener(evt,activity,{passive:evt==='scroll'}));document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')schedule();});window.addEventListener('focus',schedule,{passive:true});schedule();}
 
 if(isAdminPathCheck(window.location.pathname)){document.documentElement.classList.add('admin-page-mode');if(!hasAdminAuthSession())document.documentElement.style.visibility='hidden';}
 if(isStudentProtectedPath(window.location.pathname))document.documentElement.classList.add('student-portal-page');
@@ -52,14 +49,10 @@ function adminGatePassedOrNotNeeded(){return !isAdminPage()||hasAdminAuthSession
 async function injectPartial(url,targetId){const target=document.getElementById(targetId);if(!target)return;try{const r=await fetch(url);if(!r.ok)throw new Error(`Failed to load ${url}`);target.innerHTML=await r.text();}catch(err){console.error('Partial load error:',err);}}
 function highlightActiveLink(){const path=window.location.pathname;document.querySelectorAll('.nav-links a').forEach(link=>{const href=link.getAttribute('href');if(!href)return;const home=href==='/index.html'&&(path==='/'||path==='/index.html');const section=href!=='/index.html'&&path.startsWith(href.replace('index.html',''));if(home||section)link.classList.add('active');});}
 function bindFadeMobileMenu({toggleId,drawerId,scrimId,closeId,label}={}){
-  const toggle=document.getElementById(toggleId);
-  const drawer=document.getElementById(drawerId);
-  const scrim=document.getElementById(scrimId);
-  const close=document.getElementById(closeId);
+  const toggle=document.getElementById(toggleId),drawer=document.getElementById(drawerId),scrim=document.getElementById(scrimId),close=document.getElementById(closeId);
   if(!toggle||!drawer||!scrim)return false;
   if(toggle.dataset.navBound==='1')return true;
   toggle.dataset.navBound='1';
-
   const setOpen=open=>{
     const isOpen=!!open;
     drawer.classList.toggle('open',isOpen);
@@ -68,64 +61,41 @@ function bindFadeMobileMenu({toggleId,drawerId,scrimId,closeId,label}={}){
     scrim.setAttribute('aria-hidden',String(!isOpen));
     toggle.setAttribute('aria-expanded',String(isOpen));
     toggle.setAttribute('aria-label',isOpen?`Close ${label||'menu'}`:`Open ${label||'menu'}`);
-    // The hamburger stays in the top bar. The drawer has its own explicit × button.
-    toggle.textContent='☰';
     if(isOpen){
       document.body.dataset.mobileMenuOpen='1';
       document.body.style.overflow='hidden';
-      window.setTimeout(()=>close?.focus(),60);
+      window.setTimeout(()=>close?.focus(),50);
     }else{
       const anotherOpen=document.querySelector('.nav-drawer.open,.portal-mobile-drawer.open');
       if(!anotherOpen){document.body.dataset.mobileMenuOpen='';document.body.style.overflow='';}
       window.setTimeout(()=>toggle.focus(),0);
     }
   };
-
   toggle.setAttribute('aria-controls',drawerId);
-  toggle.setAttribute('aria-expanded','false');
-  drawer.setAttribute('aria-hidden','true');
-  scrim.setAttribute('aria-hidden','true');
+  if(!toggle.hasAttribute('aria-expanded'))toggle.setAttribute('aria-expanded','false');
+  drawer.setAttribute('aria-hidden',String(!drawer.classList.contains('open')));
+  scrim.setAttribute('aria-hidden',String(!scrim.classList.contains('open')));
+  toggle.addEventListener('click',e=>{e.preventDefault();setOpen(!drawer.classList.contains('open'));});
+  scrim.addEventListener('click',e=>{e.preventDefault();setOpen(false);});
+  close?.addEventListener('click',e=>{e.preventDefault();setOpen(false);});
   drawer.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>setOpen(false)));
-  toggle.addEventListener('click',()=>setOpen(!drawer.classList.contains('open')));
-  scrim.addEventListener('click',()=>setOpen(false));
-  close?.addEventListener('click',()=>setOpen(false));
   return true;
 }
 
 function wireMobileNavigation(){
-  bindFadeMobileMenu({
-    toggleId:'nav-toggle',
-    drawerId:'nav-drawer',
-    scrimId:'nav-scrim',
-    closeId:'nav-drawer-close',
-    label:'site menu'
-  });
-  bindFadeMobileMenu({
-    toggleId:'portalMobileToggle',
-    drawerId:'portalMobileDrawer',
-    scrimId:'portalMobileScrim',
-    closeId:'portalMobileClose',
-    label:'student portal menu'
-  });
-
+  bindFadeMobileMenu({toggleId:'nav-toggle',drawerId:'nav-drawer',scrimId:'nav-scrim',closeId:'nav-drawer-close',label:'site menu'});
+  bindFadeMobileMenu({toggleId:'portalMobileToggle',drawerId:'portalMobileDrawer',scrimId:'portalMobileScrim',closeId:'portalMobileClose',label:'student portal menu'});
   if(document.documentElement.dataset.gotegsMobileGlobal==='1')return;
   document.documentElement.dataset.gotegsMobileGlobal='1';
   document.addEventListener('keydown',event=>{
-    if(event.key!=='Escape')return;
-    document.querySelectorAll('.nav-drawer.open,.portal-mobile-drawer.open').forEach(drawer=>{
-      const id=drawer.id;
-      const toggle=document.getElementById(id==='nav-drawer'?'nav-toggle':'portalMobileToggle');
-      const close=document.getElementById(id==='nav-drawer'?'nav-drawer-close':'portalMobileClose');
-      close?.click();
-      toggle?.focus();
+    if(event.key==='Escape') document.querySelectorAll('.nav-drawer.open,.portal-mobile-drawer.open').forEach(drawer=>{
+      document.getElementById(drawer.id==='nav-drawer'?'nav-drawer-close':'portalMobileClose')?.click();
     });
   });
   window.addEventListener('resize',()=>{
-    if(window.innerWidth>899){
-      document.querySelectorAll('.nav-drawer.open,.portal-mobile-drawer.open').forEach(drawer=>{
-        (drawer.id==='nav-drawer'?document.getElementById('nav-drawer-close'):document.getElementById('portalMobileClose'))?.click();
-      });
-    }
+    if(window.innerWidth>1080) document.querySelectorAll('.nav-drawer.open,.portal-mobile-drawer.open').forEach(drawer=>{
+      document.getElementById(drawer.id==='nav-drawer'?'nav-drawer-close':'portalMobileClose')?.click();
+    });
   },{passive:true});
 }
 
@@ -173,7 +143,33 @@ function initPortalPointer(){if(window.matchMedia('(pointer: fine)').matches===f
 function initPortalTilt(){if(window.matchMedia('(pointer: fine)').matches===false||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;document.querySelectorAll('[data-tilt-card]').forEach(card=>{card.addEventListener('pointermove',e=>{const r=card.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;card.style.transform=`perspective(900px) rotateX(${(-y*2.5).toFixed(2)}deg) rotateY(${(x*2.5).toFixed(2)}deg) translateY(-5px)`;});card.addEventListener('pointerleave',()=>{card.style.transform='';});});}
 function initAdminWorkspaceControls(){if(!isAdminPage()||document.getElementById('gotegsAdminLogout'))return;const b=document.createElement('button');b.type='button';b.id='gotegsAdminLogout';b.textContent='Log out';b.setAttribute('aria-label','Log out of admin portal');b.className='admin-global-logout';b.style.cssText='position:fixed;top:18px;right:18px;z-index:9000;padding:.62rem 1rem;border:1px solid #d9cdd0;border-radius:999px;background:#fff;color:#6f2338;font:800 .72rem var(--font-display,system-ui);box-shadow:0 10px 26px rgba(54,30,36,.1);cursor:pointer;';b.addEventListener('click',()=>{clearAdminSession();window.location.href='/admin/';});document.body.appendChild(b);}
 
-async function initShell(){const adminPage=isAdminPage(),studentPage=isStudentProtectedPath(window.location.pathname);
+function protectImages(){
+  const protect=img=>{
+    if(!(img instanceof HTMLImageElement)||img.dataset.gotegsProtected==='1')return;
+    img.dataset.gotegsProtected='1';
+    img.setAttribute('draggable','false');
+    img.style.userSelect='none';
+    img.style.webkitUserSelect='none';
+    img.style.webkitUserDrag='none';
+    img.addEventListener('dragstart',e=>e.preventDefault());
+    img.addEventListener('contextmenu',e=>e.preventDefault());
+  };
+  document.querySelectorAll('img').forEach(protect);
+  if(!document.documentElement.dataset.gotegsImageObserver){
+    document.documentElement.dataset.gotegsImageObserver='1';
+    new MutationObserver(records=>records.forEach(record=>record.addedNodes.forEach(node=>{
+      if(node instanceof HTMLImageElement)protect(node);
+      else if(node instanceof Element)node.querySelectorAll?.('img').forEach(protect);
+    }))).observe(document.body,{childList:true,subtree:true});
+  }
+}
+function globalTextFlow(){
+  document.querySelectorAll('p').forEach(p=>{
+    if(!p.closest('nav,.nav-links,.portal-nav,.breadcrumb,.home-eyebrow,.splash-kicker,.splash-rule'))p.style.textAlign='justify';
+  });
+}
+
+async function initShell(){protectImages();globalTextFlow();const adminPage=isAdminPage(),studentPage=isStudentProtectedPath(window.location.pathname);
   if(adminPage){
     document.body.classList.add('admin-shell-page');
     scheduleAdminExpiry();
@@ -198,6 +194,6 @@ async function initShell(){const adminPage=isAdminPage(),studentPage=isStudentPr
 
 function setupAdminInactivityTimeout(){if(!isAdminPage())return;const TIMEOUT_MS=30*60*1000;let hiddenAt=null;const mark=()=>{if(hiddenAt===null)hiddenAt=Date.now();};const check=()=>{if(hiddenAt===null)return;const elapsed=Date.now()-hiddenAt;hiddenAt=null;if(elapsed>=TIMEOUT_MS){clearAdminSession();window.location.reload();}};document.addEventListener('visibilitychange',()=>document.hidden?mark():check());window.addEventListener('blur',mark);window.addEventListener('focus',check);}
 
-document.addEventListener('DOMContentLoaded',()=>{if(adminGatePassedOrNotNeeded()){initShell();if(isStudentProtectedPath(window.location.pathname))setupStudentInactivityTimeout();if(isAdminPage())document.dispatchEvent(new CustomEvent('gotegs:admin-authenticated'));}else showAdminGate();setupAdminInactivityTimeout();});
+document.addEventListener('DOMContentLoaded',()=>{if(adminGatePassedOrNotNeeded()){initShell();if(isAdminPage())document.dispatchEvent(new CustomEvent('gotegs:admin-authenticated'));}else showAdminGate();setupAdminInactivityTimeout();});
 
 window.addEventListener('pageshow',()=>{if(isStudentProtectedPath(window.location.pathname)&&!getValidStudentSession()){document.documentElement.style.visibility='hidden';window.location.replace('/student/index.html');}});
