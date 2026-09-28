@@ -47,18 +47,7 @@ function showAdminGate(){
 function adminGatePassedOrNotNeeded(){return !isAdminPage()||hasAdminAuthSession();}
 
 async function injectPartial(url,targetId){const target=document.getElementById(targetId);if(!target)return;try{const r=await fetch(url);if(!r.ok)throw new Error(`Failed to load ${url}`);target.innerHTML=await r.text();}catch(err){console.error('Partial load error:',err);}}
-function highlightActiveLink(){
-  const path=window.location.pathname;
-  document.querySelectorAll('.desktop-nav a, .nav-links a').forEach(link=>{
-    const href=link.getAttribute('href');
-    if(!href)return;
-    const clean=href.split('#')[0];
-    const home=(clean==='/index.html'||clean==='/')&&(path==='/'||path==='/index.html');
-    const section=!home && clean.endsWith('.html') && path===clean;
-    link.classList.toggle('active', home||section);
-    link.classList.toggle('is-active', home||section);
-  });
-}
+function highlightActiveLink(){const path=window.location.pathname;document.querySelectorAll('.nav-links a,.desktop-nav a').forEach(link=>{const href=link.getAttribute('href');if(!href)return;const home=href==='/index.html'&&(path==='/'||path==='/index.html');const section=href!=='/index.html'&&path.startsWith(href.replace('index.html',''));if(home||section)link.classList.add('active');});}
 function bindFadeMobileMenu({toggleId,drawerId,scrimId,closeId,label}={}){
   const toggle=document.getElementById(toggleId);
   const drawer=document.getElementById(drawerId);
@@ -71,32 +60,36 @@ function bindFadeMobileMenu({toggleId,drawerId,scrimId,closeId,label}={}){
   const setOpen=open=>{
     const isOpen=!!open;
     drawer.classList.toggle('open',isOpen);
+    drawer.classList.toggle('is-open',isOpen);
     scrim.classList.toggle('open',isOpen);
+    scrim.classList.toggle('is-open',isOpen);
     drawer.setAttribute('aria-hidden',String(!isOpen));
     scrim.setAttribute('aria-hidden',String(!isOpen));
     toggle.setAttribute('aria-expanded',String(isOpen));
     toggle.setAttribute('aria-label',isOpen?`Close ${label||'menu'}`:`Open ${label||'menu'}`);
-    // The hamburger stays in the top bar. The drawer has its own explicit × button.
-    toggle.textContent='☰';
+    document.body.dataset.mobileMenuOpen=isOpen?'1':'';
+    document.body.style.overflow=isOpen?'hidden':'';
     if(isOpen){
-      document.body.dataset.mobileMenuOpen='1';
-      document.body.style.overflow='hidden';
-      window.setTimeout(()=>close?.focus(),60);
+      window.setTimeout(()=>close?.focus(),80);
     }else{
-      const anotherOpen=document.querySelector('.nav-drawer.open,.portal-mobile-drawer.open');
-      if(!anotherOpen){document.body.dataset.mobileMenuOpen='';document.body.style.overflow='';}
       window.setTimeout(()=>toggle.focus(),0);
     }
   };
 
-  toggle.setAttribute('aria-controls',drawerId);
-  toggle.setAttribute('aria-expanded','false');
-  drawer.setAttribute('aria-hidden','true');
-  scrim.setAttribute('aria-hidden','true');
+  const closeFromNavigation=()=>{
+    const active=document.activeElement;
+    setOpen(false);
+    if(active===close)toggle.focus();
+  };
+
+  toggle.addEventListener('click',event=>{
+    event.preventDefault();
+    setOpen(!drawer.classList.contains('open'));
+  });
+  scrim.addEventListener('click',closeFromNavigation);
+  close?.addEventListener('click',closeFromNavigation);
   drawer.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>setOpen(false)));
-  toggle.addEventListener('click',()=>setOpen(!drawer.classList.contains('open')));
-  scrim.addEventListener('click',()=>setOpen(false));
-  close?.addEventListener('click',()=>setOpen(false));
+
   return true;
 }
 
@@ -198,8 +191,8 @@ async function initShell(){const adminPage=isAdminPage(),studentPage=isStudentPr
     initPortalTilt();
     await loadNotesScriptsIfNeeded();
   }else{
-    await injectPartial('/partials/navbar.html?v=public-20260928','navbar-placeholder');
-    await injectPartial('/partials/footer.html?v=public-20260928','footer-placeholder');
+    await injectPartial('/partials/navbar.html?v=public-ref-20260928','navbar-placeholder');
+    await injectPartial('/partials/footer.html','footer-placeholder');
     highlightActiveLink();wireNavGroups();wireMobileNavigation();setFooterYear();
   }
 }
