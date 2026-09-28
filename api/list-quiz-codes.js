@@ -24,8 +24,8 @@ function cleanQuestion(q, orderIndex) {
     option_b: String(q?.option_b || '').trim(),
     option_c: q?.option_c ? String(q.option_c).trim() : null,
     option_d: q?.option_d ? String(q.option_d).trim() : null,
-    explanation: q?.explanation ? String(q.explanation).trim() : null,
     correct_option: ['a', 'b', 'c', 'd'].includes(q?.correct_option) ? q.correct_option : null,
+    explanation: q?.explanation ? String(q.explanation).trim() : null,
     order_index: orderIndex,
   };
 }
@@ -137,7 +137,6 @@ export default async function handler(req, res) {
             title: String(body.title).trim(),
             subject: cleanSubject,
             class_restriction: storedClass,
-            department_restriction: isLibrary ? null : (String(body.department_restriction || '').trim() || null),
             time_limit_minutes: storedMinutes,
             time_limit_seconds: storedSeconds,
             attempts_allowed: storedAttempts,

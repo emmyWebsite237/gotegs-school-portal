@@ -18,3 +18,6 @@ on conflict (term) do nothing;
 alter table public.lesson_term_access enable row level security;
 -- The site reads access through /api/term-access with the service role.
 -- No public table policies are required.
+
+-- Refresh PostgREST's schema cache immediately after creating the table.
+NOTIFY pgrst, 'reload schema';

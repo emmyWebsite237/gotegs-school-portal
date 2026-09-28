@@ -5,7 +5,7 @@ const ADMIN_AUTH_KEY = 'gotegs_admin_authed';
 const ADMIN_TOKEN_KEY = 'gotegs_admin_token';
 const ADMIN_SESSION_MAX_AGE_MS = 30 * 60 * 1000;
 const STUDENT_SESSION_KEY = 'gotegs_student_session';
-const STUDENT_SESSION_MAX_AGE_MS = 5 * 60 * 60 * 1000;
+const STUDENT_SESSION_MAX_AGE_MS = 60 * 60 * 1000;
 const STUDENT_PROTECTED_PREFIXES = [
   '/student/dashboard.html',
   '/student/profile.html',
@@ -26,8 +26,11 @@ function isStudentProtectedPath(pathname){if(pathname==='/student/index.html'||p
 function getAdminTokenPayload(token){try{const raw=String(token||'').split('.')[0];if(!raw)return null;return JSON.parse(atob(raw.replace(/-/g,'+').replace(/_/g,'/')+'==='.slice((raw.length+3)%4)));}catch{return null;}}
 function hasAdminAuthSession(){if(sessionStorage.getItem(ADMIN_AUTH_KEY)!=='true')return false;const token=sessionStorage.getItem(ADMIN_TOKEN_KEY);if(!token)return false;const p=getAdminTokenPayload(token);if(!p?.exp||Date.now()>=Number(p.exp)*1000){clearAdminSession();return false;}return true;}
 function clearAdminSession(){sessionStorage.removeItem(ADMIN_AUTH_KEY);sessionStorage.removeItem(ADMIN_TOKEN_KEY);sessionStorage.removeItem('gotegs_records_authed');}
-function getValidStudentSession(){const raw=localStorage.getItem(STUDENT_SESSION_KEY);if(!raw)return null;try{const s=JSON.parse(raw);if(!s.lastActivity||Date.now()-s.lastActivity>STUDENT_SESSION_MAX_AGE_MS){localStorage.removeItem(STUDENT_SESSION_KEY);return null;}return s;}catch{localStorage.removeItem(STUDENT_SESSION_KEY);return null;}}
+function getValidStudentSession(){const raw=localStorage.getItem(STUDENT_SESSION_KEY);if(!raw)return null;try{const s=JSON.parse(raw);if(!s.lastActivity||Date.now()-Number(s.lastActivity)>STUDENT_SESSION_MAX_AGE_MS){localStorage.removeItem(STUDENT_SESSION_KEY);return null;}return s;}catch{localStorage.removeItem(STUDENT_SESSION_KEY);return null;}}
 function touchStudentSession(s){s.lastActivity=Date.now();localStorage.setItem(STUDENT_SESSION_KEY,JSON.stringify(s));}
+let studentInactivityTimer=null;
+function expireStudentSession(){if(!getValidStudentSession())return;localStorage.removeItem(STUDENT_SESSION_KEY);sessionStorage.removeItem('gotegs_result_data');window.location.replace('/student/index.html?session=expired');}
+function setupStudentInactivityTimeout(){if(!isStudentProtectedPath(window.location.pathname))return;const schedule=()=>{if(studentInactivityTimer)clearTimeout(studentInactivityTimer);const session=getValidStudentSession();if(!session){window.location.replace('/student/index.html?session=expired');return;}const expiresAt=Number(session.lastActivity)+STUDENT_SESSION_MAX_AGE_MS;studentInactivityTimer=window.setTimeout(expireStudentSession,Math.max(0,expiresAt-Date.now()));};let lastPersist=0;const activity=()=>{const session=getValidStudentSession();if(!session){expireStudentSession();return;}const now=Date.now();if(now-lastPersist>=30000){touchStudentSession(session);lastPersist=now;}schedule();};['pointerdown','touchstart','keydown','click','scroll','input'].forEach(evt=>document.addEventListener(evt,activity,{passive:evt==='scroll'}));document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')schedule();});window.addEventListener('focus',schedule,{passive:true});schedule();}
 
 if(isAdminPathCheck(window.location.pathname)){document.documentElement.classList.add('admin-page-mode');if(!hasAdminAuthSession())document.documentElement.style.visibility='hidden';}
 if(isStudentProtectedPath(window.location.pathname))document.documentElement.classList.add('student-portal-page');
@@ -47,7 +50,7 @@ function showAdminGate(){
 function adminGatePassedOrNotNeeded(){return !isAdminPage()||hasAdminAuthSession();}
 
 async function injectPartial(url,targetId){const target=document.getElementById(targetId);if(!target)return;try{const r=await fetch(url);if(!r.ok)throw new Error(`Failed to load ${url}`);target.innerHTML=await r.text();}catch(err){console.error('Partial load error:',err);}}
-function highlightActiveLink(){const path=window.location.pathname;document.querySelectorAll('.nav-links a,.desktop-nav a').forEach(link=>{const href=link.getAttribute('href');if(!href)return;const home=href==='/index.html'&&(path==='/'||path==='/index.html');const section=href!=='/index.html'&&path.startsWith(href.replace('index.html',''));if(home||section)link.classList.add('active');});}
+function highlightActiveLink(){const path=window.location.pathname;document.querySelectorAll('.nav-links a').forEach(link=>{const href=link.getAttribute('href');if(!href)return;const home=href==='/index.html'&&(path==='/'||path==='/index.html');const section=href!=='/index.html'&&path.startsWith(href.replace('index.html',''));if(home||section)link.classList.add('active');});}
 function bindFadeMobileMenu({toggleId,drawerId,scrimId,closeId,label}={}){
   const toggle=document.getElementById(toggleId);
   const drawer=document.getElementById(drawerId);
@@ -60,36 +63,32 @@ function bindFadeMobileMenu({toggleId,drawerId,scrimId,closeId,label}={}){
   const setOpen=open=>{
     const isOpen=!!open;
     drawer.classList.toggle('open',isOpen);
-    drawer.classList.toggle('is-open',isOpen);
     scrim.classList.toggle('open',isOpen);
-    scrim.classList.toggle('is-open',isOpen);
     drawer.setAttribute('aria-hidden',String(!isOpen));
     scrim.setAttribute('aria-hidden',String(!isOpen));
     toggle.setAttribute('aria-expanded',String(isOpen));
     toggle.setAttribute('aria-label',isOpen?`Close ${label||'menu'}`:`Open ${label||'menu'}`);
-    document.body.dataset.mobileMenuOpen=isOpen?'1':'';
-    document.body.style.overflow=isOpen?'hidden':'';
+    // The hamburger stays in the top bar. The drawer has its own explicit × button.
+    toggle.textContent='☰';
     if(isOpen){
-      window.setTimeout(()=>close?.focus(),80);
+      document.body.dataset.mobileMenuOpen='1';
+      document.body.style.overflow='hidden';
+      window.setTimeout(()=>close?.focus(),60);
     }else{
+      const anotherOpen=document.querySelector('.nav-drawer.open,.portal-mobile-drawer.open');
+      if(!anotherOpen){document.body.dataset.mobileMenuOpen='';document.body.style.overflow='';}
       window.setTimeout(()=>toggle.focus(),0);
     }
   };
 
-  const closeFromNavigation=()=>{
-    const active=document.activeElement;
-    setOpen(false);
-    if(active===close)toggle.focus();
-  };
-
-  toggle.addEventListener('click',event=>{
-    event.preventDefault();
-    setOpen(!drawer.classList.contains('open'));
-  });
-  scrim.addEventListener('click',closeFromNavigation);
-  close?.addEventListener('click',closeFromNavigation);
+  toggle.setAttribute('aria-controls',drawerId);
+  toggle.setAttribute('aria-expanded','false');
+  drawer.setAttribute('aria-hidden','true');
+  scrim.setAttribute('aria-hidden','true');
   drawer.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>setOpen(false)));
-
+  toggle.addEventListener('click',()=>setOpen(!drawer.classList.contains('open')));
+  scrim.addEventListener('click',()=>setOpen(false));
+  close?.addEventListener('click',()=>setOpen(false));
   return true;
 }
 
@@ -191,7 +190,7 @@ async function initShell(){const adminPage=isAdminPage(),studentPage=isStudentPr
     initPortalTilt();
     await loadNotesScriptsIfNeeded();
   }else{
-    await injectPartial('/partials/navbar.html?v=public-ref-20260928','navbar-placeholder');
+    await injectPartial('/partials/navbar.html','navbar-placeholder');
     await injectPartial('/partials/footer.html','footer-placeholder');
     highlightActiveLink();wireNavGroups();wireMobileNavigation();setFooterYear();
   }
@@ -199,6 +198,6 @@ async function initShell(){const adminPage=isAdminPage(),studentPage=isStudentPr
 
 function setupAdminInactivityTimeout(){if(!isAdminPage())return;const TIMEOUT_MS=30*60*1000;let hiddenAt=null;const mark=()=>{if(hiddenAt===null)hiddenAt=Date.now();};const check=()=>{if(hiddenAt===null)return;const elapsed=Date.now()-hiddenAt;hiddenAt=null;if(elapsed>=TIMEOUT_MS){clearAdminSession();window.location.reload();}};document.addEventListener('visibilitychange',()=>document.hidden?mark():check());window.addEventListener('blur',mark);window.addEventListener('focus',check);}
 
-document.addEventListener('DOMContentLoaded',()=>{if(adminGatePassedOrNotNeeded()){initShell();if(isAdminPage())document.dispatchEvent(new CustomEvent('gotegs:admin-authenticated'));}else showAdminGate();setupAdminInactivityTimeout();});
+document.addEventListener('DOMContentLoaded',()=>{if(adminGatePassedOrNotNeeded()){initShell();if(isStudentProtectedPath(window.location.pathname))setupStudentInactivityTimeout();if(isAdminPage())document.dispatchEvent(new CustomEvent('gotegs:admin-authenticated'));}else showAdminGate();setupAdminInactivityTimeout();});
 
 window.addEventListener('pageshow',()=>{if(isStudentProtectedPath(window.location.pathname)&&!getValidStudentSession()){document.documentElement.style.visibility='hidden';window.location.replace('/student/index.html');}});

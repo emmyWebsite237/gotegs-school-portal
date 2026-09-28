@@ -170,6 +170,26 @@ export default async function handler(req, res) {
       return await handleGallery(req, res, supabase);
     }
 
+    // Consolidated lesson-term access endpoint. /api/term-access is rewritten here.
+    if (String(req.query?.term_access || '') === '1') {
+      const TERMS = ['Term 1','Term 2','Term 3'];
+      if (req.method === 'GET') {
+        const { data, error } = await supabase.from('lesson_term_access').select('term,enabled').order('term_index',{ascending:true});
+        if (error) return res.status(500).json({ error: 'Could not load lesson-term access: ' + error.message });
+        const access = Object.fromEntries(TERMS.map(t => [t,false]));
+        (data || []).forEach(row => { if (TERMS.includes(row.term)) access[row.term] = row.enabled === true; });
+        return res.status(200).json({ access });
+      }
+      if (req.method !== 'PUT') return res.status(405).json({ error: 'Method not allowed.' });
+      const token = String(req.headers.authorization || '').replace(/^Bearer\s+/i,'');
+      if (!verifyToken(token)) return res.status(401).json({ error:'Admin session expired. Log in again.' });
+      const requested = jsonBody(req).access || {};
+      const updates = TERMS.map((term,i)=>({term,term_index:i+1,enabled:requested[term]===true,updated_at:new Date().toISOString()}));
+      const { error } = await supabase.from('lesson_term_access').upsert(updates,{onConflict:'term'});
+      if (error) return res.status(500).json({ error:'Could not update lesson-term access: '+error.message });
+      return res.status(200).json({ success:true, access:Object.fromEntries(updates.map(x=>[x.term,x.enabled])) });
+    }
+
     // Consolidated admin settings endpoint. Existing /api/admin-settings requests
     // are rewritten here by vercel.json, so no extra Serverless Function is needed.
     if (String(req.query?.settings || '') === '1') {

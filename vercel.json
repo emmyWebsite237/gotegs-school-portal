@@ -95,6 +95,10 @@
     {
       "source": "/api/admin-results",
       "destination": "/api/admin-students"
+    },
+    {
+      "source": "/api/term-access",
+      "destination": "/api/admin-verify?term_access=1"
     }
   ]
 }

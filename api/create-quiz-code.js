@@ -35,7 +35,7 @@ export default async function handler(req, res) {
     const token = String(req.headers.authorization || '').replace(/^Bearer\s+/i, '');
     if (!verifyToken(token)) return res.status(401).json({ error: 'Admin session expired. Log in again.' });
     const {
-      title, subject, class_restriction, department_restriction, time_limit_minutes, time_limit_seconds, attempts_allowed,
+      title, subject, class_restriction, time_limit_minutes, time_limit_seconds, attempts_allowed,
       show_answers_after, expires_at, library_visible, questions,
     } = req.body || {};
 
@@ -59,9 +59,7 @@ export default async function handler(req, res) {
 
     const isLibrary = library_visible !== false;
     const cleanSubject = String(subject || '').trim() || 'General Practice';
-    const cleanDept = String(department_restriction || '').trim() || null;
     let storedClass = class_restriction || null;
-    let storedDept = cleanDept;
     let storedAttempts = Number(attempts_allowed) || 1;
     let storedSeconds = time_limit_seconds == null || time_limit_seconds === '' ? null : Number(time_limit_seconds);
     let storedMinutes = time_limit_minutes == null || time_limit_minutes === '' ? null : Number(time_limit_minutes);
@@ -69,7 +67,6 @@ export default async function handler(req, res) {
     if (isLibrary) {
       // Practice-library quizzes are open to every class and can be repeated without limit.
       storedClass = null;
-      storedDept = null;
       storedAttempts = null;
       if (cleanSubject.toLowerCase() !== 'mathematics') {
         storedSeconds = questions.length * 15;
@@ -86,7 +83,6 @@ export default async function handler(req, res) {
         title,
         subject: cleanSubject,
         class_restriction: storedClass,
-        department_restriction: storedDept,
         time_limit_minutes: storedMinutes,
         time_limit_seconds: storedSeconds,
         attempts_allowed: storedAttempts,
