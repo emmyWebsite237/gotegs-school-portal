@@ -6,13 +6,20 @@
   <title>Manage Lesson Notes | Admin | Go-Tegs</title>
   <link rel="stylesheet" href="/assets/css/style.css" />
   <link rel="stylesheet" href="/assets/css/admin.css" />
-</head>
+<style>
+.term-access-panel{margin:1.25rem 0 1.5rem;padding:1.2rem;border:1px solid #d9e8f7;border-radius:20px;background:#f8fbff}.term-access-head{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start}.term-access-head h2{margin:.2rem 0}.term-access-head p{margin:0;color:#667085;font-size:.82rem}.term-access-status{font-size:.75rem;font-weight:800;color:#667085}.term-access-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin-top:1rem}.term-access-card{display:flex;justify-content:space-between;align-items:center;gap:.8rem;padding:.9rem 1rem;border:1px solid #dbe5ee;border-radius:14px;background:#fff}.term-access-card strong{display:block}.term-access-card small{color:#667085}.term-switch{width:58px;height:32px;border:0;border-radius:999px;background:#cbd5df;padding:3px;cursor:pointer}.term-switch span{display:block;width:26px;height:26px;border-radius:50%;background:#fff;transition:transform .18s}.term-switch.on{background:#16845b}.term-switch.on span{transform:translateX(26px)}.term-access-actions{display:flex;align-items:center;gap:.8rem;margin-top:1rem}.term-access-actions span{font-size:.8rem;font-weight:700}@media(max-width:700px){.term-access-grid{grid-template-columns:1fr}.term-access-head{flex-direction:column}}
+</style></head>
 <body>
   <div id="navbar-placeholder"></div>
   <main class="page-container admin-page">
     <nav class="breadcrumb">Admin / Notes</nav>
     <h1>Manage Lesson Notes</h1>
-    <p>Choose the arm and class you want to manage. Notes continue to use the direct paste/type editor until document-based lesson-note uploads are introduced.</p>
+    <p>Choose the arm and class you want to manage. Lesson-note access is controlled separately below.</p>
+    <section class="term-access-panel" aria-labelledby="termAccessTitle">
+      <div class="term-access-head"><div><span class="admin-eyebrow">Student portal control</span><h2 id="termAccessTitle">Lesson Note Term Access</h2><p>Turn each term on or off globally. Students can only open terms marked ON.</p></div><span id="termAccessStatus" class="term-access-status">Loading…</span></div>
+      <div class="term-access-grid" id="termAccessGrid"></div>
+      <div class="term-access-actions"><button class="btn" id="saveTermAccess" type="button">Save Term Access</button><span id="termAccessMsg" role="status" aria-live="polite"></span></div>
+    </section>
     <ul class="link-grid" aria-label="Lesson note sections">
       <li><a href="jss/index.html">Junior Arm</a></li>
       <li><a href="sss/index.html">Senior Arm</a></li>
@@ -21,5 +28,9 @@
   <div id="footer-placeholder"></div>
   <script src="/assets/js/main.js"></script>
   <script src="/assets/js/notes.js"></script>
+<script>
+(()=>{const grid=document.getElementById('termAccessGrid'),status=document.getElementById('termAccessStatus'),msg=document.getElementById('termAccessMsg'),save=document.getElementById('saveTermAccess');if(!grid)return;let access={'Term 1':true,'Term 2':false,'Term 3':false};function render(){grid.innerHTML=['Term 1','Term 2','Term 3'].map((term,i)=>`<div class="term-access-card"><div><strong>${term}</strong><small>${access[term]?'Students can open this term.':'Students will see Access Denied.'}</small></div><button type="button" class="term-switch ${access[term]?'on':''}" data-term="${term}" aria-pressed="${access[term]}"><span></span></button></div>`).join('');grid.querySelectorAll('.term-switch').forEach(b=>b.onclick=()=>{const t=b.dataset.term;access[t]=!access[t];render()});status.textContent=Object.values(access).filter(Boolean).length+' term'+(Object.values(access).filter(Boolean).length===1?'':'s')+' ON';}async function load(){try{const r=await fetch('/api/term-access');const d=await r.json();if(r.ok&&d.access)access=d.access;render();}catch(e){status.textContent='Could not load access settings';render();}}save.onclick=async()=>{const token=sessionStorage.getItem('gotegs_admin_token')||'';save.disabled=true;msg.textContent='Saving…';try{const r=await fetch('/api/term-access',{method:'PUT',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({access})});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||'Could not save term access.');access=d.access||access;render();msg.textContent='Saved.';msg.style.color='#16845b';}catch(e){msg.textContent=e.message;msg.style.color='#c53030'}finally{save.disabled=false}};load()})();
+</script>
+
 </body>
 </html>

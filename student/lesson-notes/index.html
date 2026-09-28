@@ -19,7 +19,7 @@
     .term-card h2 { margin:0 0 .3rem; font-size:1.1rem; }
     .term-card p { margin:0; font-size:.76rem; }
     .term-arrow { position:absolute; top:1rem; right:1rem; color:#1d63c9; font:800 1rem var(--font-display); }
-    @media(max-width:760px){ .term-grid{grid-template-columns:1fr;} .notes-header{align-items:flex-start;flex-direction:column;} }
+    @media(max-width:760px){ .term-grid{grid-template-columns:1fr;} .notes-header{align-items:flex-start;flex-direction:column;} }.term-locked{opacity:.65;filter:saturate(.65)}
   </style>
 </head>
 <body class="student-shell-page">
@@ -46,13 +46,7 @@
       document.getElementById('classLine').textContent =
         `Showing notes for ${session.class || 'your class'}${session.dept ? ' · ' + session.dept : ''}.`;
       const terms = ['Term 1','Term 2','Term 3'];
-      document.getElementById('termList').innerHTML = terms.map((term, i) => `
-        <a class="term-card" href="/lesson-notes/${sectionFolder}/${classFolder}/term${i + 1}.html" data-portal-interactive data-tilt-card>
-          <span class="term-number">TERM 0${i + 1}</span>
-          <span class="term-arrow">↗</span>
-          <h2>${term}</h2>
-          <p>Open the subjects and notes prepared for this term.</p>
-        </a>`).join('');
+      fetch('/api/term-access').then(r=>r.json()).then(data=>{const access=data.access||{};document.getElementById('termList').innerHTML=terms.map((term,i)=>{const enabled=access[term]===true;return `<a class="term-card ${enabled?'':'term-locked'}" href="/lesson-notes/${sectionFolder}/${classFolder}/term${i + 1}.html" data-term-enabled="${enabled}" data-portal-interactive data-tilt-card><span class="term-number">TERM 0${i + 1}</span><span class="term-arrow">${enabled?'↗':'🔒'}</span><h2>${term}</h2><p>${enabled?'Open the subjects and notes prepared for this term.':'Access denied — this term is currently locked.'}</p></a>`}).join('');document.querySelectorAll('.term-card').forEach(card=>card.addEventListener('click',e=>{if(card.dataset.termEnabled!=='true'){e.preventDefault();alert('Access Denied\n\nReason: This term is currently locked.')}}));}).catch(()=>{document.getElementById('termList').innerHTML='<p>Could not load lesson-note access settings.</p>'});
     }
   </script>
 </body>
