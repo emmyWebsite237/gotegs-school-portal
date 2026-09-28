@@ -29,6 +29,15 @@
   
     .qc-help{padding:.85rem 1rem;border:1px solid #d9e8f7;border-radius:13px;background:#f3f8ff;color:#52677d;font-size:.78rem;line-height:1.5}
     .qc-editor-preview{margin-top:1rem;padding:1rem;border-radius:15px;background:#fff;border:1px dashed #cad9ea;color:#4b6075;font-size:.8rem}
+
+    .qc-import-panel{background:linear-gradient(180deg,#ffffff,#f7fbff)}
+    .qc-import-panel textarea:focus{outline:none;border-color:#0f63c9;box-shadow:0 0 0 3px rgba(15,99,201,.10)}
+    .import-preview-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.55rem;margin:.75rem 0}
+    .import-preview-stat{padding:.7rem;border-radius:12px;background:#f3f7fb;border:1px solid #e0e8ef}
+    .import-preview-stat small{display:block;color:#7b8794;font-size:.58rem;text-transform:uppercase;letter-spacing:.08em}
+    .import-preview-stat strong{display:block;margin-top:.2rem;color:#213246}
+    .import-q{padding:.8rem 0;border-top:1px solid #edf1f5}
+    @media(max-width:700px){.import-preview-grid{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
@@ -40,6 +49,32 @@
     </div>
 
     <div class="qc-wrap">
+      <section class="qc-form qc-import-panel" id="quizImportPanel">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;">
+          <div>
+            <h2 style="margin:0">Run Quiz Code &amp; Preview</h2>
+            <p style="margin:.35rem 0 0;color:var(--slate)">Paste a validated quiz JSON, preview it here, then save it as a Practice Library quiz or a Code Prescribed quiz. This uses the existing quiz API.</p>
+          </div>
+          <span class="qc-code-tag">Quick Import</span>
+        </div>
+        <label for="importCode" style="margin-top:1rem">Quiz Code / JSON</label>
+        <textarea id="importCode" spellcheck="false" style="width:100%;min-height:260px;margin-top:.35rem;padding:.9rem;border:1px solid var(--border);border-radius:12px;background:#101827;color:#e8eef7;font:500 .8rem/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;box-sizing:border-box;" placeholder="Paste your quiz JSON here…"></textarea>
+        <div class="qc-editor-actions" style="justify-content:flex-start">
+          <button type="button" class="qc-copy-btn" id="importSampleBtn">Load 20-question English sample</button>
+          <button type="button" class="qc-edit-btn" id="importPreviewBtn">Preview Quiz Code</button>
+          <button type="button" class="qc-cancel" id="importClearBtn">Clear</button>
+        </div>
+        <div id="importPreview" class="qc-editor-preview" style="display:none"></div>
+        <div id="importSaveBox" style="display:none;margin-top:1rem;padding-top:1rem;border-top:1px solid #dbe4ec">
+          <strong>Save this preview as:</strong>
+          <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.65rem">
+            <button type="button" class="qc-save" id="saveImportLibrary">Practice Library</button>
+            <button type="button" class="qc-edit-btn" id="saveImportCodeOnly">Code Prescribed</button>
+          </div>
+          <p id="importStatus" class="qc-status"></p>
+        </div>
+      </section>
+
       <form class="qc-form" id="qcForm">
         <h2 style="margin-top:0">Create a new test</h2><div class="qc-help">Build the test here. Students will only see the questions after they preview the test and start the countdown.</div>
         <label for="qTitle">Quiz Title</label>
@@ -175,6 +210,79 @@
       try{const res=await fetch('/api/list-quiz-codes?id='+encodeURIComponent(id),{method:'DELETE',headers:authHeaders()});const data=await responseJson(res);if(!res.ok)throw new Error(data.error||'Could not delete test.');loadQuizzes();}catch(err){alert(err.message);}
     }
     function escapeHtml(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+    
+    let importedQuiz = null;
+    const sampleQuizImport = {
+      title:"English Language Practice — 20 Questions",
+      subject:"English Language",
+      class_restriction:null,
+      time_limit_minutes:null,
+      time_limit_seconds:null,
+      attempts_allowed:null,
+      show_answers_after:true,
+      expires_at:null,
+      library_visible:true,
+      questions:[
+        ["Choose the word that is closest in meaning to “rapid”.","Slow","Quick","Weak","Quiet","b"],
+        ["Which sentence is correctly punctuated?","Mary said “I am ready”.","Mary said, “I am ready.”","Mary said “I am ready.”","Mary, said “I am ready.”","b"],
+        ["What is the plural form of “child”?","Childs","Childes","Children","Childrens","c"],
+        ["Identify the adjective in: “The tall boy won the race.”","boy","won","race","tall","d"],
+        ["Choose the correct word: “Neither John nor Peter ___ coming.”","are","were","is","be","c"],
+        ["Which word is an antonym of “ancient”?","Old","Modern","Former","Past","b"],
+        ["Choose the correct spelling.","Definately","Definetely","Definitely","Definatly","c"],
+        ["Which sentence is in the past tense?","She sings every morning.","She is singing now.","She will sing tomorrow.","She sang yesterday.","d"],
+        ["What type of word is “quickly” in “He ran quickly”?","Noun","Adjective","Adverb","Pronoun","c"],
+        ["Choose the correct comparative form of “good”.","Gooder","More good","Best","Better","d"],
+        ["Complete the sentence: “If I ___ enough money, I would buy the laptop.”","have","had","has","having","b"],
+        ["Which word is a pronoun?","Beautiful","Teacher","They","Carefully","c"],
+        ["Choose the correct preposition: “The books are ___ the table.”","on","at","from","by","a"],
+        ["What is the meaning of the idiom “break the ice”?","To destroy something frozen","To start a friendly conversation","To become angry","To end a friendship","b"],
+        ["Choose the sentence with the correct subject–verb agreement.","The boys runs every morning.","The boy run every morning.","The boys run every morning.","The boys running every morning.","c"],
+        ["Which word contains a silent letter?","Table","Knife","Paper","Window","b"],
+        ["Choose the correct question tag: “You are coming, ___?”","aren't you","are you","isn't it","won't you","a"],
+        ["Which sentence is written in the passive voice?","The teacher marked the scripts.","The students answered the questions.","The scripts were marked by the teacher.","The teacher is marking the scripts.","c"],
+        ["Choose the word that completes the sentence: “She has ___ finished her homework.”","already","yesterday","tomorrow","last","a"],
+        ["Which of these is a compound word?","Beautiful","Sunflower","Quickly","Honesty","b"]
+      ].map((x,i)=>({question:x[0],option_a:x[1],option_b:x[2],option_c:x[3],option_d:x[4],correct_option:x[5],order_index:i}))
+    };
+    function normalizeImport(raw){
+      if(!raw || typeof raw!=='object' || !Array.isArray(raw.questions) || !String(raw.title||'').trim()) throw new Error('Quiz code needs a title and a questions array.');
+      if(!raw.questions.length) throw new Error('Add at least one question.');
+      const clean={...raw,title:String(raw.title).trim(),subject:String(raw.subject||'General Practice').trim()||'General Practice',questions:raw.questions.map(q=>({question:String(q?.question||'').trim(),option_a:String(q?.option_a||'').trim(),option_b:String(q?.option_b||'').trim(),option_c:q?.option_c?String(q.option_c).trim():null,option_d:q?.option_d?String(q.option_d).trim():null,correct_option:String(q?.correct_option||'').toLowerCase()}))};
+      clean.questions.forEach((q,i)=>{if(!q.question||!q.option_a||!q.option_b||!['a','b','c','d'].includes(q.correct_option))throw new Error(`Question ${i+1} needs text, options A/B and a valid correct answer.`);});
+      return clean;
+    }
+    function renderImportPreview(q){
+      importedQuiz=q;
+      const elp=document.getElementById('importPreview'),save=document.getElementById('importSaveBox');
+      const visible=q.library_visible!==false;
+      const totalSeconds=String(q.subject).toLowerCase()==='mathematics' ? (q.time_limit_seconds??(q.time_limit_minutes!=null?Number(q.time_limit_minutes)*60:null)) : (visible?q.questions.length*15:(q.time_limit_seconds??(q.time_limit_minutes!=null?Number(q.time_limit_minutes)*60:null)));
+      elp.style.display='block';
+      elp.innerHTML=`<div><strong>${escapeHtml(q.title)}</strong> · ${escapeHtml(q.subject)}</div><div class="import-preview-grid"><div class="import-preview-stat"><small>Questions</small><strong>${q.questions.length}</strong></div><div class="import-preview-stat"><small>Mode</small><strong>${visible?'Practice Library':'Code Prescribed'}</strong></div><div class="import-preview-stat"><small>Time</small><strong>${totalSeconds==null?'No limit':String(totalSeconds)+' seconds'}</strong></div></div>`+
+        q.questions.map((x,i)=>`<div class="import-q"><strong>${i+1}. ${escapeHtml(x.question)}</strong><div style="margin-top:.45rem;display:grid;gap:.25rem">${[['a',x.option_a],['b',x.option_b],['c',x.option_c],['d',x.option_d]].filter(([,v])=>v).map(([k,v])=>`<span><b>${k.toUpperCase()}.</b> ${escapeHtml(v)}${x.correct_option===k?' ✓':''}</span>`).join('')}</div></div>`).join('');
+      save.style.display='block';document.getElementById('importStatus').textContent='';
+    }
+    document.getElementById('importPreviewBtn')?.addEventListener('click',()=>{
+      try{const raw=JSON.parse(document.getElementById('importCode').value);renderImportPreview(normalizeImport(raw));document.getElementById('importStatus').textContent='Preview generated. Choose how this quiz should be published.';document.getElementById('importStatus').style.color='#155eaa';}
+      catch(e){document.getElementById('importPreview').style.display='block';document.getElementById('importPreview').textContent=e.message;document.getElementById('importPreview').style.color='#b42318';document.getElementById('importSaveBox').style.display='none';}
+    });
+    document.getElementById('importSampleBtn')?.addEventListener('click',()=>{document.getElementById('importCode').value=JSON.stringify(sampleQuizImport,null,2);document.getElementById('importPreviewBtn').click();});
+    document.getElementById('importClearBtn')?.addEventListener('click',()=>{document.getElementById('importCode').value='';document.getElementById('importPreview').style.display='none';document.getElementById('importSaveBox').style.display='none';});
+    async function publishImported(asLibrary){
+      if(!importedQuiz)return;
+      const btn=asLibrary?document.getElementById('saveImportLibrary'):document.getElementById('saveImportCodeOnly');
+      const status=document.getElementById('importStatus');btn.disabled=true;btn.textContent='Saving…';status.textContent='';
+      try{
+        const payload={...importedQuiz,library_visible:asLibrary,class_restriction:asLibrary?null:(importedQuiz.class_restriction||null),attempts_allowed:asLibrary?null:(importedQuiz.attempts_allowed??1)};
+        if(asLibrary && String(payload.subject).toLowerCase()!=='mathematics'){payload.time_limit_seconds=payload.questions.length*15;payload.time_limit_minutes=Math.ceil(payload.time_limit_seconds/60);}
+        const r=await fetch('/api/create-quiz-code',{method:'POST',headers:{'Content-Type':'application/json',...authHeaders()},body:JSON.stringify(payload)});const d=await responseJson(r);if(!r.ok)throw new Error(d.error||'Could not create this quiz.');
+        status.style.color='#177a55';status.textContent=`Quiz saved successfully. Generated code: ${d.code}`;loadQuizzes();
+      }catch(e){status.style.color='#b42318';status.textContent=e.message;}
+      finally{btn.disabled=false;btn.textContent=asLibrary?'Practice Library':'Code Prescribed';}
+    }
+    document.getElementById('saveImportLibrary')?.addEventListener('click',()=>publishImported(true));
+    document.getElementById('saveImportCodeOnly')?.addEventListener('click',()=>publishImported(false));
+
     loadQuizzes();
   </script>
 </body>

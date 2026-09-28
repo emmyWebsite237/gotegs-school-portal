@@ -1,24 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" type="image/png" href="/assets/img/logo.png" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="News, announcements and events from Go-Tegs International School."/>
+  <link rel="icon" type="image/png" href="/assets/img/logo.png"/>
   <title>Updates &amp; Events | Go-Tegs International School</title>
-  <link rel="stylesheet" href="/assets/css/style.css" />
+  <link rel="stylesheet" href="/assets/css/public-site.css"/>
 </head>
 <body>
   <div id="navbar-placeholder"></div>
-
-  <main class="page-container">
-    <nav class="breadcrumb">Home / Updates &amp; Events</nav>
-    <h1>Updates &amp; Events</h1>
-    <p>News, announcements and events from Go-Tegs International School.</p>
-    <section id="updates-feed"></section>
+  <main class="public-site">
+    <div class="content-page">
+      <section class="page-intro">
+        <span class="section-kicker">Go-Tegs · School journal</span>
+        <h1>Updates &amp; Events</h1>
+        <div class="page-intro-copy"><p>News, announcements and events from Go-Tegs International School.</p></div>
+      </section>
+      <section id="updates-feed" class="update-grid"><div class="empty-state">Loading school updates…</div></section>
+    </div>
   </main>
-
   <div id="footer-placeholder"></div>
-
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/assets/js/main.js"></script>
   <script src="/assets/js/supabase-config.js"></script>

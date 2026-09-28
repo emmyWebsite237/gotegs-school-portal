@@ -47,7 +47,18 @@ function showAdminGate(){
 function adminGatePassedOrNotNeeded(){return !isAdminPage()||hasAdminAuthSession();}
 
 async function injectPartial(url,targetId){const target=document.getElementById(targetId);if(!target)return;try{const r=await fetch(url);if(!r.ok)throw new Error(`Failed to load ${url}`);target.innerHTML=await r.text();}catch(err){console.error('Partial load error:',err);}}
-function highlightActiveLink(){const path=window.location.pathname;document.querySelectorAll('.nav-links a').forEach(link=>{const href=link.getAttribute('href');if(!href)return;const home=href==='/index.html'&&(path==='/'||path==='/index.html');const section=href!=='/index.html'&&path.startsWith(href.replace('index.html',''));if(home||section)link.classList.add('active');});}
+function highlightActiveLink(){
+  const path=window.location.pathname;
+  document.querySelectorAll('.desktop-nav a, .nav-links a').forEach(link=>{
+    const href=link.getAttribute('href');
+    if(!href)return;
+    const clean=href.split('#')[0];
+    const home=(clean==='/index.html'||clean==='/')&&(path==='/'||path==='/index.html');
+    const section=!home && clean.endsWith('.html') && path===clean;
+    link.classList.toggle('active', home||section);
+    link.classList.toggle('is-active', home||section);
+  });
+}
 function bindFadeMobileMenu({toggleId,drawerId,scrimId,closeId,label}={}){
   const toggle=document.getElementById(toggleId);
   const drawer=document.getElementById(drawerId);
@@ -187,8 +198,8 @@ async function initShell(){const adminPage=isAdminPage(),studentPage=isStudentPr
     initPortalTilt();
     await loadNotesScriptsIfNeeded();
   }else{
-    await injectPartial('/partials/navbar.html','navbar-placeholder');
-    await injectPartial('/partials/footer.html','footer-placeholder');
+    await injectPartial('/partials/navbar.html?v=public-20260928','navbar-placeholder');
+    await injectPartial('/partials/footer.html?v=public-20260928','footer-placeholder');
     highlightActiveLink();wireNavGroups();wireMobileNavigation();setFooterYear();
   }
 }

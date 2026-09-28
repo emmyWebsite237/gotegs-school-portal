@@ -1,48 +1,42 @@
-<!-- Public-site navigation. This shell is intentionally not injected into authenticated student pages. -->
-<aside class="site-sidebar">
-  <a href="/index.html" class="nav-brand">
-    <img src="/assets/img/logo.png" alt="Go-Tegs International School logo" />
-    <span>Go-Tegs<small>International School</small></span>
-  </a>
+<!-- Public site header. This shell is never used inside authenticated student/admin pages. -->
+<header class="site-header">
+  <div class="site-header-inner">
+    <a class="site-brand" href="/index.html" aria-label="Go-Tegs International School home">
+      <span class="site-brand-mark"><img src="/assets/img/logo.png" alt="" /></span>
+      <span><strong>Go-Tegs</strong><small>International School · Lagos</small></span>
+    </a>
 
-  <nav class="nav-links" aria-label="Main">
-    <a href="/index.html">Home</a>
-    <a href="/about.html">About</a>
-    <a href="/updates.html">Updates &amp; Events</a>
-    <a href="/gallery.html">Gallery</a>
-    <a href="/enrolment.html">Enrolment</a>
-    <a href="/student/index.html">Student Portal</a>
-    
-    <a href="/contact.html">Contact</a>
-  </nav>
+    <nav class="desktop-nav" aria-label="Main navigation">
+      <a href="/about.html">About</a>
+      <a href="/updates.html">Updates &amp; Events</a>
+      <a href="/gallery.html">Gallery</a>
+      <a href="/enrolment.html">Enrolment</a>
+      <a href="/faq.html">FAQ</a>
+      <a href="/contact.html">Contact</a>
+    </nav>
 
-  <p class="nav-foot">Training the Leaders of Tomorrow</p>
-</aside>
-
-<header class="site-topbar">
-  <a href="/index.html" class="nav-brand">
-    <img src="/assets/img/logo.png" alt="Go-Tegs International School logo" />
-    <span>Go-Tegs<small>International School</small></span>
-  </a>
-  <button class="nav-toggle" id="nav-toggle" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+    <div class="header-actions">
+      <a class="gt-button gt-button--outline portal-button" href="/student/index.html">Student Portal</a>
+      <a class="gt-button gt-button--primary enrol-button" href="/enrolment.html">Enrol now</a>
+      <button class="menu-button" id="nav-toggle" type="button" aria-label="Open site menu" aria-controls="nav-drawer" aria-expanded="false">☰</button>
+    </div>
+  </div>
 </header>
 
-<div class="nav-scrim" id="nav-scrim"></div>
-
-<aside class="nav-drawer" id="nav-drawer">
-  <div class="nav-drawer-head">
+<div class="mobile-scrim" id="nav-scrim" aria-hidden="true"></div>
+<aside class="mobile-menu" id="nav-drawer" aria-label="Mobile site menu" aria-hidden="true">
+  <div class="mobile-menu-head">
     <span>Menu</span>
-    <button class="nav-drawer-close" id="nav-drawer-close" aria-label="Close menu">&times;</button>
+    <button class="gt-button gt-button--outline" id="nav-drawer-close" type="button" aria-label="Close site menu">×</button>
   </div>
-
-  <nav class="nav-links" aria-label="Mobile">
-    <a href="/index.html">Home</a>
-    <a href="/about.html">About</a>
-    <a href="/updates.html">Updates &amp; Events</a>
-    <a href="/gallery.html">Gallery</a>
-    <a href="/enrolment.html">Enrolment</a>
-    <a href="/student/index.html">Student Portal</a>
-    
-    <a href="/contact.html">Contact</a>
+  <nav aria-label="Mobile navigation">
+    <a href="/index.html"><span>01</span>Home</a>
+    <a href="/about.html"><span>02</span>About</a>
+    <a href="/updates.html"><span>03</span>Updates &amp; Events</a>
+    <a href="/gallery.html"><span>04</span>Gallery</a>
+    <a href="/enrolment.html"><span>05</span>Enrolment</a>
+    <a href="/faq.html"><span>06</span>FAQ</a>
+    <a href="/contact.html"><span>07</span>Contact</a>
   </nav>
+  <a class="mobile-portal" href="/student/index.html">Enter Student Portal</a>
 </aside>
