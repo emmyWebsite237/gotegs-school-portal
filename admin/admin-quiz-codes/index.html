@@ -48,7 +48,7 @@
         <input type="text" id="qSubject" placeholder="e.g. English Language" required />
         <div class="qc-help" style="margin-top:.65rem">Practice Library rules: any class, unlimited attempts. Every non-Mathematics practice quiz gets 15 seconds per question automatically. Mathematics keeps the time you set below.</div>
         <div class="qc-settings-grid">
-          <div><label for="qClass">Restrict to Class (code-only tests)</label><input type="text" id="qClass" placeholder="Leave blank for any class" /></div>
+          <div><label for="qClass">Restrict to Class / Section (code-only tests)</label><input type="text" id="qClass" placeholder="e.g. JSS or JSS 2" /><small style="display:block;margin-top:.35rem;color:#667085;line-height:1.45">Prefix matching: J, JS, or JSS gives access to JSS 1–3. Enter JSS 2 for JSS 2 only. Spaces and letter case are ignored.</small></div>
           <div><label for="qTimeLimit">Time Limit (minutes) — Mathematics / code-only</label><input type="number" id="qTimeLimit" min="1" placeholder="15 sec/question for library" /></div>
           <div><label for="qAttempts">Attempts Allowed (code-only)</label><input type="number" id="qAttempts" min="1" value="1" /></div>
           <div><label for="qShowAnswers">Show Answers After Submitting?</label><select id="qShowAnswers"><option value="true">Yes</option><option value="false">No</option></select></div><div><label for="qLibraryVisible">Practice Library</label><select id="qLibraryVisible"><option value="true">Visible to students</option><option value="false">Code-only / prescribed</option></select></div>
@@ -73,7 +73,7 @@
           <label for="editSubject">Subject</label><input type="text" id="editSubject" required />
           <div class="qc-help" style="margin-top:.65rem">Practice Library rules: any class, unlimited attempts. Every non-Mathematics practice quiz gets 15 seconds per question automatically. Mathematics keeps the time you set.</div>
           <div class="qc-settings-grid">
-            <div><label for="editClass">Restrict to Class (code-only tests)</label><input type="text" id="editClass" /></div>
+            <div><label for="editClass">Restrict to Class / Section (code-only tests)</label><input type="text" id="editClass" placeholder="e.g. JSS or JSS 2" /><small style="display:block;margin-top:.35rem;color:#667085;line-height:1.45">Prefix matching: J, JS, or JSS gives access to JSS 1–3. Enter JSS 2 for JSS 2 only. Spaces and letter case are ignored.</small></div>
             <div><label for="editTime">Time Limit (minutes) — Mathematics / code-only</label><input type="number" id="editTime" min="1" /></div>
             <div><label for="editAttempts">Attempts Allowed (code-only)</label><input type="number" id="editAttempts" min="1" /></div>
             <div><label for="editShowAnswers">Show Answers After Submitting?</label><select id="editShowAnswers"><option value="true">Yes</option><option value="false">No</option></select></div><div><label for="editLibraryVisible">Practice Library</label><select id="editLibraryVisible"><option value="true">Visible to students</option><option value="false">Code-only / prescribed</option></select></div>

@@ -13,6 +13,14 @@ export default async function handler(req, res) {
     const cleanClass = String(studentClass || '').trim();
     const cleanDepartment = String(studentDepartment || '').trim();
     const norm = v => String(v || '').trim().toLowerCase().replace(/\s+/g, ' ');
+    // Class restrictions are prefix-based so an admin can enter J, JS, JSS,
+    // S, SS, SSS, or a specific class such as JSS 2. Spaces are ignored for
+    // matching (e.g. JSS 2 matches JSS2).
+    const classMatchesRestriction = (studentValue, restriction) => {
+      const student = norm(studentValue).replace(/\s+/g, '');
+      const allowed = norm(restriction).replace(/\s+/g, '');
+      return !allowed || student.startsWith(allowed);
+    };
 
     // Student practice library: safe metadata only; answers and codes are never exposed.
     if (String(library || '') === '1') {
@@ -60,7 +68,7 @@ export default async function handler(req, res) {
     if (!quiz) return res.status(404).json({ error: "That quiz could not be found." });
     if (quiz_id && quiz.library_visible !== true) return res.status(403).json({ error: "That quiz is not available in the practice library." });
     if (quiz.expires_at && new Date(quiz.expires_at) < new Date()) return res.status(403).json({ error: "This quiz has expired." });
-    if (quiz.class_restriction && norm(quiz.class_restriction) !== norm(cleanClass)) return res.status(403).json({ error: `This quiz is only available to ${quiz.class_restriction} students.` });
+    if (quiz.class_restriction && !classMatchesRestriction(cleanClass, quiz.class_restriction)) return res.status(403).json({ error: `This quiz is only available to classes starting with “${quiz.class_restriction}”.` });
     if (quiz.department_restriction && norm(quiz.department_restriction) !== norm(cleanDepartment)) return res.status(403).json({ error: `This quiz is only available to ${quiz.department_restriction} students.` });
 
     const { count, error: countError } = await supabase.from('quiz_code_attempts').select('*', { count: 'exact', head: true }).eq('quiz_code_id', quiz.id).eq('student_id', cleanStudentId);

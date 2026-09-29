@@ -26,6 +26,38 @@ export default async function handler(req, res) {
     if (quizError) throw quizError;
     if (!quiz) return res.status(404).json({ error: "Quiz not found." });
 
+    const norm = v => String(v || '').trim().toLowerCase().replace(/\s+/g, ' ');
+    const classMatchesRestriction = (studentValue, restriction) => {
+      const student = norm(studentValue).replace(/\s+/g, '');
+      const allowed = norm(restriction).replace(/\s+/g, '');
+      return !allowed || student.startsWith(allowed);
+    };
+
+    // Resolve the student's real class from the database rather than trusting a
+    // browser-provided class value. This keeps class restrictions enforceable.
+    let studentClass = null;
+    const { data: jssStudent, error: jssStudentError } = await supabase
+      .from('jss_students')
+      .select('class')
+      .eq('student_id', student_id)
+      .maybeSingle();
+    if (jssStudentError) throw jssStudentError;
+    if (jssStudent?.class) studentClass = jssStudent.class;
+    if (!studentClass) {
+      const { data: sssStudent, error: sssStudentError } = await supabase
+        .from('sss_students')
+        .select('class')
+        .eq('student_id', student_id)
+        .maybeSingle();
+      if (sssStudentError) throw sssStudentError;
+      if (sssStudent?.class) studentClass = sssStudent.class;
+    }
+    if (!studentClass) return res.status(403).json({ error: 'Your student class could not be verified.' });
+
+    if (quiz.class_restriction && !classMatchesRestriction(studentClass, quiz.class_restriction)) {
+      return res.status(403).json({ error: `This quiz is only available to classes starting with “${quiz.class_restriction}”.` });
+    }
+
     // Re-check attempts server-side in case of a race (e.g. two tabs open)
     const { count, error: countError } = await supabase
       .from('quiz_code_attempts')
@@ -56,16 +88,11 @@ export default async function handler(req, res) {
       const selected = answerMap[q.id] || null;
       const isCorrect = selected === q.correct_option;
       if (isCorrect) score++;
-      const selectedOptionText = selected ? q[`option_${selected}`] || null : null;
-      const correctOptionText = q.correct_option ? q[`option_${q.correct_option}`] || null : null;
-
       return {
         question_id: q.id,
         question: q.question,
         selected,
-        selected_option_text: selectedOptionText,
         correct_option: q.correct_option,
-        correct_option_text: correctOptionText,
         explanation: q.explanation || 'No explanation was provided for this question.',
         is_correct: isCorrect,
       };
