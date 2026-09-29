@@ -45,10 +45,10 @@ export default async function handler(req, res) {
         .order('created_at', { ascending: false }),
       supabase
         .from('jss_students')
-        .select('student_id,full_name,class,dept'),
+        .select('student_id,full_name,class'),
       supabase
         .from('sss_students')
-        .select('student_id,full_name,class,dept')
+        .select('student_id,full_name,class')
     ]);
 
     for (const result of [attemptsResult, quizzesResult, jssResult, sssResult]) {
@@ -60,7 +60,6 @@ export default async function handler(req, res) {
       studentMap.set(String(row.student_id), {
         full_name: text(row.full_name, 'Unknown student'),
         class: text(row.class, '—'),
-        dept: text(row.dept, ''),
       });
     }
 
@@ -78,7 +77,6 @@ export default async function handler(req, res) {
         student_id: studentId,
         student_name: student?.full_name || 'Unknown student',
         class: student?.class || '—',
-        dept: student?.dept || '',
         quiz_id: quizId,
         quiz_code: quiz?.code || '—',
         test_title: quiz?.title || 'Deleted test',
