@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Lesson Note | Go-Tegs International School</title>
   <link rel="stylesheet" href="/assets/css/style.css" />
-  <link rel="stylesheet" href="/assets/css/portal.css" />
+  <link rel="stylesheet" href="/assets/css/public-site.css" />
+  <link rel="stylesheet" href="/assets/css/lesson-notes-public.css" />
   <style>
     .document-preview{margin-top:1.25rem;background:var(--paper,#fff);border:1px solid var(--border,#e5e7eb);border-radius:var(--radius,18px);overflow:hidden;box-shadow:0 10px 30px rgba(15,23,42,.06)}
     .document-preview-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.9rem 1rem;border-bottom:1px solid var(--border,#e5e7eb);background:#fff;flex-wrap:wrap}
@@ -16,7 +17,7 @@
     @media(max-width:700px){.document-preview-frame{min-height:70vh;height:70vh}.document-preview-head{align-items:flex-start}}
   </style>
 </head>
-<body class="student-shell-page">
+<body>
   <div id="navbar-placeholder"></div>
 
   <main class="page-container">
@@ -27,12 +28,10 @@
     <section class="document-preview" aria-label="Lesson note document preview">
       <div class="document-preview-head">
         <small id="documentName">Lesson note</small>
-        <a id="openDocument" href="#" target="_blank" rel="noopener">Open document</a>
       </div>
       <iframe id="documentFrame" class="document-preview-frame" title="Lesson note preview" allowfullscreen></iframe>
       <div id="documentFallback" class="document-fallback" hidden>
-        The document preview could not be displayed here. You can open the original document instead.
-        <br><a id="fallbackLink" href="#" target="_blank" rel="noopener">Open lesson note</a>
+        The document preview could not be displayed here. Please return to the lesson-note list and try again.
       </div>
     </section>
   </main>
@@ -80,8 +79,6 @@
     document.getElementById('noteMeta').textContent = 'Lesson note document';
     document.getElementById('noteBreadcrumb').textContent = `Home / Lesson Notes / ${className} / ${term} / ${subject}`;
     document.getElementById('documentName').textContent = `${subject}.docx`;
-    document.getElementById('openDocument').href = url;
-    document.getElementById('fallbackLink').href = url;
 
     // The DOCX is hosted by the same deployed site. Microsoft Office Online renders
     // the document without exposing the GitHub raw-file URL to students.
