@@ -445,21 +445,61 @@ body:not(.student-shell-page):not(.admin-shell-page) {
 }
 
 
-/* Footer compatibility: same current footer used by the other public pages. */
+/* Footer compatibility: keep this block self-contained so the homepage does
+   not depend on public-site.css just to define the footer's color variables. */
 /* Footer */
-.site-footer-new { background: var(--gt-navy); color: #fff; padding: 3.5rem 1.25rem 1.5rem; border-top: 5px solid var(--gt-sun); }
-.footer-main { max-width: var(--gt-wrap); margin: 0 auto; display: grid; gap: 2rem; }
+.site-footer-new {
+  background: var(--gt-navy, #0a2c5c);
+  color: #fff;
+  padding: 3.5rem 1.25rem 1.5rem;
+  border-top: 5px solid var(--gt-sun, #ffc93c);
+}
+.footer-main {
+  max-width: var(--gt-wrap, 1200px);
+  margin: 0 auto;
+  display: grid;
+  gap: 2rem;
+}
 @media (min-width: 860px) { .footer-main { grid-template-columns: 1.4fr 1fr 1.2fr; } }
 .footer-brand { display: flex; gap: 1rem; align-items: flex-start; }
 .footer-brand img { width: 60px; height: 60px; background: #fff; border-radius: 50%; padding: 4px; }
 .footer-brand h2 { color: #fff !important; font-size: 1.25rem; }
-.footer-main h3 { color: var(--gt-sun) !important; font-family: var(--gt-sans) !important; font-size: .78rem; letter-spacing: .14em; text-transform: uppercase; margin-bottom: .9rem; }
+.footer-main h3 {
+  color: var(--gt-sun, #ffc93c) !important;
+  font-family: var(--gt-sans, "IBM Plex Sans", system-ui, sans-serif) !important;
+  font-size: .78rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  margin-bottom: .9rem;
+}
 .footer-main a { display: block; padding: .2rem 0; color: rgba(255,255,255,.8); font-size: .92rem; }
-.footer-main a:hover { color: var(--gt-sun); }
+.footer-main a:hover { color: var(--gt-sun, #ffc93c); }
 .footer-main p { color: rgba(255,255,255,.7) !important; font-size: .9rem; margin-top: .5rem; }
-.footer-bottom-new { max-width: var(--gt-wrap); margin: 2.5rem auto 0; padding-top: 1.25rem; border-top: 1px solid rgba(255,255,255,.14); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; font-size: .8rem; color: rgba(255,255,255,.6); }
+.footer-bottom-new {
+  max-width: var(--gt-wrap, 1200px);
+  margin: 2.5rem auto 0;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(255,255,255,.14);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: .8rem;
+  color: rgba(255,255,255,.6);
+}
 .footer-bottom-new div { display: flex; gap: .5rem; }
-.footer-bottom-new div a { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,.1); color: #fff; }
-.footer-bottom-new div a:hover { background: var(--gt-sun); color: var(--gt-navy); }
+.footer-bottom-new div a {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.1);
+  color: #fff;
+}
+.footer-bottom-new div a:hover {
+  background: var(--gt-sun, #ffc93c);
+  color: var(--gt-navy, #0a2c5c);
+}
 
 

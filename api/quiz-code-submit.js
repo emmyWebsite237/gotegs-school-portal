@@ -56,11 +56,16 @@ export default async function handler(req, res) {
       const selected = answerMap[q.id] || null;
       const isCorrect = selected === q.correct_option;
       if (isCorrect) score++;
+      const selectedOptionText = selected ? q[`option_${selected}`] || null : null;
+      const correctOptionText = q.correct_option ? q[`option_${q.correct_option}`] || null : null;
+
       return {
         question_id: q.id,
         question: q.question,
         selected,
+        selected_option_text: selectedOptionText,
         correct_option: q.correct_option,
+        correct_option_text: correctOptionText,
         explanation: q.explanation || 'No explanation was provided for this question.',
         is_correct: isCorrect,
       };
