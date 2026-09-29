@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiz Attempts | Admin | Go-Tegs</title>
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <link rel="stylesheet" href="/assets/css/admin.css" />
+  <style>
+    .qa-wrap{max-width:1180px;margin:0 auto;padding:2.2rem 1rem 4rem;position:relative;z-index:1}
+    .qa-head{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;margin-bottom:1rem}.qa-head h1{margin:0;color:var(--admin-ink);font-size:clamp(2rem,4vw,3.05rem);letter-spacing:-.04em}.qa-head p{margin:.35rem 0 0;max-width:800px;color:var(--admin-muted);font-size:.82rem}
+    .qa-refresh{border:1px solid var(--admin-line);background:#fff;color:var(--admin-blue-dark);border-radius:12px;padding:.65rem .82rem;font:800 .7rem var(--font-display);cursor:pointer;box-shadow:0 8px 22px rgba(16,54,104,.07)}.qa-refresh:hover{background:var(--admin-blue-soft)}
+    .qa-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.85rem;margin:1.2rem 0}.qa-stat{padding:1rem 1.05rem;border:1px solid var(--admin-line);border-radius:18px;background:linear-gradient(145deg,#fff,#f5f9ff);box-shadow:var(--admin-shadow)}.qa-stat small{display:block;color:#7b8b99;text-transform:uppercase;letter-spacing:.08em;font:800 .58rem var(--font-display)}.qa-stat strong{display:block;margin-top:.2rem;color:var(--admin-ink);font:900 1.7rem var(--font-display)}
+    .qa-panel{border:1px solid var(--admin-line);border-radius:22px;background:rgba(255,255,255,.95);box-shadow:var(--admin-shadow);overflow:hidden}.qa-toolbar{display:flex;gap:.65rem;align-items:center;flex-wrap:wrap;padding:1rem;border-bottom:1px solid #e8eef5;background:linear-gradient(180deg,#fbfdff,#f7fbff)}.qa-search{flex:1;min-width:240px}.qa-toolbar input,.qa-toolbar select{box-sizing:border-box;width:100%;padding:.72rem .8rem;border:1px solid #dce7f5;border-radius:11px;background:#fff;color:#233b52;font:600 .72rem var(--font-display)}.qa-toolbar select{width:auto;min-width:180px}.qa-count{margin-left:auto;color:#7b8b99;font:800 .67rem var(--font-display)}
+    .qa-table-wrap{overflow:auto}.qa-table{width:100%;min-width:900px;border-collapse:collapse}.qa-table th,.qa-table td{padding:.82rem .8rem;border-bottom:1px solid #edf1f5;text-align:left;vertical-align:middle}.qa-table th{background:#f7fbff;color:#687b8e;font:800 .61rem var(--font-display);letter-spacing:.07em;text-transform:uppercase;white-space:nowrap;position:sticky;top:0;z-index:1}.qa-table td{color:#334c61;font-size:.73rem}.qa-student{font:900 .76rem var(--font-display);color:#173149}.qa-sub{margin-top:.18rem;color:#8a9aa7;font-size:.62rem}.qa-test{font:800 .73rem var(--font-display);color:#193d62}.qa-code{display:inline-block;margin-top:.2rem;padding:.18rem .4rem;border-radius:999px;background:#eef5ff;color:#1b5aa9;font:900 .56rem var(--font-display);letter-spacing:.05em}.qa-bar-cell{min-width:160px}.qa-bar-row{display:flex;align-items:center;gap:.55rem}.qa-bar-track{position:relative;flex:1;height:10px;border-radius:999px;background:#eaf0f6;overflow:hidden}.qa-bar-fill{height:100%;min-width:4px;border-radius:inherit;background:linear-gradient(90deg,var(--admin-cyan),var(--admin-blue))}.qa-bar-count{min-width:30px;text-align:right;color:#173149;font:900 .72rem var(--font-display)}.qa-score{font:900 .72rem var(--font-display);color:#173149}.qa-date{white-space:nowrap;color:#6d8090;font-size:.67rem}.qa-empty,.qa-status{padding:2rem;text-align:center;color:#80909d;font-size:.78rem}.qa-error{color:#b42318}.qa-note{margin-top:.7rem;color:#8996a1;font-size:.68rem}.qa-reset{border:0;background:transparent;color:#1a62b3;font:800 .68rem var(--font-display);cursor:pointer;padding:.25rem}.qa-reset:hover{text-decoration:underline}
+    @media(max-width:760px){.qa-head{align-items:flex-start;flex-direction:column}.qa-stats{grid-template-columns:1fr}.qa-toolbar{align-items:stretch}.qa-toolbar select{width:100%}.qa-count{margin-left:0}.qa-wrap{padding-top:1.5rem}}
+  </style>
+</head>
+<body class="admin-page-mode">
+  <main class="qa-wrap">
+    <div class="qa-head">
+      <div>
+        <div class="breadcrumb">Admin / Quiz Attempts</div>
+        <h1>Quiz Attempts</h1>
+        <p>See who has taken each test, how many times each student has taken it, the test involved, and the latest recorded score.</p>
+      </div>
+      <button id="refreshBtn" class="qa-refresh" type="button">↻ Refresh data</button>
+    </div>
+
+    <section class="qa-stats" aria-label="Quiz attempt summary">
+      <article class="qa-stat"><small>Total recorded attempts</small><strong id="totalAttempts">—</strong></article>
+      <article class="qa-stat"><small>Students who have taken tests</small><strong id="uniqueStudents">—</strong></article>
+      <article class="qa-stat"><small>Different tests attempted</small><strong id="uniqueTests">—</strong></article>
+    </section>
+
+    <section class="qa-panel">
+      <div class="qa-toolbar">
+        <div class="qa-search"><input id="searchInput" type="search" placeholder="Search student, test, subject or quiz code…" autocomplete="off" /></div>
+        <select id="classFilter" aria-label="Filter by class"><option value="all">All classes</option></select>
+        <select id="testFilter" aria-label="Filter by test"><option value="all">All tests</option></select>
+        <button id="resetBtn" class="qa-reset" type="button">Reset filters</button>
+        <span id="rowCount" class="qa-count">0 records</span>
+      </div>
+      <div class="qa-table-wrap">
+        <table class="qa-table">
+          <thead><tr><th>Student</th><th>Class</th><th>Test done</th><th>Subject</th><th>Times taken</th><th>Latest score</th><th>Last submitted</th></tr></thead>
+          <tbody id="tableBody"><tr><td colspan="7" class="qa-status">Loading quiz attempt records…</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+    <p class="qa-note">The “Times taken” bar compares each student’s attempts for that particular test against the highest count currently recorded.</p>
+  </main>
+
+  <script src="/assets/js/main.js"></script>
+  <script>
+    (() => {
+      const $ = id => document.getElementById(id);
+      const state = { rows: [], tests: [], maxAttempts: 1 };
+      const token = () => sessionStorage.getItem('gotegs_admin_token') || '';
+      const esc = value => String(value ?? '').replace(/[&<>'"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
+      const percent = (score,total) => total > 0 ? Math.round((Number(score)/Number(total))*100) : 0;
+      const dateText = value => { if (!value) return '—'; const d = new Date(value); return Number.isNaN(d.getTime()) ? '—' : d.toLocaleString([], {year:'numeric',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}); };
+
+      async function load() {
+        $('tableBody').innerHTML = '<tr><td colspan="7" class="qa-status">Loading quiz attempt records…</td></tr>';
+        try {
+          const res = await fetch('/api/admin-quiz-attempts', { headers: { Authorization: 'Bearer ' + token() }, cache: 'no-store' });
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok) throw new Error(data.error || 'Could not load quiz attempt records.');
+          state.rows = Array.isArray(data.rows) ? data.rows : [];
+          state.tests = Array.isArray(data.tests) ? data.tests : [];
+          state.maxAttempts = Math.max(1, Number(data.summary?.max_attempts_per_student_test || 1));
+          $('totalAttempts').textContent = Number(data.summary?.total_attempts || 0).toLocaleString();
+          $('uniqueStudents').textContent = Number(data.summary?.unique_students || 0).toLocaleString();
+          $('uniqueTests').textContent = Number(data.summary?.unique_tests || 0).toLocaleString();
+          populateFilters();
+          render();
+        } catch (err) {
+          $('tableBody').innerHTML = `<tr><td colspan="7" class="qa-status qa-error">${esc(err.message)}</td></tr>`;
+          $('rowCount').textContent = 'Unable to load';
+        }
+      }
+
+      function populateFilters() {
+        const currentClass = $('classFilter').value;
+        const currentTest = $('testFilter').value;
+        const classes = [...new Set(state.rows.map(r => r.class).filter(Boolean))].sort((a,b) => a.localeCompare(b));
+        $('classFilter').innerHTML = '<option value="all">All classes</option>' + classes.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
+        $('classFilter').value = classes.includes(currentClass) ? currentClass : 'all';
+        $('testFilter').innerHTML = '<option value="all">All tests</option>' + state.tests.map(t => `<option value="${esc(t.id)}">${esc(t.title)}${t.code ? ' · '+esc(t.code) : ''}</option>`).join('');
+        $('testFilter').value = state.tests.some(t => String(t.id) === currentTest) ? currentTest : 'all';
+      }
+
+      function filteredRows() {
+        const q = $('searchInput').value.trim().toLowerCase();
+        const klass = $('classFilter').value;
+        const test = $('testFilter').value;
+        return state.rows.filter(r => {
+          if (klass !== 'all' && r.class !== klass) return false;
+          if (test !== 'all' && String(r.quiz_id) !== String(test)) return false;
+          if (!q) return true;
+          return [r.student_name,r.student_id,r.class,r.dept,r.test_title,r.subject,r.quiz_code].some(v => String(v || '').toLowerCase().includes(q));
+        });
+      }
+
+      function render() {
+        const rows = filteredRows();
+        $('rowCount').textContent = `${rows.length.toLocaleString()} record${rows.length === 1 ? '' : 's'}`;
+        if (!rows.length) {
+          $('tableBody').innerHTML = '<tr><td colspan="7" class="qa-empty">No quiz attempt records match these filters.</td></tr>';
+          return;
+        }
+        $('tableBody').innerHTML = rows.map(r => {
+          const width = Math.max(4, Math.round((Number(r.attempts) / state.maxAttempts) * 100));
+          const score = r.latest_total > 0 ? `${Number(r.latest_score)}/${Number(r.latest_total)} <span class="qa-sub">(${percent(r.latest_score,r.latest_total)}%)</span>` : '—';
+          return `<tr>
+            <td><div class="qa-student">${esc(r.student_name)}</div><div class="qa-sub">${esc(r.student_id)}</div></td>
+            <td>${esc(r.class)}${r.dept ? `<div class="qa-sub">${esc(r.dept)}</div>` : ''}</td>
+            <td><div class="qa-test">${esc(r.test_title)}</div><span class="qa-code">${esc(r.quiz_code)}</span></td>
+            <td>${esc(r.subject)}</td>
+            <td class="qa-bar-cell"><div class="qa-bar-row"><div class="qa-bar-track" title="${Number(r.attempts)} attempt${Number(r.attempts)===1?'':'s'}"><div class="qa-bar-fill" style="width:${width}%"></div></div><span class="qa-bar-count">${Number(r.attempts).toLocaleString()}×</span></div></td>
+            <td class="qa-score">${score}</td>
+            <td class="qa-date">${esc(dateText(r.latest_submitted_at))}</td>
+          </tr>`;
+        }).join('');
+      }
+
+      ['searchInput','classFilter','testFilter'].forEach(id => $(id).addEventListener(id === 'searchInput' ? 'input' : 'change', render));
+      $('resetBtn').addEventListener('click', () => { $('searchInput').value=''; $('classFilter').value='all'; $('testFilter').value='all'; render(); });
+      $('refreshBtn').addEventListener('click', load);
+      document.addEventListener('gotegs:admin-authenticated', load, { once: true });
+    })();
+  </script>
+</body>
+</html>
