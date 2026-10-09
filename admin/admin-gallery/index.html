@@ -21,20 +21,21 @@
     .cloud-note{margin:.7rem 0 0;padding:.75rem .85rem;border-radius:10px;background:#eef7ff;color:#47637d;font-size:.75rem;line-height:1.55}
     .gallery-admin-actions{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;margin-top:1rem}
     .gallery-status{min-height:1.1rem;font-size:.8rem;font-weight:700}
-    .gallery-list{display:grid;gap:.8rem;margin-top:1rem}
-    .gallery-row{display:grid;grid-template-columns:170px 1fr auto;gap:1rem;align-items:center;padding:.8rem;border:1px solid var(--border);border-radius:14px;background:#fff}
-    .gallery-thumb{width:170px;height:112px;object-fit:cover;border-radius:10px;background:#edf3f8;display:block;-webkit-user-drag:none;user-select:none}
-    .gallery-meta h3{margin:0;font:800 .95rem var(--font-display);color:#17344e}
+    .gallery-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:.75rem;margin-top:1rem}
+    .gallery-row{display:flex;flex-direction:column;align-items:stretch;gap:.6rem;min-width:0;padding:.65rem;border:1px solid var(--border);border-radius:12px;background:#fff;box-shadow:0 4px 14px rgba(35,45,55,.05)}
+    .gallery-thumb{width:100%;height:126px;object-fit:cover;border-radius:8px;background:#edf3f8;display:block;-webkit-user-drag:none;user-select:none}
+    .gallery-meta{min-width:0}.gallery-meta h3{margin:0;font:800 .9rem var(--font-display);color:#17344e}
     .gallery-meta p{margin:.25rem 0;color:#708398;font-size:.72rem;line-height:1.5;word-break:break-word}
-    .gallery-code{font:500 .7rem ui-monospace,SFMono-Regular,Menlo,monospace;color:#53708a}
-    .gallery-row-actions{display:flex;gap:.45rem;flex-wrap:wrap;justify-content:flex-end}
+    .gallery-code{font:500 .65rem ui-monospace,SFMono-Regular,Menlo,monospace;color:#53708a;overflow-wrap:anywhere;max-height:2.5em;overflow:hidden}
+    .gallery-row-actions{display:flex;gap:.35rem;flex-wrap:wrap;justify-content:flex-start;margin-top:auto}
     .gallery-row-actions button{border:1px solid #d6e0ea;border-radius:9px;padding:.52rem .7rem;background:#fff;font:800 .72rem var(--font-display);cursor:pointer}
     .gallery-row-actions .danger{color:#b42318;border-color:#f3b8b1;background:#fff8f7}
     .gallery-row-actions .publish{color:#0b5eb7;border-color:#b8d5ee;background:#f4f9ff}
     .gallery-row-actions .published{color:#16794c;border-color:#bfe3cf;background:#f2fbf5}
     .gallery-empty{padding:2rem;text-align:center;border:1px dashed #cbd9e5;border-radius:14px;color:#74879a;font-size:.82rem}
     .gallery-editing{outline:2px solid #75aee8;outline-offset:0}
-    @media(max-width:850px){.gallery-admin-grid{grid-template-columns:1fr}.gallery-row{grid-template-columns:1fr}.gallery-thumb{width:100%;height:190px}.gallery-row-actions{justify-content:flex-start}.gallery-admin-hero{flex-direction:column}}
+    @media(max-width:850px){.gallery-admin-grid{grid-template-columns:1fr}.gallery-thumb{height:150px}.gallery-admin-hero{flex-direction:column}}
+    .upload-panel{margin-top:1rem;padding:1rem;border:1px dashed #c7d4df;border-radius:14px;background:#fbfcfd}.upload-panel h2{margin:0 0 .35rem;font-size:1.05rem}.upload-panel p{margin:.25rem 0 .8rem;color:#61758a;font-size:.8rem;line-height:1.55}.upload-controls{display:flex;gap:.65rem;align-items:center;flex-wrap:wrap}.upload-controls input[type=file]{max-width:100%;padding:.6rem;background:#fff;border:1px solid #d5e0ea;border-radius:10px}.upload-progress{height:8px;background:#e7edf3;border-radius:99px;overflow:hidden;margin-top:.75rem}.upload-progress span{display:block;width:0;height:100%;background:#8a6846;transition:width .2s}.upload-previews{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:.5rem;margin-top:.75rem}.upload-previews img{width:100%;height:78px;object-fit:cover;border-radius:8px;border:1px solid #e0e6ec}.upload-previews small{display:block;font-size:.65rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#667788}
   </style>
 </head>
 <body>
@@ -47,12 +48,23 @@
       <div>
         <span class="admin-eyebrow" style="color:#a9d6ff;">Cloudinary gallery</span>
         <h1>Manage School Gallery</h1>
-        <p>Upload the actual image in Cloudinary first. Then enter the Cloudinary cloud name and Public ID here. The site automatically builds the delivery link, stores it, and displays it on the public gallery.</p>
+        <p>Upload school photos directly from your device. Images are saved to Cloudinary and listed below as small, tidy tiles for easy management.</p>
       </div>
       <a class="btn" href="https://console.cloudinary.com/" target="_blank" rel="noopener" style="white-space:nowrap;background:#fff;color:#0b4e91;">Open Cloudinary</a>
     </section>
 
     <section class="gallery-admin-card">
+      <section class="upload-panel" aria-labelledby="uploadHeading">
+        <h2 id="uploadHeading">Upload photos from your device</h2>
+        <p>Select one or several JPG, PNG, WebP or GIF images. They will upload to Cloudinary and be added to the school gallery automatically. Uploads use your unsigned preset; no API secret is stored in this page.</p>
+        <div class="upload-controls">
+          <input id="galleryFiles" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif" multiple />
+          <button class="btn" type="button" id="uploadFilesBtn">Upload selected photos</button>
+          <span id="uploadStatus" class="gallery-status" role="status" aria-live="polite"></span>
+        </div>
+        <div class="upload-progress" aria-hidden="true"><span id="uploadProgressBar"></span></div>
+        <div id="uploadPreviews" class="upload-previews"></div>
+      </section>
       <form id="galleryForm">
         <input type="hidden" id="editId" />
         <div class="gallery-admin-grid">
@@ -63,10 +75,10 @@
             <input id="altText" type="text" maxlength="240" placeholder="Go-Tegs students at sports day" />
           </label>
           <label>Cloudinary cloud name
-            <input id="cloudName" type="text" maxlength="120" placeholder="your-cloud-name" required />
+            <input id="cloudName" type="text" maxlength="120" value="euzmro0n" required />
           </label>
           <label>Cloudinary Public ID
-            <input id="publicId" type="text" maxlength="500" placeholder="school/gallery/sports-day-01" required />
+            <input id="publicId" type="text" maxlength="500" placeholder="Filled automatically after upload" required />
           </label>
           <label>Display order
             <input id="displayOrder" type="number" min="0" step="1" value="0" />
@@ -81,7 +93,7 @@
             <div id="cloudPreview" class="cloud-preview">https://res.cloudinary.com/…</div>
           </label>
         </div>
-        <div class="cloud-note"><strong>How this works:</strong> the admin page does not upload image files. Add the image from Cloudinary's own dashboard/media library, copy its Public ID, enter it above, and the delivery URL is generated automatically. Deleting it here only removes the image from the Go-Tegs gallery; it does not delete the asset from your Cloudinary account.</div>
+        <div class="cloud-note"><strong>Note:</strong> direct uploads add images to Cloudinary and save their details to the existing gallery catalogue. Deleting an item here removes it from the Go-Tegs gallery only; it does not delete the Cloudinary asset.</div>
         <div class="gallery-admin-actions">
           <button class="btn" type="submit" id="saveGalleryBtn">Add image</button>
           <button class="btn" type="button" id="cancelEdit" style="display:none;background:#eef3f7;color:#2f4a61;">Cancel edit</button>
@@ -253,6 +265,82 @@
         $('galleryStatus').textContent = err.message;
         $('galleryStatus').style.color = '#b42318';
       } finally { button.disabled = false; }
+    });
+
+    const CLOUDINARY_NAME = 'euzmro0n';
+    const CLOUDINARY_PRESET = 'gotegs_gallery';
+    const fileInput = $('galleryFiles');
+    const previewBox = $('uploadPreviews');
+    fileInput.addEventListener('change', () => {
+      previewBox.innerHTML = '';
+      Array.from(fileInput.files || []).forEach(file => {
+        if (!file.type.startsWith('image/')) return;
+        const img = document.createElement('img');
+        img.alt = file.name;
+        img.title = file.name;
+        img.src = URL.createObjectURL(file);
+        previewBox.appendChild(img);
+      });
+    });
+
+    $('uploadFilesBtn').addEventListener('click', async () => {
+      const files = Array.from(fileInput.files || []);
+      const button = $('uploadFilesBtn');
+      if (!files.length) {
+        $('uploadStatus').textContent = 'Choose one or more images first.';
+        $('uploadStatus').style.color = '#b42318';
+        return;
+      }
+      const invalid = files.find(file => !['image/jpeg','image/png','image/webp','image/gif','image/avif'].includes(file.type));
+      if (invalid) {
+        $('uploadStatus').textContent = `${invalid.name} is not a supported image type.`;
+        $('uploadStatus').style.color = '#b42318';
+        return;
+      }
+      button.disabled = true;
+      fileInput.disabled = true;
+      let uploaded = 0;
+      $('uploadProgressBar').style.width = '0%';
+      $('uploadStatus').style.color = '#4b6279';
+      try {
+        for (const file of files) {
+          $('uploadStatus').textContent = `Uploading ${uploaded + 1} of ${files.length}: ${file.name}`;
+          const body = new FormData();
+          body.append('file', file);
+          body.append('upload_preset', CLOUDINARY_PRESET);
+          body.append('folder', 'gotegs/gallery');
+          const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_NAME}/image/upload`, { method: 'POST', body });
+          const cloudData = await response.json().catch(() => ({}));
+          if (!response.ok || !cloudData.secure_url || !cloudData.public_id) {
+            throw new Error(cloudData.error?.message || `Cloudinary upload failed for ${file.name}. Check that the unsigned preset name is correct.`);
+          }
+          const order = Date.now() + uploaded;
+          const title = file.name.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ').slice(0, 160);
+          await request(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'create', title, alt_text: title || 'Go-Tegs school gallery photo',
+              cloud_name: CLOUDINARY_NAME, public_id: cloudData.public_id,
+              cloudinary_url: cloudData.secure_url, display_order: order, is_published: true
+            })
+          });
+          uploaded += 1;
+          $('uploadProgressBar').style.width = `${Math.round(uploaded / files.length * 100)}%`;
+        }
+        $('uploadStatus').textContent = `Successfully uploaded ${uploaded} photo${uploaded === 1 ? '' : 's'}.`;
+        $('uploadStatus').style.color = '#16794c';
+        fileInput.value = '';
+        previewBox.innerHTML = '';
+        await loadGallery();
+      } catch (err) {
+        $('uploadStatus').textContent = `${uploaded} uploaded; ${err.message}`;
+        $('uploadStatus').style.color = '#b42318';
+        if (uploaded) await loadGallery();
+      } finally {
+        button.disabled = false;
+        fileInput.disabled = false;
+      }
     });
 
     $('cancelEdit').addEventListener('click', () => resetForm());

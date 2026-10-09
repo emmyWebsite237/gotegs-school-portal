@@ -6,7 +6,7 @@
   <meta name="description" content="Gallery of moments from Go-Tegs International School."/>
   <link rel="icon" type="image/png" href="/assets/img/logo.png"/>
   <title>Gallery | Go-Tegs International School</title>
-  <link rel="stylesheet" href="/assets/css/public-site.css"/>
+  <link rel="stylesheet" href="/assets/css/public-site.css"/><style>.gallery-grid-public{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:.85rem}.gallery-card{margin:0;min-width:0;border:1px solid #e7dfd4;border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 5px 18px rgba(50,40,30,.06)}.gallery-card img{display:block;width:100%;height:150px;object-fit:cover;cursor:zoom-in}.gallery-card figcaption{padding:.55rem .65rem;font-size:.75rem;color:#756c62;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}@media(max-width:480px){.gallery-grid-public{grid-template-columns:repeat(2,minmax(0,1fr));gap:.55rem}.gallery-card img{height:115px}}</style>
 </head>
 <body>
   <div id="navbar-placeholder"></div>
@@ -15,7 +15,7 @@
       <section class="page-intro">
         <span class="section-kicker">Go-Tegs · School life</span>
         <h1>Moments worth remembering.</h1>
-        <div class="page-intro-copy"><p>Browse recent photographs from around the school. New images can be added to the gallery source without changing this page.</p></div>
+        <div class="page-intro-copy"><p>Small snapshots of learning, school events and everyday Go-Tegs life.</p></div>
       </section>
       <div class="gallery-label"><span class="section-kicker">Gallery</span><small id="galleryCount">Preparing the gallery…</small></div>
       <div class="gallery-grid-public" id="galleryGrid"><div class="empty-state gallery-empty-public">Loading school moments…</div></div>
@@ -25,28 +25,19 @@
   <div id="footer-placeholder"></div>
   <script src="/assets/js/main.js"></script>
   <script>
-    const GH_OWNER="YOUR-GITHUB-USERNAME",GH_REPO="gotegs-school-website",GH_FOLDER="assets/img/gallery",CACHE_KEY="gotegs_gallery_cache_v2",CACHE_MAX_AGE_MS=60*60*1000,IMAGE_EXT=/\.(png|jpe?g|gif|webp|avif)$/i;
-    async function ghFetch(url){const res=await fetch(url,{headers:{Accept:"application/vnd.github+json"}});if(!res.ok)throw new Error(`GitHub API error (${res.status})`);return res.json();}
-    async function loadGalleryOrdered(){
-      const cached=JSON.parse(localStorage.getItem(CACHE_KEY)||"null");
-      if(cached&&Date.now()-cached.savedAt<CACHE_MAX_AGE_MS)return cached.urls;
-      if(GH_OWNER==="YOUR-GITHUB-USERNAME")throw new Error("Gallery source is not configured yet.");
-      const files=await ghFetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_FOLDER}`);
-      const images=files.filter(f=>f.type==="file"&&IMAGE_EXT.test(f.name));
-      if(!images.length)return[];
-      const urls=images.map(f=>f.download_url);
-      localStorage.setItem(CACHE_KEY,JSON.stringify({urls,savedAt:Date.now()}));
-      return urls;
-    }
+    const GALLERY_ENDPOINT = '/api/admin-verify?gallery=public';
     async function renderGallery(){
       const grid=document.getElementById('galleryGrid'),count=document.getElementById('galleryCount');
       try{
-        const urls=await loadGalleryOrdered();
-        if(!urls.length){count.textContent='No photos uploaded yet';grid.innerHTML='<div class="empty-state gallery-empty-public">The gallery is ready for school photos.</div>';return;}
-        count.textContent=`${urls.length} photo${urls.length===1?'':'s'}`;
-        grid.innerHTML=urls.map((u,i)=>`<figure class="gallery-card"><img src="${u.replace(/"/g,'&quot;')}" alt="Go-Tegs school gallery photo ${i+1}" loading="lazy" draggable="false"/><figcaption>Go-Tegs school life · ${i+1}</figcaption></figure>`).join('');
+        const res=await fetch(GALLERY_ENDPOINT,{headers:{Accept:'application/json'}});
+        const data=await res.json().catch(()=>({}));
+        if(!res.ok)throw new Error(data.error||'Gallery could not be loaded.');
+        const images=data.images||[];
+        if(!images.length){count.textContent='No photos uploaded yet';grid.innerHTML='<div class="empty-state gallery-empty-public">The gallery is ready for school photos.</div>';return;}
+        count.textContent=`${images.length} photo${images.length===1?'':'s'}`;
+        grid.innerHTML=images.map((image,i)=>`<figure class="gallery-card"><img src="${String(image.cloudinary_url||'').replace(/"/g,'&quot;')}" alt="${String(image.alt_text||'Go-Tegs school gallery photo').replace(/"/g,'&quot;')}" loading="lazy" draggable="false"/><figcaption>${String(image.title||`Go-Tegs school life · ${i+1}`).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}</figcaption></figure>`).join('');
         grid.querySelectorAll('img').forEach(img=>{img.addEventListener('contextmenu',e=>e.preventDefault());img.addEventListener('dragstart',e=>e.preventDefault());img.addEventListener('click',()=>openLightbox(img.src));});
-      }catch(err){count.textContent='Gallery source pending';grid.innerHTML='<div class="empty-state gallery-empty-public"><strong>The gallery is ready for school photos.</strong><br/>Connect the configured gallery source to populate it.</div>';}
+      }catch(err){count.textContent='Gallery temporarily unavailable';grid.innerHTML='<div class="empty-state gallery-empty-public">The school gallery could not load right now. Please try again later.</div>';}
     }
     const lightbox=document.getElementById('galleryLightbox'),lightboxImage=document.getElementById('galleryLightboxImage');
     function openLightbox(src){lightboxImage.src=src;lightbox.classList.add('open');lightbox.setAttribute('aria-hidden','false');}
