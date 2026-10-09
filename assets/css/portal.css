@@ -542,3 +542,34 @@ input, select, textarea {
   font-family: 'DM Sans', Arial, sans-serif;
 }
 
+
+
+/* Go-Tegs portal simplification: white surfaces, blue accents, calmer spacing. */
+body.student-shell-page {
+  background:#f7faff !important;
+  color:#101826 !important;
+}
+body.student-shell-page .portal-hero {
+  background:#fff !important;
+  border:1px solid #dbe6f2 !important;
+  box-shadow:0 6px 24px rgba(16,40,72,.045) !important;
+}
+body.student-shell-page .portal-hero::before { display:none !important; }
+body.student-shell-page .portal-card {
+  background:#fff !important;
+  border:1px solid #dbe6f2 !important;
+  box-shadow:0 4px 18px rgba(16,40,72,.04) !important;
+  border-radius:14px !important;
+}
+body.student-shell-page .portal-card::before { display:none !important; }
+body.student-shell-page .portal-card:hover {
+  border-color:#b8d2f2 !important;
+  box-shadow:0 8px 24px rgba(29,99,201,.08) !important;
+}
+body.student-shell-page .portal-hero h1,
+body.student-shell-page .portal-card h2,
+body.student-shell-page .portal-card h3 { color:#101826 !important; }
+body.student-shell-page .portal-hero p,
+body.student-shell-page .portal-card p { color:#5b6b7f !important; }
+body.student-shell-page .portal-card a,
+body.student-shell-page .portal-card button { border-radius:10px; }

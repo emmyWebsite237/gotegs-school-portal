@@ -33,6 +33,25 @@ function signToken() {
   return `${raw}.${sig}`;
 }
 
+function verifyToken(token) {
+  try {
+    const parts = String(token || '').split('.');
+    if (parts.length !== 2 || !parts[0] || !parts[1]) return false;
+    const [raw, signature] = parts;
+    const expected = createHmac('sha256', sessionSecret()).update(raw).digest('base64url');
+    if (!secureEqual(signature, expected)) return false;
+    const payload = JSON.parse(Buffer.from(raw, 'base64url').toString('utf8'));
+    const now = Math.floor(Date.now() / 1000);
+    return payload?.sub === 'gotegs-admin'
+      && Number.isFinite(payload?.exp)
+      && payload.exp > now
+      && Number.isFinite(payload?.iat)
+      && payload.iat <= now + 60;
+  } catch {
+    return false;
+  }
+}
+
 
 function cleanGalleryText(value, max = 300) {
   return String(value ?? '').trim().slice(0, max);
