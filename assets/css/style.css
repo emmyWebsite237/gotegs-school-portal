@@ -782,3 +782,30 @@ main p,article p,.page-container p,.home-page p{ text-align:justify; text-justif
     transition-delay:0s!important;
   }
 }
+
+
+/* Go-Tegs calm palette refresh — white-first surfaces, warm brown and parchment */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+:root {
+  --blue: #805a3b;
+  --navy: #68452f;
+  --deep: #3e2b20;
+  --gold: #d9bd78;
+  --pale: #f4eee5;
+  --ink: #29231e;
+  --slate: #756c62;
+  --border: #e8dfd4;
+  --green: #56806a;
+  --purple: #9b876f;
+  --red: #b85b4b;
+  font-family: 'DM Sans', Arial, sans-serif;
+  color: var(--ink);
+  background: #fff;
+}
+body, button, input, select, textarea {
+  font-family: 'DM Sans', Arial, sans-serif;
+}
+h1, h2, h3, h4, strong, b {
+  font-family: 'DM Sans', Arial, sans-serif;
+}
+

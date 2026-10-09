@@ -213,3 +213,70 @@ html.splash-active body > *:not(#splash) { visibility:hidden; }
   transform:translateY(0);
 }
 .home-program:hover,.home-program:focus-visible{transform:translateY(-4px);border-color:#bfd4e8;box-shadow:0 18px 36px rgba(25,48,73,.10);outline:none;}
+
+
+/* Calm public homepage and matching splash */
+:root {
+  --gt-blue: #805a3b;
+  --gt-blue-deep: #68452f;
+  --gt-navy: #3e2b20;
+  --gt-sky: #f4eee5;
+  --gt-sky-2: #e9ddcd;
+  --gt-sun: #d9bd78;
+  --gt-sun-soft: #f6edda;
+  --gt-ink: #29231e;
+  --gt-slate: #756c62;
+  --gt-line: #e8dfd4;
+  --gt-paper: #fff;
+}
+html, body { background: #fff; color: #29231e; }
+#splash {
+  background: #f5eee4 !important;
+  color: #3e2b20 !important;
+}
+#splash .splash-panel,
+#splash .splash-grid,
+#splash .splash-line { opacity: .12; }
+#splash .splash-card {
+  background: #fffdf8 !important;
+  border-color: #e8dfd4 !important;
+  box-shadow: 0 24px 70px rgba(62,43,32,.12) !important;
+}
+#splash .splash-kicker,
+#splash .splash-brand { color: #3e2b20 !important; }
+#splash .splash-crest { filter: sepia(.18) saturate(.7); }
+#splash .splash-rule span { background: #d9bd78 !important; }
+#splash .splash-rule i { color: #756c62 !important; }
+#splash .splash-enter {
+  background: #3e2b20 !important;
+  color: #fff !important;
+  border-color: #3e2b20 !important;
+  box-shadow: none !important;
+}
+#splash .splash-skip { color: #756c62 !important; }
+.public-nav, header.site-header, .site-header {
+  background: rgba(255,255,255,.96);
+  border-color: #e8dfd4;
+}
+a:hover { color: #68452f; }
+button, .button, .btn, .primary-button, .cta-button {
+  box-shadow: none;
+}
+.hero, .home-hero, .hero-section, main {
+  background-color: #fff;
+}
+.hero h1, .home-hero h1, .section-title, .home-section h2 {
+  letter-spacing: -.025em;
+}
+.feature-card, .service-card, .gallery-card, .update-card {
+  box-shadow: 0 5px 20px rgba(62,43,32,.045);
+  border-color: #e8dfd4;
+}
+footer, .site-footer {
+  background: #fff;
+  border-color: #e8dfd4;
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+}
+

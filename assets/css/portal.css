@@ -481,3 +481,64 @@ body.student-shell-page .note-body code{white-space:pre-wrap;overflow-wrap:anywh
   .portal-mobile-drawer .portal-nav-link{min-height:44px;white-space:normal;}
   .portal-mobile-drawer .portal-logout{margin-top:1rem;flex:0 0 auto;}
 }
+
+
+/* Student portal: use the same brown, warm-white and muted-gold identity */
+:root {
+  --portal-charcoal: #3e2b20;
+  --portal-charcoal-2: #4d3526;
+  --portal-maroon: #68452f;
+  --portal-maroon-2: #805a3b;
+  --portal-gold: #d9bd78;
+  --portal-gold-soft: #f0e2c2;
+  --portal-cream: #f4eee5;
+  --portal-paper: #fff;
+  --portal-ink: #29231e;
+}
+body, .portal, .portal-shell, .student-portal {
+  background: #fff;
+  color: #29231e;
+  font-family: 'DM Sans', Arial, sans-serif;
+}
+.portal-sidebar, .sidebar, .portal-nav, .student-sidebar {
+  background: #f5efe7 !important;
+  color: #3e2b20 !important;
+  border-color: #e8dfd4 !important;
+}
+.portal-sidebar a, .sidebar a, .portal-nav a, .student-sidebar a,
+.portal-sidebar button, .sidebar button {
+  color: #685b4e;
+}
+.portal-sidebar a.active, .sidebar a.active, .portal-nav a.active,
+.student-sidebar a.active, .portal-sidebar button.active, .sidebar button.active {
+  background: #e9ddcd !important;
+  color: #3e2b20 !important;
+  box-shadow: inset 3px 0 #d9bd78;
+}
+.portal-main, .portal-content, .student-content, .dashboard-content {
+  background: #fff;
+}
+.portal-card, .student-card, .dashboard-card, .lesson-card, .result-card,
+.profile-card, .panel, .content-card {
+  background: #fff;
+  border-color: #e8dfd4 !important;
+  box-shadow: 0 5px 20px rgba(62,43,32,.045);
+}
+.portal-primary, .portal-button, .btn-primary, .primary-button {
+  background: #3e2b20 !important;
+  color: #fff !important;
+  border-color: #3e2b20 !important;
+  box-shadow: none !important;
+}
+.portal-accent, .portal-card .accent, .student-card .accent {
+  color: #68452f;
+}
+.portal-badge, .avatar, .student-avatar {
+  background: #d9bd78;
+  color: #3e2b20;
+}
+input, select, textarea {
+  border-color: #e8dfd4;
+  font-family: 'DM Sans', Arial, sans-serif;
+}
+
