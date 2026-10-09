@@ -6,7 +6,8 @@
   <meta name="description" content="Gallery of moments from Go-Tegs International School."/>
   <link rel="icon" type="image/png" href="/assets/img/logo.png"/>
   <title>Gallery | Go-Tegs International School</title>
-  <link rel="stylesheet" href="/assets/css/public-site.css"/><style>.gallery-grid-public{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:.85rem}.gallery-card{margin:0;min-width:0;border:1px solid #e7dfd4;border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 5px 18px rgba(50,40,30,.06)}.gallery-card img{display:block;width:100%;height:150px;object-fit:cover;cursor:zoom-in}.gallery-card figcaption{padding:.55rem .65rem;font-size:.75rem;color:#756c62;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}@media(max-width:480px){.gallery-grid-public{grid-template-columns:repeat(2,minmax(0,1fr));gap:.55rem}.gallery-card img{height:115px}}</style>
+  <link rel="stylesheet" href="/assets/css/public-site.css"/>
+  <link rel="stylesheet" href="/assets/css/public-header-fix.css"/><style>.gallery-grid-public{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:.85rem}.gallery-card{margin:0;min-width:0;border:1px solid #e7dfd4;border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 5px 18px rgba(50,40,30,.06)}.gallery-card img{display:block;width:100%;height:150px;object-fit:cover;cursor:zoom-in}.gallery-card figcaption{padding:.55rem .65rem;font-size:.75rem;color:#756c62;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}@media(max-width:480px){.gallery-grid-public{grid-template-columns:repeat(2,minmax(0,1fr));gap:.55rem}.gallery-card img{height:115px}}</style>
 </head>
 <body>
   <div id="navbar-placeholder"></div>
@@ -25,19 +26,47 @@
   <div id="footer-placeholder"></div>
   <script src="/assets/js/main.js"></script>
   <script>
-    const GALLERY_ENDPOINT = '/api/admin-verify?gallery=public';
+    const GALLERY_ENDPOINT = '/api/admin-verify?gallery=cloudinary';
+    const LEGACY_GALLERY_ENDPOINT = '/api/admin-verify?gallery=public';
     async function renderGallery(){
       const grid=document.getElementById('galleryGrid'),count=document.getElementById('galleryCount');
       try{
-        const res=await fetch(GALLERY_ENDPOINT,{headers:{Accept:'application/json'}});
-        const data=await res.json().catch(()=>({}));
-        if(!res.ok)throw new Error(data.error||'Gallery could not be loaded.');
-        const images=data.images||[];
-        if(!images.length){count.textContent='No photos uploaded yet';grid.innerHTML='<div class="empty-state gallery-empty-public">The gallery is ready for school photos.</div>';return;}
-        count.textContent=`${images.length} photo${images.length===1?'':'s'}`;
-        grid.innerHTML=images.map((image,i)=>`<figure class="gallery-card"><img src="${String(image.cloudinary_url||'').replace(/"/g,'&quot;')}" alt="${String(image.alt_text||'Go-Tegs school gallery photo').replace(/"/g,'&quot;')}" loading="lazy" draggable="false"/><figcaption>${String(image.title||`Go-Tegs school life · ${i+1}`).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}</figcaption></figure>`).join('');
+        let images=[];
+        let cursor='';
+        let cloudinaryError=null;
+        do {
+          const url=new URL(GALLERY_ENDPOINT,window.location.origin);
+          if(cursor)url.searchParams.set('cursor',cursor);
+          const res=await fetch(url.toString(),{headers:{Accept:'application/json'}});
+          const data=await res.json().catch(()=>({}));
+          if(!res.ok)throw new Error(data.error||'Cloudinary gallery could not be loaded.');
+          images.push(...(data.images||[]));
+          cursor=data.next_cursor||'';
+        } while(cursor);
+        if(!images.length){count.textContent='No photos uploaded yet';grid.innerHTML='<div class="empty-state gallery-empty-public">No image assets were found in Cloudinary yet.</div>';return;}
+        count.textContent=`${images.length} photo${images.length===1?'':'s'} · Cloudinary assets`;
+        grid.innerHTML=images.map((image,i)=>{
+          const title=String(image.title||image.public_id||`Go-Tegs school life · ${i+1}`);
+          const url=String(image.cloudinary_url||image.secure_url||'');
+          const alt=String(image.alt_text||title||'Go-Tegs school gallery photo');
+          return `<figure class="gallery-card"><img src="${url.replace(/"/g,'&quot;')}" alt="${alt.replace(/"/g,'&quot;')}" loading="lazy" draggable="false"/><figcaption>${title.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}</figcaption></figure>`;
+        }).join('');
         grid.querySelectorAll('img').forEach(img=>{img.addEventListener('contextmenu',e=>e.preventDefault());img.addEventListener('dragstart',e=>e.preventDefault());img.addEventListener('click',()=>openLightbox(img.src));});
-      }catch(err){count.textContent='Gallery temporarily unavailable';grid.innerHTML='<div class="empty-state gallery-empty-public">The school gallery could not load right now. Please try again later.</div>';}
+      }catch(err){
+        try {
+          const fallback=await fetch(LEGACY_GALLERY_ENDPOINT,{headers:{Accept:'application/json'}});
+          const data=await fallback.json().catch(()=>({}));
+          if(!fallback.ok)throw new Error(data.error||err.message);
+          const images=data.images||[];
+          if(!images.length)throw err;
+          count.textContent=`${images.length} photo${images.length===1?'':'s'} · saved gallery`;
+          grid.innerHTML=images.map((image,i)=>`<figure class="gallery-card"><img src="${String(image.cloudinary_url||'').replace(/"/g,'&quot;')}" alt="${String(image.alt_text||'Go-Tegs school gallery photo').replace(/"/g,'&quot;')}" loading="lazy" draggable="false"/><figcaption>${String(image.title||`Go-Tegs school life · ${i+1}`).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}</figcaption></figure>`).join('');
+          grid.querySelectorAll('img').forEach(img=>{img.addEventListener('contextmenu',e=>e.preventDefault());img.addEventListener('dragstart',e=>e.preventDefault());img.addEventListener('click',()=>openLightbox(img.src));});
+        } catch (fallbackError) {
+          count.textContent='Gallery temporarily unavailable';
+          grid.innerHTML='<div class="empty-state gallery-empty-public">The school gallery could not load right now. Please check the Cloudinary server settings and try again.</div>';
+        }
+      }
     }
     const lightbox=document.getElementById('galleryLightbox'),lightboxImage=document.getElementById('galleryLightboxImage');
     function openLightbox(src){lightboxImage.src=src;lightbox.classList.add('open');lightbox.setAttribute('aria-hidden','false');}

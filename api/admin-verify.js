@@ -76,7 +76,64 @@ function normalizeCloudinaryUrl(value) {
   }
 }
 
+async function listCloudinaryGalleryAssets(req, res) {
+  if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed.' });
+
+  const cloudName = cleanGalleryText(process.env.CLOUDINARY_CLOUD_NAME || process.env.CLOUDINARY_NAME || 'euzmro0n', 120)
+    .replace(/[^a-zA-Z0-9_-]/g, '');
+  const apiKey = String(process.env.CLOUDINARY_API_KEY || '').trim();
+  const apiSecret = String(process.env.CLOUDINARY_API_SECRET || '').trim();
+  if (!cloudName || !apiKey || !apiSecret) {
+    return res.status(503).json({
+      error: 'Cloudinary asset listing is not configured. Set CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET in the server environment.'
+    });
+  }
+
+  const params = new URLSearchParams({ max_results: '500' });
+  const cursor = cleanGalleryText(req.query?.cursor, 1000);
+  if (cursor) params.set('next_cursor', cursor);
+
+  try {
+    const auth = Buffer.from(`${apiKey}:${apiSecret}`).toString('base64');
+    const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/resources/image/upload?${params.toString()}`, {
+      method: 'GET',
+      headers: { Authorization: `Basic ${auth}`, Accept: 'application/json' }
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      const message = data?.error?.message || `Cloudinary returned HTTP ${response.status}.`;
+      return res.status(response.status === 401 || response.status === 403 ? 502 : 500)
+        .json({ error: `Could not list Cloudinary assets: ${message}` });
+    }
+
+    const images = (Array.isArray(data.resources) ? data.resources : [])
+      .filter(asset => asset?.secure_url && asset?.resource_type === 'image')
+      .map((asset, index) => {
+        const publicId = String(asset.public_id || '');
+        const displayName = String(asset.display_name || publicId.split('/').pop() || `School photo ${index + 1}`);
+        return {
+          id: String(asset.asset_id || publicId),
+          title: displayName,
+          alt_text: displayName,
+          cloud_name: cloudName,
+          public_id: publicId,
+          cloudinary_url: asset.secure_url,
+          created_at: asset.created_at || null,
+          display_order: index,
+        };
+      });
+
+    return res.status(200).json({ images, next_cursor: data.next_cursor || null, source: 'cloudinary' });
+  } catch (error) {
+    return res.status(502).json({ error: `Could not contact Cloudinary: ${error.message || 'network error'}` });
+  }
+}
+
 async function handleGallery(req, res, supabase) {
+  if (String(req.query?.gallery || '') === 'cloudinary') {
+    return await listCloudinaryGalleryAssets(req, res);
+  }
+
   // Public gallery feed: only published display data is returned.
   if (String(req.query?.gallery || '') === 'public') {
     if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed.' });
@@ -115,7 +172,8 @@ async function handleGallery(req, res, supabase) {
     const directUrl = normalizeCloudinaryUrl(input.cloudinary_url);
     const url = directUrl || makeCloudinaryUrl(cloudName, publicId);
     if (!url) return res.status(400).json({ error: 'Enter a valid Cloudinary cloud name and public ID, or a full Cloudinary delivery URL.' });
-    const displayOrder = Number.isFinite(Number(input.display_order)) ? Number(input.display_order) : 0;
+    const requestedOrder = Number(input.display_order);
+    const displayOrder = Number.isFinite(requestedOrder) ? Math.max(0, Math.min(2147483647, Math.trunc(requestedOrder))) : 0;
     const row = {
       title: title || null,
       alt_text: altText,
@@ -153,7 +211,10 @@ async function handleGallery(req, res, supabase) {
     if ('alt_text' in input) update.alt_text = cleanGalleryText(input.alt_text, 240) || 'Go-Tegs school gallery photo';
     if ('cloud_name' in input) update.cloud_name = cleanGalleryText(input.cloud_name, 120) || null;
     if ('public_id' in input) update.public_id = cleanGalleryText(input.public_id, 500) || null;
-    if ('display_order' in input) update.display_order = Number.isFinite(Number(input.display_order)) ? Number(input.display_order) : 0;
+    if ('display_order' in input) {
+      const requestedOrder = Number(input.display_order);
+      update.display_order = Number.isFinite(requestedOrder) ? Math.max(0, Math.min(2147483647, Math.trunc(requestedOrder))) : 0;
+    }
     if ('is_published' in input) update.is_published = input.is_published !== false;
 
     if ('cloudinary_url' in input || 'cloud_name' in input || 'public_id' in input) {

@@ -56,7 +56,7 @@
     <section class="gallery-admin-card">
       <section class="upload-panel" aria-labelledby="uploadHeading">
         <h2 id="uploadHeading">Upload photos from your device</h2>
-        <p>Select one or several JPG, PNG, WebP or GIF images. They will upload to Cloudinary and be added to the school gallery automatically. Uploads use your unsigned preset; no API secret is stored in this page.</p>
+        <p>Select one or several JPG, PNG, WebP or GIF images. They will upload directly to Cloudinary and appear in the public gallery automatically. Uploads use your unsigned preset; no API secret is stored in this page.</p>
         <div class="upload-controls">
           <input id="galleryFiles" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif" multiple />
           <button class="btn" type="button" id="uploadFilesBtn">Upload selected photos</button>
@@ -93,7 +93,7 @@
             <div id="cloudPreview" class="cloud-preview">https://res.cloudinary.com/…</div>
           </label>
         </div>
-        <div class="cloud-note"><strong>Note:</strong> direct uploads add images to Cloudinary and save their details to the existing gallery catalogue. Deleting an item here removes it from the Go-Tegs gallery only; it does not delete the Cloudinary asset.</div>
+        <div class="cloud-note"><strong>Note:</strong> uploaded images are read directly from Cloudinary by the public gallery, so a separate database insert is not needed. Deleting a saved catalogue item here does not delete its Cloudinary asset.</div>
         <div class="gallery-admin-actions">
           <button class="btn" type="submit" id="saveGalleryBtn">Add image</button>
           <button class="btn" type="button" id="cancelEdit" style="display:none;background:#eef3f7;color:#2f4a61;">Cancel edit</button>
@@ -314,21 +314,12 @@
           if (!response.ok || !cloudData.secure_url || !cloudData.public_id) {
             throw new Error(cloudData.error?.message || `Cloudinary upload failed for ${file.name}. Check that the unsigned preset name is correct.`);
           }
-          const order = Date.now() + uploaded;
-          const title = file.name.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ').slice(0, 160);
-          await request(endpoint, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              action: 'create', title, alt_text: title || 'Go-Tegs school gallery photo',
-              cloud_name: CLOUDINARY_NAME, public_id: cloudData.public_id,
-              cloudinary_url: cloudData.secure_url, display_order: order, is_published: true
-            })
-          });
+          // Cloudinary is now the source of truth for the public gallery.
+          // Do not insert a timestamp/display_order or duplicate row into Supabase.
           uploaded += 1;
           $('uploadProgressBar').style.width = `${Math.round(uploaded / files.length * 100)}%`;
         }
-        $('uploadStatus').textContent = `Successfully uploaded ${uploaded} photo${uploaded === 1 ? '' : 's'}.`;
+        $('uploadStatus').textContent = `Successfully uploaded ${uploaded} photo${uploaded === 1 ? '' : 's'} to Cloudinary. The public gallery syncs from Cloudinary assets.`;
         $('uploadStatus').style.color = '#16794c';
         fileInput.value = '';
         previewBox.innerHTML = '';
