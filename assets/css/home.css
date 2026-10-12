@@ -330,3 +330,49 @@ html, body { background:#fff; color:#101826; }
 a:hover { color:#123f80; }
 .feature-card, .service-card, .gallery-card, .update-card { box-shadow:0 5px 20px rgba(16,40,72,.045); border-color:#dbe6f2; }
 footer, .site-footer { background:#fff; border-color:#dbe6f2; }
+
+/* Simple public homepage refresh: calmer hero, real school photography, and a clear three-column gallery preview. */
+.home-hero{min-height:0;grid-template-columns:minmax(0,1.05fr) minmax(320px,.95fr);gap:clamp(2rem,5vw,4rem);padding-top:clamp(3.5rem,6vw,5.5rem);padding-bottom:clamp(3.5rem,6vw,5.5rem);background:#f7f6f2;color:#172333}
+.home-hero-grid,.home-hero::after{display:none}
+.home-hero h1{color:#172333;max-width:700px}
+.home-hero h1 em{color:#426c55}
+.home-eyebrow{color:#426c55}
+.home-eyebrow>span{background:#426c55}
+.home-lead{color:#606b64}
+.home-signals span{color:#606b64}
+.home-signals b{color:#426c55}
+.home-btn--gold{background:#426c55;box-shadow:none}
+.home-btn--gold:hover{background:#31513f}
+.home-btn--ghost{background:transparent;border-color:#cfd5cc;color:#2c4937}
+.home-hero-photo{min-height:0;display:block;position:relative;overflow:hidden;border-radius:12px;background:#e9e7df;aspect-ratio:4/3}
+.home-hero-photo>img{display:block;width:100%;height:100%;position:absolute;inset:0;object-fit:cover}
+.home-hero-photo-caption{position:absolute;left:1rem;right:1rem;bottom:1rem;display:grid;gap:.25rem;padding:1rem 1.1rem;background:rgba(255,255,255,.93);border:1px solid rgba(255,255,255,.75);border-radius:8px}
+.home-hero-photo-caption span{font-size:.62rem;letter-spacing:.1em;font-weight:800;color:#55715c}
+.home-hero-photo-caption strong{font-size:1rem;color:#202b23}
+.home-bento{grid-template-columns:repeat(4,minmax(0,1fr));gap:.8rem}
+.home-bento-card{min-height:205px;border-radius:12px;box-shadow:none;padding:1.1rem;background:#fff}
+.home-bento-card::before{display:none}
+.home-bento-card:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(25,48,73,.07)}
+.home-bento-card--wide{grid-column:auto}
+.home-bento-card--dark{background:#344d3c;border-color:#344d3c}
+.home-bento-card--dark .bento-icon{background:rgba(255,255,255,.12);color:#fff}
+.bento-icon{border-radius:8px;background:#f0f2ed;color:#426c55}
+.home-bento-card>span{color:#426c55}
+.home-gallery-preview{padding-top:1.5rem}
+.home-gallery-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.85rem}
+.home-gallery-card,.home-gallery-placeholder{display:block;position:relative;min-width:0;overflow:hidden;aspect-ratio:4/3;border-radius:10px;background:#eceae3;border:1px solid #e2e0d8;text-decoration:none}
+.home-gallery-card img,.home-gallery-placeholder img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .25s ease}
+.home-gallery-card:hover img,.home-gallery-placeholder:hover img{transform:scale(1.025)}
+.home-gallery-card span,.home-gallery-placeholder span{position:absolute;left:.6rem;right:.6rem;bottom:.6rem;padding:.55rem .65rem;background:rgba(255,255,255,.94);border-radius:6px;color:#25372b;font-size:.75rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.home-gallery-placeholder img[src$="logo.png"]{object-fit:contain;padding:2rem;background:#f5f4ef}
+.home-slice{background:#f7f6f2;border-color:#e5e4dc}
+.home-slice-visual{min-height:330px;background:url('/assets/img/go-tegs-classroom.jpg') center/cover no-repeat;border-radius:12px;overflow:hidden}
+.slice-ring,.slice-badge{display:none}
+.slice-mark{background:rgba(255,255,255,.94);box-shadow:none;border-radius:12px}
+.home-cta{background:#f2f2eb;border-color:#e1e2d8}
+.cta-orbit,.cta-orbit::before{display:none}
+.home-cta p{color:#606b64}
+@media(max-width:1100px){.home-bento{grid-template-columns:repeat(2,minmax(0,1fr))}.home-bento-card--wide{grid-column:auto}}
+@media(max-width:800px){.home-hero{grid-template-columns:1fr}.home-hero-photo{aspect-ratio:5/3;max-height:440px}.home-gallery-grid{gap:.6rem}.home-slice-visual{min-height:280px}}
+@media(max-width:560px){.home-gallery-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:.4rem}.home-gallery-card span,.home-gallery-placeholder span{left:.3rem;right:.3rem;bottom:.3rem;padding:.35rem .4rem;font-size:.62rem}.home-bento{grid-template-columns:1fr 1fr}.home-bento-card{min-height:180px;padding:.85rem}.home-bento-card p{font-size:.73rem}.home-hero-photo{aspect-ratio:4/3}}
+@media(prefers-reduced-motion:reduce){.home-gallery-card img,.home-gallery-placeholder img{transition:none}}

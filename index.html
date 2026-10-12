@@ -13,7 +13,6 @@
   <link rel="stylesheet" href="/assets/css/home.css" />
   <!-- Current public navbar/mobile shell compatibility -->
   <link rel="stylesheet" href="/assets/css/public-header-fix.css" />
-  <link rel="stylesheet" href="/assets/css/simple-public.css" />
   <script>
     document.documentElement.classList.add("splash-active");
   </script>
@@ -57,21 +56,24 @@
         </div>
       </div>
 
-      <div class="home-hero-stage" aria-label="Go-Tegs school experience preview">
-        <div class="hero-stage-grid"></div>
-        <div class="hero-node hero-node--top"><span>LEARN</span><b>Curiosity</b></div>
-        <div class="hero-node hero-node--left"><span>LEAD</span><b>Character</b></div>
-        <div class="hero-node hero-node--right"><span>BECOME</span><b>Confidence</b></div>
-        <div class="hero-orbit orbit-outer"></div>
-        <div class="hero-orbit orbit-inner"></div>
-        <div class="hero-core">
-          <div class="hero-core-ring"></div>
-          <img src="/assets/img/logo.png" alt="Go-Tegs crest" />
+      <div class="home-hero-stage home-hero-photo" aria-label="A classroom at Go-Tegs International School">
+        <img src="/assets/img/go-tegs-classroom.jpg" alt="A learning space at Go-Tegs International School" loading="eager" />
+        <div class="home-hero-photo-caption"><span>GO-TEGS INTERNATIONAL SCHOOL</span><strong>Learning, every day.</strong></div>
+      </div>
+    </section>
+
+    <section class="home-section home-gallery-preview" aria-labelledby="homeGalleryHeading">
+      <div class="home-section-head home-section-head--split">
+        <div>
+          <span class="home-eyebrow home-eyebrow--dark"><span></span> A glimpse of school life</span>
+          <h2 id="homeGalleryHeading">See Go-Tegs in moments.</h2>
         </div>
-        <div class="hero-stage-caption">
-          <small>THE GO-TEGS EXPERIENCE</small>
-          <strong>Built around the learner</strong>
-        </div>
+        <a class="home-text-link" href="/gallery.html">Open the full gallery <span>→</span></a>
+      </div>
+      <div class="home-gallery-grid" id="homeGalleryGrid" aria-label="Recent school gallery photos">
+        <a class="home-gallery-placeholder" href="/gallery.html"><img src="/assets/img/go-tegs-classroom.jpg" alt="A classroom at Go-Tegs" loading="lazy"/><span>Explore school life</span></a>
+        <a class="home-gallery-placeholder" href="/gallery.html"><img src="/assets/img/logo.png" alt="Go-Tegs International School" loading="lazy"/><span>School moments</span></a>
+        <a class="home-gallery-placeholder" href="/gallery.html"><img src="/assets/img/go-tegs-classroom.jpg" alt="Learning at Go-Tegs" loading="lazy"/><span>Learning together</span></a>
       </div>
     </section>
 
@@ -175,6 +177,32 @@
 
   <div id="footer-placeholder"></div>
   <script src="/assets/js/main.js"></script>
+  <script>
+    (async function loadHomeGalleryPreview(){
+      const grid = document.getElementById('homeGalleryGrid');
+      if (!grid) return;
+      try {
+        const response = await fetch('/api/admin-verify?gallery=cloudinary', { headers: { Accept: 'application/json' } });
+        if (!response.ok) return;
+        const data = await response.json();
+        const images = (data.images || []).filter(item => item && (item.cloudinary_url || item.secure_url)).slice(0, 6);
+        if (!images.length) return;
+        grid.innerHTML = images.map((item, index) => {
+          const card = document.createElement('a');
+          card.className = 'home-gallery-card';
+          card.href = '/gallery.html';
+          const image = document.createElement('img');
+          image.src = item.cloudinary_url || item.secure_url;
+          image.alt = item.alt_text || item.title || `Go-Tegs school moment ${index + 1}`;
+          image.loading = 'lazy';
+          const label = document.createElement('span');
+          label.textContent = item.title || 'View in gallery';
+          card.append(image, label);
+          return card.outerHTML;
+        }).join('');
+      } catch (_) { /* Keep the local image preview if Cloudinary is temporarily unavailable. */ }
+    })();
+  </script>
   <script>
     (function(){
       const splash = document.getElementById('splash');
