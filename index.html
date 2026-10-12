@@ -56,24 +56,9 @@
         </div>
       </div>
 
-      <div class="home-hero-stage home-hero-photo" aria-label="A classroom at Go-Tegs International School">
-        <img src="/assets/img/go-tegs-classroom.jpg" alt="A learning space at Go-Tegs International School" loading="eager" />
-        <div class="home-hero-photo-caption"><span>GO-TEGS INTERNATIONAL SCHOOL</span><strong>Learning, every day.</strong></div>
-      </div>
-    </section>
-
-    <section class="home-section home-gallery-preview" aria-labelledby="homeGalleryHeading">
-      <div class="home-section-head home-section-head--split">
-        <div>
-          <span class="home-eyebrow home-eyebrow--dark"><span></span> A glimpse of school life</span>
-          <h2 id="homeGalleryHeading">See Go-Tegs in moments.</h2>
-        </div>
-        <a class="home-text-link" href="/gallery.html">Open the full gallery <span>→</span></a>
-      </div>
-      <div class="home-gallery-grid" id="homeGalleryGrid" aria-label="Recent school gallery photos">
-        <a class="home-gallery-placeholder" href="/gallery.html"><img src="/assets/img/go-tegs-classroom.jpg" alt="A classroom at Go-Tegs" loading="lazy"/><span>Explore school life</span></a>
-        <a class="home-gallery-placeholder" href="/gallery.html"><img src="/assets/img/logo.png" alt="Go-Tegs International School" loading="lazy"/><span>School moments</span></a>
-        <a class="home-gallery-placeholder" href="/gallery.html"><img src="/assets/img/go-tegs-classroom.jpg" alt="Learning at Go-Tegs" loading="lazy"/><span>Learning together</span></a>
+      <div class="home-hero-photo-wrap" aria-label="A moment from school life">
+        <img id="homeHeroPhoto" class="home-hero-photo" src="/assets/img/logo.png" alt="Go-Tegs International School students learning together" fetchpriority="high" />
+        <div class="home-photo-caption"><span class="home-photo-dot"></span><div><strong>Learning with purpose</strong><small>A welcoming place to learn, grow and belong.</small></div></div>
       </div>
     </section>
 
@@ -111,6 +96,19 @@
           <div><h3>Student Portal</h3><p>A private workspace for learning, lesson notes, quizzes, profile, and new student tools.</p></div>
           <span>Enter <b>↗</b></span>
         </a>
+      </div>
+    </section>
+
+    <section class="home-gallery-preview" id="school-life">
+      <div class="home-section-head home-section-head--split">
+        <div><span class="home-eyebrow home-eyebrow--dark"><span></span> Life at Go-Tegs</span><h2>School life, in pictures.</h2></div>
+        <a class="home-text-link" href="/gallery.html">Explore the full gallery <span>→</span></a>
+      </div>
+      <p class="home-gallery-intro">A glimpse of the learning, people and moments that make our school community.</p>
+      <div class="home-gallery-cards" id="homeGalleryCards">
+        <a class="home-gallery-card" href="/gallery.html"><img src="/assets/img/logo.png" alt="School learning and classroom life" loading="lazy"><span>Learning together <b>↗</b></span></a>
+        <a class="home-gallery-card" href="/gallery.html"><img src="/assets/img/logo.png" alt="School activities and community" loading="lazy"><span>Growing together <b>↗</b></span></a>
+        <a class="home-gallery-card" href="/gallery.html"><img src="/assets/img/logo.png" alt="Students and teachers at school" loading="lazy"><span>Making progress <b>↗</b></span></a>
       </div>
     </section>
 
@@ -178,32 +176,31 @@
   <div id="footer-placeholder"></div>
   <script src="/assets/js/main.js"></script>
   <script>
-    (async function loadHomeGalleryPreview(){
-      const grid = document.getElementById('homeGalleryGrid');
-      if (!grid) return;
+    (async function loadCloudinaryHomePreview(){
+      const endpoint = '/api/admin-verify?gallery=cloudinary';
       try {
-        const response = await fetch('/api/admin-verify?gallery=cloudinary', { headers: { Accept: 'application/json' } });
+        const response = await fetch(endpoint, { headers: { Accept: 'application/json' } });
         if (!response.ok) return;
         const data = await response.json();
-        const images = (data.images || []).filter(item => item && (item.cloudinary_url || item.secure_url)).slice(0, 6);
-        if (!images.length) return;
-        grid.innerHTML = images.map((item, index) => {
-          const card = document.createElement('a');
-          card.className = 'home-gallery-card';
-          card.href = '/gallery.html';
-          const image = document.createElement('img');
-          image.src = item.cloudinary_url || item.secure_url;
-          image.alt = item.alt_text || item.title || `Go-Tegs school moment ${index + 1}`;
-          image.loading = 'lazy';
-          const label = document.createElement('span');
-          label.textContent = item.title || 'View in gallery';
-          card.append(image, label);
-          return card.outerHTML;
-        }).join('');
-      } catch (_) { /* Keep the local image preview if Cloudinary is temporarily unavailable. */ }
+        const images = Array.isArray(data.images) ? data.images : [];
+        const usable = images.map((item) => ({
+          url: String(item.cloudinary_url || item.secure_url || ''),
+          title: String(item.title || item.alt_text || 'Go-Tegs school life')
+        })).filter((item) => /^https:\/\//i.test(item.url));
+        if (!usable.length) return;
+        const hero = document.getElementById('homeHeroPhoto');
+        if (hero) { hero.src = usable[0].url; hero.alt = usable[0].title; }
+        const cards = document.getElementById('homeGalleryCards');
+        if (cards) {
+          cards.innerHTML = usable.slice(0, 3).map((item, index) => {
+            const title = ['Learning together', 'Growing together', 'Making progress'][index] || 'Life at Go-Tegs';
+            const safeUrl = item.url.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+            const safeTitle = item.title.replace(/[&<>"']/g, (ch) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+            return `<a class="home-gallery-card" href="/gallery.html"><img src="${safeUrl}" alt="${safeTitle}" loading="lazy"><span>${title} <b>↗</b></span></a>`;
+          }).join('');
+        }
+      } catch (_) { /* Keep the local fallback images if Cloudinary is temporarily unavailable. */ }
     })();
-  </script>
-  <script>
     (function(){
       const splash = document.getElementById('splash');
       const enter = document.getElementById('splashEnter');

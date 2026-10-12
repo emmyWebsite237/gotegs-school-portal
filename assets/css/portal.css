@@ -575,21 +575,31 @@ body.student-shell-page .portal-card a,
 body.student-shell-page .portal-card button { border-radius:10px; }
 
 
-/* Simple student portal refresh: flatter surfaces, calmer colour and less visual noise. */
-:root{--portal-charcoal:#202733;--portal-charcoal-2:#293445;--portal-maroon:#344a64;--portal-maroon-2:#506985;--portal-gold:#c5a66a;--portal-gold-soft:#f1e7d3;--portal-cream:#f5f7fa;--portal-paper:#ffffff;--portal-ink:#202938;--portal-muted:#697586;--portal-line:#e2e7ee;--portal-rail-width:248px;}
-html.student-portal-page{background:#f4f6f9}
-body.student-shell-page{background:#f4f6f9;color:var(--portal-ink)}
-body.student-shell-page main.page-container{padding-top:1.5rem}
-.portal-rail{background:#fff!important;border-right:1px solid #e2e7ee!important;box-shadow:2px 0 12px rgba(15,23,42,.035)!important}
-.portal-brand-copy strong,.portal-profile-mini strong{color:#202938!important}
-.portal-brand-copy span,.portal-profile-mini span,.portal-nav-label{color:#788393!important}
-.portal-nav-link{border-radius:9px!important;box-shadow:none!important;transition:background .16s ease,color .16s ease!important}
-.portal-nav-link:hover{background:#f1f4f8!important;color:#24364d!important;transform:none!important}
-.portal-nav-link.active,.portal-nav-link[aria-current="page"]{background:#eaf0f7!important;color:#294663!important;box-shadow:inset 3px 0 #506985!important}
-.portal-hero{background:#fff!important;color:#202938!important;border:1px solid #e2e7ee!important;border-radius:16px!important;box-shadow:0 4px 18px rgba(15,23,42,.045)!important}
-.portal-hero h1,.portal-hero h2,.portal-hero p{color:inherit}
-.portal-hero-orbit{opacity:.22}
-.portal-identity-chip{background:#f4f6f9!important;border:1px solid #e2e7ee!important;color:#475569!important}
-.portal-dashboard .portal-card,.portal-card,.portal-panel,.dashboard-card,.portal-widget{border:1px solid #e2e7ee!important;border-radius:13px!important;box-shadow:0 3px 12px rgba(15,23,42,.035)!important}
-.portal-dashboard button,.portal-dashboard .button,.student-shell-page button{box-shadow:none}
-@media(max-width:800px){body.student-shell-page main.page-container{padding:1rem .85rem 3rem}.portal-rail{box-shadow:0 4px 18px rgba(15,23,42,.08)!important}}
+/* Calm, consistent student portal styling — visual-only overrides */
+:root{--portal-charcoal:#332b25;--portal-charcoal-2:#45382e;--portal-maroon:#92764a;--portal-maroon-2:#b69a64;--portal-gold:#b69a64;--portal-gold-soft:#eee3d0;--portal-cream:#f8f6f2;--portal-paper:#fff;--portal-ink:#302920;--portal-muted:#746a5e;--portal-line:#e7e0d6}
+html.student-portal-page{background:#fff!important}
+body.student-shell-page{background:#fff!important;color:#302920!important}
+.portal-rail{background:#faf8f4!important;border-right:1px solid #e7e0d6!important;box-shadow:none!important}
+.portal-brand{border-bottom-color:#e7e0d6!important}
+.portal-brand-copy strong{color:#302920!important}.portal-brand-copy span{color:#92764a!important}
+.portal-profile-mini strong{color:#302920!important}.portal-profile-mini span{color:#746a5e!important}
+.portal-nav-label{color:#9b8b75!important}
+.portal-nav-link{color:#65594d!important;border-radius:8px!important;box-shadow:none!important}
+.portal-nav-link span{background:#f0ebe3!important;color:#92764a!important}
+.portal-nav-link:hover{background:#f4f0e9!important;color:#302920!important;transform:none!important}
+.portal-nav-link.is-active{color:#302920!important;background:#eee6da!important;box-shadow:inset 3px 0 #b69a64!important}
+.portal-nav-link.is-active span{background:#fff!important;color:#92764a!important}
+.portal-logout{background:#fff!important;border-color:#e7e0d6!important;color:#65594d!important;border-radius:8px!important}
+body.student-shell-page main.page-container{background:#fff!important}
+.portal-dashboard{background:#fff!important}
+.portal-hero{border:1px solid #e7e0d6!important;border-radius:12px!important;background:#faf8f4!important;box-shadow:none!important}
+.portal-hero::before{display:none!important}.portal-hero::after{width:4px!important;background:#b69a64!important}
+.portal-hero h1,.portal-hero h1 span{color:#302920!important}.portal-hero-copy p{color:#746a5e!important}
+.portal-identity-chip{border-color:#e7e0d6!important;border-radius:7px!important;color:#65594d!important;background:#fff!important}
+.portal-card,.portal-stat,.portal-panel,.portal-widget,.portal-activity-card{box-shadow:none!important;border-color:#e7e0d6!important;border-radius:10px!important}
+.portal-card:hover{box-shadow:0 7px 20px rgba(58,44,29,.06)!important}
+.portal-dashboard h2,.portal-dashboard h3{color:#302920!important}
+.portal-dashboard p{color:#746a5e}
+.portal-mobile-bar{box-shadow:none!important;border-bottom:1px solid #e7e0d6!important;background:#fff!important}
+.portal-mobile-drawer{background:#faf8f4!important}
+@media(max-width:899px){body.student-shell-page{background:#fff!important}.portal-dashboard{padding-top:1rem!important}.portal-hero{border-radius:10px!important}}
