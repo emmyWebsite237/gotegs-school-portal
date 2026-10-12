@@ -7,7 +7,24 @@
   <link rel="icon" type="image/png" href="/assets/img/logo.png"/>
   <title>Gallery | Go-Tegs International School</title>
   <link rel="stylesheet" href="/assets/css/public-site.css"/>
-  <link rel="stylesheet" href="/assets/css/public-header-fix.css"/><style>.gallery-grid-public{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:.85rem}.gallery-card{margin:0;min-width:0;border:1px solid #e7dfd4;border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 5px 18px rgba(50,40,30,.06)}.gallery-card img{display:block;width:100%;height:150px;object-fit:cover;cursor:zoom-in}.gallery-card figcaption{padding:.55rem .65rem;font-size:.75rem;color:#756c62;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}@media(max-width:480px){.gallery-grid-public{grid-template-columns:repeat(2,minmax(0,1fr));gap:.55rem}.gallery-card img{height:115px}}</style>
+  <link rel="stylesheet" href="/assets/css/public-header-fix.css"/>
+  <link rel="stylesheet" href="/assets/css/simple-public.css"/><style>
+.gallery-grid-public{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:.7rem;align-items:start}
+.gallery-card{margin:0;min-width:0;aspect-ratio:1/1;border:1px solid #e9e0d6;border-radius:12px;overflow:hidden;background:#f6f1ea;box-shadow:none;position:relative;scroll-snap-align:start}
+.gallery-card img{display:block;width:100%;height:100%;object-fit:cover;cursor:zoom-in;transition:transform .2s ease}
+.gallery-card:hover img{transform:scale(1.035)}
+.gallery-card figcaption{position:absolute;left:0;right:0;bottom:0;padding:.65rem .45rem .4rem;font-size:.68rem;line-height:1.25;color:#fff;background:linear-gradient(transparent,rgba(25,20,16,.72));overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gallery-label{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin:1rem 0 .75rem}
+.gallery-label small{color:#756b61;font-size:.78rem}
+@media(max-width:600px){
+ .gallery-grid-public{grid-auto-flow:column;grid-template-rows:repeat(10,88px);grid-auto-columns:96px;grid-template-columns:none;gap:.45rem;overflow-x:auto;overflow-y:hidden;padding:.15rem .1rem .7rem;max-width:100%;overscroll-behavior-x:contain;scroll-snap-type:x proximity;scrollbar-width:thin;scrollbar-color:#d8cabb transparent}
+ .gallery-card{width:96px;height:88px;border-radius:9px}
+ .gallery-card figcaption{font-size:.58rem;padding:.55rem .3rem .28rem}
+ .gallery-grid-public::-webkit-scrollbar{height:5px}
+ .gallery-grid-public::-webkit-scrollbar-thumb{background:#d8cabb;border-radius:99px}
+}
+@media(min-width:601px){.gallery-grid-public{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}}
+</style>
 </head>
 <body>
   <div id="navbar-placeholder"></div>
