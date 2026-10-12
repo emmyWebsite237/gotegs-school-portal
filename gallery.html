@@ -8,15 +8,12 @@
   <title>Gallery | Go-Tegs International School</title>
   <link rel="stylesheet" href="/assets/css/public-site.css"/>
   <link rel="stylesheet" href="/assets/css/public-header-fix.css"/><style>
-/* Explorer-style gallery: ten stacked rows, with more columns revealed by horizontal scrolling. */
-.gallery-grid-public{display:grid;grid-auto-flow:column;grid-template-rows:repeat(10,156px);grid-auto-columns:156px;gap:.7rem;align-content:start;overflow-x:auto;overflow-y:hidden;max-width:100%;padding:.25rem .15rem 1rem;scroll-snap-type:x proximity;overscroll-behavior-x:contain;scrollbar-width:thin;scrollbar-color:#b8b0a5 #f2efe9}
-.gallery-card{margin:0;min-width:0;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:.35rem;padding:.55rem .45rem .4rem;border:1px solid transparent;border-radius:9px;background:transparent;scroll-snap-align:start;transition:background .15s,border-color .15s}
-.gallery-card:hover,.gallery-card:focus-within{background:#f5f2ed;border-color:#e5ded4}
-.gallery-card img{display:block;width:100%;height:116px;object-fit:cover;border:1px solid #e6e0d7;border-radius:5px;background:#f3f0eb;cursor:zoom-in}
-.gallery-card figcaption{width:100%;padding:.18rem .15rem;font-size:.76rem;line-height:1.3;color:#5f5a53;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center}
-.gallery-grid-public .empty-state{grid-row:1 / span 2;grid-column:1 / span 3}
-@media(min-width:1200px){.gallery-grid-public{grid-template-rows:repeat(10,176px);grid-auto-columns:176px;gap:.8rem}.gallery-card img{height:132px}.gallery-card figcaption{font-size:.82rem}}
-@media(max-width:600px){.gallery-grid-public{grid-template-rows:repeat(10,112px);grid-auto-columns:104px;gap:.35rem}.gallery-card{padding:.35rem .25rem .2rem;gap:.25rem;border-radius:7px}.gallery-card img{height:76px;border-radius:4px}.gallery-card figcaption{font-size:.65rem;padding:.12rem 0}}
+/* Fixed-size file-explorer tiles. Ten rows; additional photos continue horizontally. */
+.gallery-grid-public{display:grid;grid-auto-flow:column;grid-template-rows:repeat(10,auto);grid-auto-columns:240px;gap:14px;padding:8px 4px 16px;overflow-x:auto;overflow-y:hidden;align-items:start;overscroll-behavior-x:contain;scrollbar-width:thin;scroll-snap-type:x proximity}
+.gallery-card{box-sizing:border-box;width:240px;min-width:240px;max-width:240px;height:190px;margin:0;border:1px solid #e5e7eb;border-radius:9px;overflow:hidden;background:#fff;box-shadow:0 2px 7px rgba(15,23,42,.06);scroll-snap-align:start}
+.gallery-card img{display:block;box-sizing:border-box;width:100%;height:148px;object-fit:cover;object-position:center;cursor:zoom-in;background:#f3f4f6}
+.gallery-card figcaption{box-sizing:border-box;width:100%;height:40px;padding:10px 9px;font-size:.76rem;line-height:1.2;color:#475569;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left}
+@media(max-width:700px){.gallery-grid-public{grid-template-rows:repeat(10,auto);grid-auto-columns:112px;gap:9px;padding:6px 2px 12px}.gallery-card{width:112px;min-width:112px;max-width:112px;height:112px;border-radius:7px}.gallery-card img{height:82px}.gallery-card figcaption{height:28px;padding:7px 6px;font-size:.68rem}}
 </style>
 </head>
 <body>
