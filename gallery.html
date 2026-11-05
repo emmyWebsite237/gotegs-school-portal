@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Gallery of moments from Go-Tegs International School."/>
+  <link rel="icon" type="image/png" href="/assets/img/logo.png"/>
+  <title>Gallery | Go-Tegs International School</title>
+  <link rel="stylesheet" href="/assets/css/public-site.css"/>
+  <link rel="stylesheet" href="/assets/css/public-header-fix.css"/><style>
+/* Modern responsive photo grid */
+.gallery-grid-public {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.25rem;
+  padding: 1.5rem 0;
+}
+.gallery-card {
+  box-sizing: border-box;
+  margin: 0;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.gallery-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.1);
+}
+.gallery-card img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  object-position: center;
+  cursor: zoom-in;
+  background: #f1f5f9;
+}
+.gallery-card figcaption {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #334155;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media (max-width: 600px) {
+  .gallery-grid-public {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+  .gallery-card figcaption {
+    font-size: 0.75rem;
+    padding: 0.5rem 0.6rem;
+  }
+}
+</style>
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+  <main class="public-site">
+    <div class="content-page">
+      <section class="page-intro">
+        <span class="section-kicker">Go-Tegs · School life</span>
+        <h1>Moments worth remembering.</h1>
+        <div class="page-intro-copy"><p>Small snapshots of learning, school events and everyday Go-Tegs life.</p></div>
+      </section>
+      <div class="gallery-label"><span class="section-kicker">Gallery</span><small id="galleryCount">Preparing the gallery…</small></div>
+      <div class="gallery-grid-public" id="galleryGrid"><div class="empty-state gallery-empty-public">Loading school moments…</div></div>
+    </div>
+  </main>
+  <div class="lightbox-public" id="galleryLightbox" aria-hidden="true"><button type="button" id="galleryClose" aria-label="Close image">×</button><img id="galleryLightboxImage" alt="Go-Tegs gallery photo"/></div>
+  <div id="footer-placeholder"></div>
+  <script src="/assets/js/main.js"></script>
+  <script>
+    const GALLERY_ENDPOINT = '/api/admin-verify?gallery=cloudinary';
+    const LEGACY_GALLERY_ENDPOINT = '/api/admin-verify?gallery=public';
+    async function renderGallery(){
+      const grid=document.getElementById('galleryGrid'),count=document.getElementById('galleryCount');
+      try{
+        let images=[];
+        let cursor='';
+        let cloudinaryError=null;
+        do {
+          const url=new URL(GALLERY_ENDPOINT,window.location.origin);
+          if(cursor)url.searchParams.set('cursor',cursor);
+          const res=await fetch(url.toString(),{headers:{Accept:'application/json'}});
+          const data=await res.json().catch(()=>({}));
+          if(!res.ok)throw new Error(data.error||'Cloudinary gallery could not be loaded.');
+          images.push(...(data.images||[]));
+          cursor=data.next_cursor||'';
+        } while(cursor);
+        if(!images.length){count.textContent='No photos uploaded yet';grid.innerHTML='<div class="empty-state gallery-empty-public">No image assets were found in Cloudinary yet.</div>';return;}
+        count.textContent=`${images.length} photo${images.length===1?'':'s'} · Cloudinary assets`;
+        grid.innerHTML=images.map((image,i)=>{
+          const title=String(image.title||image.public_id||`Go-Tegs school life · ${i+1}`);
+          const url=String(image.cloudinary_url||image.secure_url||'');
+          const alt=String(image.alt_text||title||'Go-Tegs school gallery photo');
+          return `<figure class="gallery-card"><img src="${url.replace(/"/g,'&quot;')}" alt="${alt.replace(/"/g,'&quot;')}" loading="lazy" draggable="false"/><figcaption>${title.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}</figcaption></figure>`;
+        }).join('');
+        grid.querySelectorAll('img').forEach(img=>{img.addEventListener('contextmenu',e=>e.preventDefault());img.addEventListener('dragstart',e=>e.preventDefault());img.addEventListener('click',()=>openLightbox(img.src));});
+      }catch(err){
+        try {
+          const fallback=await fetch(LEGACY_GALLERY_ENDPOINT,{headers:{Accept:'application/json'}});
+          const data=await fallback.json().catch(()=>({}));
+          if(!fallback.ok)throw new Error(data.error||err.message);
+          const images=data.images||[];
+          if(!images.length)throw err;
+          count.textContent=`${images.length} photo${images.length===1?'':'s'} · saved gallery`;
+          grid.innerHTML=images.map((image,i)=>`<figure class="gallery-card"><img src="${String(image.cloudinary_url||'').replace(/"/g,'&quot;')}" alt="${String(image.alt_text||'Go-Tegs school gallery photo').replace(/"/g,'&quot;')}" loading="lazy" draggable="false"/><figcaption>${String(image.title||`Go-Tegs school life · ${i+1}`).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}</figcaption></figure>`).join('');
+          grid.querySelectorAll('img').forEach(img=>{img.addEventListener('contextmenu',e=>e.preventDefault());img.addEventListener('dragstart',e=>e.preventDefault());img.addEventListener('click',()=>openLightbox(img.src));});
+        } catch (fallbackError) {
+          count.textContent='Gallery temporarily unavailable';
+          grid.innerHTML='<div class="empty-state gallery-empty-public">The school gallery could not load right now. Please check the Cloudinary server settings and try again.</div>';
+        }
+      }
+    }
+    const lightbox=document.getElementById('galleryLightbox'),lightboxImage=document.getElementById('galleryLightboxImage');
+    function openLightbox(src){lightboxImage.src=src;lightbox.classList.add('open');lightbox.setAttribute('aria-hidden','false');}
+    function closeLightbox(){lightbox.classList.remove('open');lightbox.setAttribute('aria-hidden','true');lightboxImage.removeAttribute('src');}
+    document.getElementById('galleryClose').addEventListener('click',closeLightbox);
+    lightbox.addEventListener('click',e=>{if(e.target===lightbox)closeLightbox();});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLightbox();});
+    renderGallery();
+  </script>
+</body>
+</html>

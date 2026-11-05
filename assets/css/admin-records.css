@@ -1,0 +1,54 @@
+/* Go-Tegs — Admin Records visual layer.
+   Styling only: record generation/export logic is unchanged. */
+
+html.admin-page-mode .table-responsive-wrapper {
+  margin-top: 1.5rem;
+  overflow: auto;
+  border: 1px solid #dce7f5;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 18px 48px rgba(16, 54, 104, .09);
+}
+
+html.admin-page-mode #captureArea {
+  background: #fff !important;
+}
+
+html.admin-page-mode .ledger-table {
+  border: 1px solid #cfdbea !important;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+html.admin-page-mode .ledger-table th {
+  background: linear-gradient(180deg, #0f59bf, #0a438e) !important;
+  color: #fff !important;
+  border-color: #0a438e !important;
+  padding: 8px !important;
+  font-weight: 800 !important;
+  letter-spacing: .03em;
+}
+
+html.admin-page-mode .ledger-table td {
+  border-color: #e4ebf4 !important;
+  padding: 6px !important;
+  background: #fff;
+}
+
+html.admin-page-mode .ledger-table tr:nth-child(even) td {
+  background: #fbfdff;
+}
+
+html.admin-page-mode .ledger-table tr:hover td {
+  background: #f4f8fe;
+}
+
+html.admin-page-mode .ledger-table .name-cell {
+  color: #10233f !important;
+  font-weight: 750 !important;
+}
+
+html.admin-page-mode #downloadBtn {
+  margin-top: 1rem;
+  box-shadow: 0 12px 28px rgba(20,100,216,.18);
+}

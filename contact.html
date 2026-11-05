@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Contact Go-Tegs International School by enquiry form, phone, email or WhatsApp."/>
+  <link rel="icon" type="image/png" href="/assets/img/logo.png"/>
+  <title>Contact | Go-Tegs International School</title>
+  <link rel="stylesheet" href="/assets/css/public-site.css"/>
+  <link rel="stylesheet" href="/assets/css/public-header-fix.css"/>
+  <link rel="stylesheet" href="/assets/css/simple-public.css"/>
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+  <main class="public-site">
+    <div class="content-page">
+      <section class="page-intro">
+        <span class="section-kicker">Go-Tegs · Connect with us</span>
+        <h1>Let's talk about what you need.</h1>
+        <div class="page-intro-copy"><p>Send an enquiry using the form and choose the topic that best matches your question. You can also reach the school directly through the channels below.</p></div>
+      </section>
+      <div class="form-layout-public">
+        <section class="panel-card-public">
+          <h2>Send an enquiry</h2>
+          <form id="contactForm" class="school-form-public">
+            <label>Full name<input id="contactName" name="name" autocomplete="name" required/></label>
+            <label>Phone<input id="contactPhone" name="phone" type="tel" autocomplete="tel" required/></label>
+            <label>Email<input id="contactEmail" name="email" type="email" autocomplete="email" required/></label>
+            <label>Related topic<select id="contactTopic" name="topic" required><option value="">Choose a topic</option><option>Admissions / Enrolment</option><option>Student Portal</option><option>Lesson Notes</option><option>Quiz &amp; Practice</option><option>School Store</option><option>Fees / Payments</option><option>Updates &amp; Events</option><option>General Enquiry</option><option>Other</option></select></label>
+            <label class="full">Message<textarea id="contactMessage" name="message" placeholder="Tell us what you would like help with..." required></textarea></label>
+            <div class="full" style="display:flex;flex-wrap:wrap;gap:.75rem;align-items:center">
+              <button class="gt-button gt-button--primary" type="submit" id="contactSubmit">Send Enquiry ↗</button>
+              <span style="font-size:.8rem;color:var(--gt-slate)">Your message is submitted securely through FormSubmit.</span>
+            </div>
+            <p class="full status-text" id="contactFormStatus" aria-live="polite"></p>
+          </form>
+        </section>
+
+        <aside class="panel-card-public details">
+          <h2>Contact details</h2>
+          <div class="contact-detail-public"><div class="icon">☎</div><div><strong>Phone</strong><a href="tel:08066525319">0806 652 5319</a><a href="tel:08106958638">0810 695 8638</a></div></div>
+          <div class="contact-detail-public"><div class="icon">✉</div><div><strong>Email</strong><a href="mailto:gotegs622@gmail.com">gotegs622@gmail.com</a></div></div>
+          <div class="contact-detail-public"><div class="icon">◌</div><div><strong>WhatsApp</strong><a href="https://wa.me/2348066525319" target="_blank" rel="noopener">Chat on WhatsApp</a></div></div>
+          <div class="contact-detail-public"><div class="icon">⌂</div><div><strong>School address</strong><p>15, Ayesanmi Street, GloryLand Estate,<br/>Powerline Bus Stop, Isheri Olofin,<br/>Alimosho, Lagos.</p></div></div>
+          <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--gt-sky-2)">
+            <strong>Social channels</strong>
+            <div id="contactSocials" style="display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.65rem"><span style="color:var(--gt-slate);font-size:.8rem">Loading social channels…</span></div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+  <div id="footer-placeholder"></div>
+  <script src="/assets/js/main.js"></script>
+  <script>
+    const contactForm=document.getElementById('contactForm');
+    const contactStatus=document.getElementById('contactFormStatus');
+    const contactSubmit=document.getElementById('contactSubmit');
+    contactForm.addEventListener('submit',async (e)=>{
+      e.preventDefault();
+      contactSubmit.disabled=true; contactSubmit.textContent='Sending…'; contactStatus.textContent='Sending your enquiry…'; contactStatus.style.color='var(--gt-blue-deep)';
+      const data=new FormData(contactForm);
+      data.append('_subject','Go-Tegs International School — Website Enquiry');
+      data.append('_captcha','false');
+      data.append('_template','table');
+      try{
+        const res=await fetch('https://formsubmit.co/ajax/gotegs622@gmail.com',{method:'POST',body:data,headers:{Accept:'application/json'}});
+        if(!res.ok) throw new Error('Unable to submit the form right now.');
+        contactForm.reset();
+        contactStatus.textContent='Thank you. Your enquiry has been sent successfully.';
+        contactStatus.style.color='#177a55';
+      }catch(err){
+        contactStatus.textContent=err.message||'Something went wrong. Please try again or contact the school directly.';
+        contactStatus.style.color='#b42318';
+      }finally{
+        contactSubmit.disabled=false; contactSubmit.textContent='Send Enquiry ↗';
+      }
+    });
+  </script>
+</body>
+</html>

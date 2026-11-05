@@ -1,0 +1,10 @@
+/* Public lesson-note pages — keeps the existing Go-Tegs public shell intact. */
+.lesson-notes-page{}
+.document-preview{width:100%}
+.document-preview-head small{font-weight:700}
+.document-preview-frame{display:block}
+.document-fallback{line-height:1.6}
+@media (max-width: 700px){
+  .document-preview{border-radius:14px}
+  .document-preview-frame{min-height:68vh;height:68vh}
+}

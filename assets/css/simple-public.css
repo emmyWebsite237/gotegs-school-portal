@@ -1,0 +1,76 @@
+/* Go-Tegs public refresh: calm, image-led, and intentionally simple. */
+:root {
+  --gt-blue: #79583f;
+  --gt-blue-deep: #4f3828;
+  --gt-navy: #30271f;
+  --gt-sky: #f6f1ea;
+  --gt-sky-2: #eee4d8;
+  --gt-sun: #d8bf88;
+  --gt-sun-soft: #f7f0df;
+  --gt-ink: #29231e;
+  --gt-slate: #756b61;
+  --gt-line: #e9e0d6;
+  --gt-paper: #fff;
+}
+html, body { background:#fff; color:var(--gt-ink); }
+body { overflow-x:hidden; }
+/* Home: reduce decorative colour and replace the abstract hero art with a real school photo. */
+.home-hero {
+  background:#faf8f4 !important;
+  background-image:none !important;
+  min-height:unset !important;
+  padding-top:clamp(3rem,6vw,5rem) !important;
+  padding-bottom:clamp(3rem,6vw,5rem) !important;
+}
+.home-hero-grid { display:none !important; }
+.home-hero::after { display:none !important; }
+.home-hero h1 em { color:var(--gt-blue) !important; }
+.home-eyebrow span { background:var(--gt-sun) !important; }
+.home-btn--gold { background:var(--gt-blue) !important; color:#fff !important; border-color:var(--gt-blue) !important; }
+.home-btn--gold:hover { background:var(--gt-blue-deep) !important; }
+.home-btn--ghost { background:#fff !important; color:var(--gt-blue-deep) !important; border-color:#d8cabb !important; }
+.home-hero-stage {
+  min-height:clamp(260px,34vw,450px) !important;
+  position:relative !important;
+  display:block !important;
+  overflow:hidden !important;
+  border-radius:20px !important;
+  background:#e9e0d5 url('/assets/img/go-tegs-classroom.jpg') center/cover no-repeat !important;
+  box-shadow:0 12px 32px rgba(47,36,25,.10) !important;
+}
+.home-hero-stage::after { content:""; position:absolute; inset:0; background:linear-gradient(0deg,rgba(28,23,18,.38),transparent 48%); }
+.home-hero-stage > * { display:none !important; }
+.home-bento { gap:.8rem !important; }
+.home-bento-card { border-radius:14px !important; box-shadow:none !important; }
+.home-bento-card:hover { transform:translateY(-2px) !important; box-shadow:0 8px 22px rgba(47,36,25,.08) !important; }
+.bento-icon { background:var(--gt-sky) !important; color:var(--gt-blue) !important; }
+.home-bento-card--dark { background:#f5efe7 !important; border-color:#e7dbcd !important; }
+.home-bento-card--dark h3, .home-bento-card--dark p { color:var(--gt-ink) !important; }
+.home-bento-card--dark .bento-icon { background:#fff !important; color:var(--gt-blue) !important; }
+.home-slice { background:#faf8f4 !important; border-color:var(--gt-line) !important; }
+.home-slice-visual { min-height:300px !important; border-radius:18px; background:#eee5da url('/assets/img/go-tegs-classroom.jpg') center/cover no-repeat; overflow:hidden; }
+.home-slice-visual > * { display:none !important; }
+.home-slice-copy h2, .home-section h2, .home-cta h2 { color:var(--gt-ink) !important; }
+.home-program { border-radius:12px !important; box-shadow:none !important; }
+.home-program:hover, .home-program:focus-visible { transform:translateY(-2px) !important; box-shadow:0 8px 20px rgba(47,36,25,.07) !important; }
+.home-cta { background:#f6f1ea !important; border-color:var(--gt-line) !important; }
+.home-cta p { color:var(--gt-slate) !important; }
+.cta-orbit { display:none !important; }
+/* Public inner pages: quiet borders, less visual noise, consistent warm neutral surfaces. */
+.public-site { color:var(--gt-ink) !important; }
+.public-site h1, .public-site h2, .public-site h3 { color:var(--gt-ink) !important; }
+.section-kicker { color:var(--gt-blue) !important; }
+.section-kicker::before { background:var(--gt-sun) !important; }
+.site-header::after { height:2px !important; background:var(--gt-line) !important; }
+.desktop-nav a:hover { background:var(--gt-sky) !important; color:var(--gt-blue-deep) !important; }
+.desktop-nav a.is-active { background:var(--gt-sky) !important; color:var(--gt-blue-deep) !important; }
+.mobile-menu { background:#30271f !important; border-left:2px solid var(--gt-sun) !important; }
+.mobile-scrim { background:rgba(35,28,22,.35) !important; }
+/* Avoid long, layered scroll effects; preserve normal page and horizontal gallery scrolling. */
+html { scroll-behavior:auto !important; }
+@media (prefers-reduced-motion:reduce) { *, *::before, *::after { animation:none !important; transition:none !important; } }
+@media (max-width:560px) {
+  .home-hero { padding-left:1.1rem !important; padding-right:1.1rem !important; }
+  .home-hero-stage { min-height:250px !important; border-radius:14px !important; }
+  .home-slice-visual { min-height:230px !important; }
+}

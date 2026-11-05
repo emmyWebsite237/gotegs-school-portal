@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Dashboard | Go-Tegs</title>
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <link rel="stylesheet" href="/assets/css/portal.css" />
+</head>
+<body class="student-shell-page">
+  <div id="navbar-placeholder"></div>
+  <main class="portal-dashboard">
+    <div class="dashboard-topline"><span>Go-Tegs / Private Student Workspace</span><span id="portalDate">Today</span></div>
+
+    <section class="portal-hero" aria-labelledby="dashboardHeading">
+      <div class="portal-hero-copy">
+        <div class="portal-kicker">Your school workspace</div>
+        <h1 id="dashboardHeading">Welcome back, <span id="dashName">Student</span>.</h1>
+        <p>Everything here is personal to your student account—results, notes, practice, your profile and the tools the school will unlock next.</p>
+        <div class="portal-identity-row"><span class="portal-identity-chip">ID · <span id="dashStudentId">—</span></span><span class="portal-identity-chip">Class · <span id="dashClass">—</span></span><span class="portal-identity-chip">Session · <span id="dashYear">—</span></span></div>
+      </div>
+      <div class="portal-hero-orbit" aria-label="Student profile visual"><span class="portal-orbit-tag a">LEARN</span><span class="portal-orbit-tag b">LEAD</span><span class="portal-orbit-tag c">BECOME</span><div class="portal-orbit-core"><img src="/assets/img/logo.png" data-portal-profile-image alt="Go-Tegs logo" /><span class="portal-profile-initials" data-portal-initials aria-hidden="true"></span></div></div>
+    </section>
+
+    <section class="portal-section" aria-labelledby="workspaceTitle">
+      <div class="portal-section-head"><div><div class="portal-section-label">Your workspace</div><h2 class="portal-section-title" id="workspaceTitle">Choose what you want to do</h2></div><p class="portal-section-note">Tap a card to enter</p></div>
+      <div class="portal-card-grid">
+        <a class="portal-card portal-card--feature span-7" href="/student/profile.html" data-portal-interactive data-tilt-card><div class="portal-card-top"><span class="portal-icon">◉</span><span class="portal-badge">Identity</span></div><h3>Your Profile</h3><p>Review your student details and manage your profile picture.</p><span class="portal-arrow">↗</span></a>
+        <a class="portal-card span-5" href="/student/result/index.html" data-portal-interactive data-tilt-card><div class="portal-card-top"><span class="portal-icon">▥</span><span class="portal-badge">Academic</span></div><h3>Results</h3><p>Use your result PIN to check a released result.</p><span class="portal-arrow">↗</span></a>
+        <a class="portal-card span-5" href="/student/lesson-notes/index.html" data-portal-interactive data-tilt-card><div class="portal-card-top"><span class="portal-icon">▤</span><span class="portal-badge">Study</span></div><h3>Lesson Notes</h3><p>Open notes for your class, term and subjects.</p><span class="portal-arrow">↗</span></a>
+        <a class="portal-card portal-card--dark span-7" href="/student/quiz/" data-portal-interactive data-tilt-card><div class="portal-card-top"><span class="portal-icon">✦</span><span class="portal-badge">Practice</span></div><h3>Quiz &amp; Practice</h3><p>Train your recall and sharpen your knowledge through practice.</p><span class="portal-arrow">↗</span></a>
+        <a class="portal-card span-6" href="/student/quiz-code/" data-portal-interactive data-tilt-card><div class="portal-card-top"><span class="portal-icon">⌘</span><span class="portal-badge">Teacher code</span></div><h3>Quiz Code</h3><p>Preview and start a teacher-assigned test with a code.</p><span class="portal-arrow">↗</span></a>
+        <a class="portal-card span-6" href="/student/store/" data-portal-interactive data-tilt-card><div class="portal-card-top"><span class="portal-icon">◫</span><span class="portal-badge">School</span></div><h3>Store</h3><p>Access school items and place an order from your private portal.</p><span class="portal-arrow">↗</span></a>
+      </div>
+    </section>
+
+    <section class="portal-section" aria-labelledby="futureTitle">
+      <div class="portal-section-head"><div><div class="portal-section-label">Coming next</div><h2 class="portal-section-title" id="futureTitle">More tools will appear here</h2></div><p class="portal-section-note">Inactive until released</p></div>
+      <div class="portal-card-grid">
+        <div class="portal-card portal-card--disabled span-6" aria-disabled="true"><div class="portal-card-top"><span class="portal-icon">♜</span><span class="portal-badge">Coming Soon</span></div><h3>Tournaments</h3><p>Competitive school challenges will appear here when the school opens the feature.</p></div>
+        <div class="portal-card portal-card--disabled span-6" aria-disabled="true"><div class="portal-card-top"><span class="portal-icon">▣</span><span class="portal-badge">Coming Soon</span></div><h3>School Leaving Testimonial</h3><p>This module remains inactive until the school makes it available.</p></div>
+      </div>
+      <div class="portal-focus"><div class="portal-focus-mark">→</div><div><strong>Keep moving</strong><span>Choose one active module above. Your private workspace stays focused and the school can unlock future tools without changing the shell.</span></div></div>
+    </section>
+  </main>
+  <script src="/assets/js/main.js"></script>
+  <script>
+    (()=>{const raw=localStorage.getItem('gotegs_student_session');if(!raw)return;let s;try{s=JSON.parse(raw)}catch{return}const $=id=>document.getElementById(id);$('dashName').textContent=s.full_name||'Student';$('dashStudentId').textContent=s.student_id||'—';$('dashClass').textContent=(s.class||'—')+(s.dept?' · '+s.dept:'');$('dashYear').textContent=s.year||'Current';$('portalDate').textContent=new Date().toLocaleDateString(undefined,{weekday:'long',month:'short',day:'numeric'});})();
+  </script>
+</body>
+</html>

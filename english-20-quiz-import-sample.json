@@ -1,0 +1,173 @@
+{
+  "title": "English Language Practice — 20 Questions",
+  "subject": "English Language",
+  "class_restriction": null,
+  "time_limit_minutes": 5,
+  "time_limit_seconds": 300,
+  "attempts_allowed": null,
+  "show_answers_after": true,
+  "expires_at": null,
+  "library_visible": true,
+  "questions": [
+    {
+      "question": "Choose the word that is closest in meaning to “rapid”.",
+      "option_a": "Slow",
+      "option_b": "Quick",
+      "option_c": "Weak",
+      "option_d": "Quiet",
+      "correct_option": "b"
+    },
+    {
+      "question": "Which sentence is correctly punctuated?",
+      "option_a": "Mary said “I am ready”.",
+      "option_b": "Mary said, “I am ready.”",
+      "option_c": "Mary said “I am ready.”",
+      "option_d": "Mary, said “I am ready.”",
+      "correct_option": "b"
+    },
+    {
+      "question": "What is the plural form of “child”?",
+      "option_a": "Childs",
+      "option_b": "Childes",
+      "option_c": "Children",
+      "option_d": "Childrens",
+      "correct_option": "c"
+    },
+    {
+      "question": "Identify the adjective in: “The tall boy won the race.”",
+      "option_a": "boy",
+      "option_b": "won",
+      "option_c": "race",
+      "option_d": "tall",
+      "correct_option": "d"
+    },
+    {
+      "question": "Choose the correct word: “Neither John nor Peter ___ coming.”",
+      "option_a": "are",
+      "option_b": "were",
+      "option_c": "is",
+      "option_d": "be",
+      "correct_option": "c"
+    },
+    {
+      "question": "Which word is an antonym of “ancient”?",
+      "option_a": "Old",
+      "option_b": "Modern",
+      "option_c": "Former",
+      "option_d": "Past",
+      "correct_option": "b"
+    },
+    {
+      "question": "Choose the correct spelling.",
+      "option_a": "Definately",
+      "option_b": "Definetely",
+      "option_c": "Definitely",
+      "option_d": "Definatly",
+      "correct_option": "c"
+    },
+    {
+      "question": "Which sentence is in the past tense?",
+      "option_a": "She sings every morning.",
+      "option_b": "She is singing now.",
+      "option_c": "She will sing tomorrow.",
+      "option_d": "She sang yesterday.",
+      "correct_option": "d"
+    },
+    {
+      "question": "What type of word is “quickly” in “He ran quickly”?",
+      "option_a": "Noun",
+      "option_b": "Adjective",
+      "option_c": "Adverb",
+      "option_d": "Pronoun",
+      "correct_option": "c"
+    },
+    {
+      "question": "Choose the correct comparative form of “good”.",
+      "option_a": "Gooder",
+      "option_b": "More good",
+      "option_c": "Best",
+      "option_d": "Better",
+      "correct_option": "d"
+    },
+    {
+      "question": "Complete the sentence: “If I ___ enough money, I would buy the laptop.”",
+      "option_a": "have",
+      "option_b": "had",
+      "option_c": "has",
+      "option_d": "having",
+      "correct_option": "b"
+    },
+    {
+      "question": "Which word is a pronoun?",
+      "option_a": "Beautiful",
+      "option_b": "Teacher",
+      "option_c": "They",
+      "option_d": "Carefully",
+      "correct_option": "c"
+    },
+    {
+      "question": "Choose the correct preposition: “The books are ___ the table.”",
+      "option_a": "on",
+      "option_b": "at",
+      "option_c": "from",
+      "option_d": "by",
+      "correct_option": "a"
+    },
+    {
+      "question": "What is the meaning of the idiom “break the ice”?",
+      "option_a": "To destroy something frozen",
+      "option_b": "To start a friendly conversation",
+      "option_c": "To become angry",
+      "option_d": "To end a friendship",
+      "correct_option": "b"
+    },
+    {
+      "question": "Choose the sentence with the correct subject–verb agreement.",
+      "option_a": "The boys runs every morning.",
+      "option_b": "The boy run every morning.",
+      "option_c": "The boys run every morning.",
+      "option_d": "The boys running every morning.",
+      "correct_option": "c"
+    },
+    {
+      "question": "Which word contains a silent letter?",
+      "option_a": "Table",
+      "option_b": "Knife",
+      "option_c": "Paper",
+      "option_d": "Window",
+      "correct_option": "b"
+    },
+    {
+      "question": "Choose the correct question tag: “You are coming, ___?”",
+      "option_a": "aren't you",
+      "option_b": "are you",
+      "option_c": "isn't it",
+      "option_d": "won't you",
+      "correct_option": "a"
+    },
+    {
+      "question": "Which sentence is written in the passive voice?",
+      "option_a": "The teacher marked the scripts.",
+      "option_b": "The students answered the questions.",
+      "option_c": "The scripts were marked by the teacher.",
+      "option_d": "The teacher is marking the scripts.",
+      "correct_option": "c"
+    },
+    {
+      "question": "Choose the word that completes the sentence: “She has ___ finished her homework.”",
+      "option_a": "already",
+      "option_b": "yesterday",
+      "option_c": "tomorrow",
+      "option_d": "last",
+      "correct_option": "a"
+    },
+    {
+      "question": "Which of these is a compound word?",
+      "option_a": "Beautiful",
+      "option_b": "Sunflower",
+      "option_c": "Quickly",
+      "option_d": "Honesty",
+      "correct_option": "b"
+    }
+  ]
+}

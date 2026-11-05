@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manage Social Links | Admin | Go-Tegs</title>
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <link rel="stylesheet" href="/assets/css/admin.css" />
+  <style>
+    .social-add-form {
+      display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: flex-end;
+      padding: 1.5rem; border: 1px solid var(--border); border-radius: var(--radius);
+      background: var(--paper); margin-top: 1.5rem;
+    }
+    .social-add-form > div { display: flex; flex-direction: column; gap: 0.3rem; }
+    .social-add-form label { font-family: var(--font-display); font-weight: 600; font-size: 0.82rem; }
+    .social-add-form input, .social-add-form select {
+      font-size: 0.9rem; padding: 0.55rem 0.7rem; border: 1px solid var(--border); border-radius: 8px;
+    }
+    .social-row {
+      display: flex; align-items: center; gap: 0.9rem; padding: 0.85rem 1rem;
+      border: 1px solid var(--border); border-radius: var(--radius); background: var(--paper);
+      margin-top: 0.7rem;
+    }
+    .social-row .platform { font-family: var(--font-display); font-weight: 600; text-transform: capitalize; width: 110px; }
+    .social-row .url { flex: 1; font-size: 0.88rem; color: var(--slate); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .btn-delete { background: #fef2f2; color: #dc2626; border: 1px solid #fca5a5; }
+    .btn-delete:hover { background: #dc2626; color: #fff; }
+  </style>
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+
+  <main class="page-container admin-page" style="max-width: 800px;">
+    <nav class="breadcrumb">Admin / Social Links</nav>
+    <h1>Manage Social Links</h1>
+    <p>These icons appear in the footer on every page of the site.</p>
+
+    <form class="social-add-form" id="addForm">
+      <div>
+        <label for="platform">Platform</label>
+        <select id="platform">
+          <option value="facebook">Facebook</option>
+          <option value="twitter">Twitter / X</option>
+          <option value="instagram">Instagram</option>
+          <option value="whatsapp">WhatsApp</option>
+          <option value="tiktok">TikTok</option>
+          <option value="youtube">YouTube</option>
+        </select>
+      </div>
+      <div style="flex:1;">
+        <label for="url">Link URL</label>
+        <input type="url" id="url" placeholder="https://..." required style="width:100%;" />
+      </div>
+      <button type="submit" class="btn" id="addBtn">Add Link</button>
+    </form>
+    <p id="addMsg" class="upload-status"></p>
+
+    <div id="linksList" style="margin-top:1.5rem;"></div>
+  </main>
+
+  <div id="footer-placeholder"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/assets/js/main.js"></script>
+  <script src="/assets/js/supabase-config.js"></script>
+  <script>
+    async function loadLinks() {
+      const { data, error } = await supabaseClient.from('social_links').select('*').order('display_order');
+      const list = document.getElementById('linksList');
+
+      if (error) { list.innerHTML = `<p style="color:#dc2626;">Failed to load: ${error.message}</p>`; return; }
+      if (!data.length) { list.innerHTML = `<p class="empty-state">No social links added yet.</p>`; return; }
+
+      list.innerHTML = data.map(row => `
+        <div class="social-row" data-id="${row.id}">
+          <span class="platform">${row.platform}</span>
+          <span class="url">${row.url}</span>
+          <button class="btn-delete delete-btn" type="button">Delete</button>
+        </div>
+      `).join('');
+
+      list.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const row = btn.closest('.social-row');
+          if (!confirm(`Remove this ${row.querySelector('.platform').textContent} link?`)) return;
+          await supabaseClient.from('social_links').delete().eq('id', row.dataset.id);
+          loadLinks();
+        });
+      });
+    }
+
+    document.getElementById('addForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const platform = document.getElementById('platform').value;
+      const url = document.getElementById('url').value.trim();
+      const msg = document.getElementById('addMsg');
+      const btn = document.getElementById('addBtn');
+
+      btn.disabled = true; btn.textContent = 'Adding...';
+      const { error } = await supabaseClient.from('social_links').insert({ platform, url });
+      btn.disabled = false; btn.textContent = 'Add Link';
+
+      if (error) { msg.style.color = '#dc2626'; msg.textContent = error.message; return; }
+      msg.style.color = '#2c8c87'; msg.textContent = 'Added!';
+      document.getElementById('addForm').reset();
+      loadLinks();
+    });
+
+    loadLinks();
+  </script>
+</body>
+</html>

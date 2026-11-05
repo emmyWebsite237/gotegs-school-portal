@@ -1,0 +1,148 @@
+/* Go-Tegs public site — visual system matched to the current Lovable preview.
+   Functionality/integrations remain in the existing page scripts. */
+:root{
+  --lp-ink:#101010;
+  --lp-muted:#686868;
+  --lp-soft:#f4f3ef;
+  --lp-line:#deddd8;
+  --lp-dark:#121212;
+  --lp-accent:#e7e2d8;
+  --lp-max:1280px;
+  --lp-serif:Georgia,"Times New Roman",serif;
+}
+
+html.public-lovable, html:not(.admin-page-mode) body{background:#f7f6f2;color:var(--lp-ink)}
+body:has(.public-lovable-page){padding-left:0!important;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+
+/* ---------- Lovable-style top navigation ---------- */
+.site-sidebar{display:none!important}
+.site-topbar{
+  position:sticky!important;top:0;z-index:100!important;
+  width:100%!important;height:78px!important;
+  display:grid!important;grid-template-columns:auto 1fr auto;align-items:center!important;
+  gap:1.5rem!important;padding:0 clamp(1.1rem,4vw,3.5rem)!important;
+  background:rgba(247,246,242,.94)!important;border-bottom:1px solid var(--lp-line)!important;
+  backdrop-filter:blur(16px)!important;box-shadow:none!important;
+}
+.site-topbar .nav-brand{display:flex!important;align-items:center;gap:.7rem!important;padding:0!important;margin:0!important;border:0!important;color:var(--lp-ink)!important;font:800 .85rem/1.05 Inter,sans-serif!important;letter-spacing:-.02em!important}
+.site-topbar .nav-brand img{width:38px!important;height:38px!important;border-radius:50%!important;background:#fff!important;padding:2px!important;border:1px solid var(--lp-line)!important}
+.site-topbar .nav-brand small{display:block!important;margin-top:3px!important;color:#777!important;font:600 .55rem/1 Inter,sans-serif!important;letter-spacing:.1em!important;text-transform:uppercase!important}
+.site-topbar:after{content:"";display:block}
+.site-topbar .nav-brand{grid-column:1}
+.site-topbar .nav-toggle{grid-column:3}
+
+.public-desktop-links{display:flex;align-items:center;justify-content:center;gap:clamp(.8rem,2vw,1.7rem)}
+.public-desktop-links a{font:600 .68rem Inter,sans-serif;text-decoration:none;color:#626262;letter-spacing:.03em;transition:color .18s ease}
+.public-desktop-links a:hover,.public-desktop-links a.active{color:#111}
+.public-nav-actions{display:flex;align-items:center;gap:.55rem}
+.public-nav-actions a{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:.55rem .85rem;border:1px solid #cfcfc8;border-radius:999px;font:700 .65rem Inter,sans-serif;color:#222;white-space:nowrap}
+.public-nav-actions a.primary{background:#121212;color:#fff;border-color:#121212}
+.public-nav-actions a:hover{transform:translateY(-1px)}
+
+.nav-toggle{display:none!important;background:transparent!important;border:0!important;color:#111!important;font-size:1.3rem!important;padding:.35rem!important}
+.nav-drawer{background:#f7f6f2!important;color:#111!important;border-left:1px solid var(--lp-line)!important}
+.nav-drawer-head{color:#111!important;border-bottom:1px solid var(--lp-line)!important}
+.nav-drawer .nav-links a{color:#222!important;border-bottom:1px solid var(--lp-line)!important}
+.nav-drawer .nav-links a.active{background:#eceae4!important;color:#111!important}
+
+/* ---------- shared public page shell ---------- */
+.public-lovable-page{max-width:var(--lp-max)!important;margin:0 auto!important;padding:0 clamp(1.1rem,4vw,3.5rem) 5rem!important;min-height:0!important}
+.public-page-kicker{display:inline-flex;align-items:center;gap:.5rem;font:700 .64rem Inter,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#6d6d68}
+.public-page-kicker:before{content:"";width:18px;height:1px;background:#111;display:inline-block}
+.public-page-hero{padding:clamp(4.5rem,9vw,8rem) 0 clamp(3rem,7vw,6rem);border-bottom:1px solid var(--lp-line)}
+.public-page-hero h1{max-width:980px;margin:.9rem 0 1.25rem;font:500 clamp(3rem,8vw,7.3rem)/.91 Inter,sans-serif;letter-spacing:-.075em;color:#111}
+.public-page-hero h1 em{font-family:var(--lp-serif);font-weight:400}
+.public-page-hero p{max-width:720px;margin:0;color:#686868;font-size:clamp(.95rem,1.5vw,1.12rem);line-height:1.8}
+.public-content-section{padding:clamp(3rem,7vw,6rem) 0;border-bottom:1px solid var(--lp-line)}
+.public-section-label{font:700 .62rem Inter,sans-serif;letter-spacing:.13em;text-transform:uppercase;color:#777;margin-bottom:1rem}
+.public-content-section h2{max-width:850px;margin:0 0 1.2rem;font:500 clamp(2rem,4.5vw,4rem)/1 Inter,sans-serif;letter-spacing:-.055em;color:#111}
+.public-content-section p{max-width:760px;color:#656565;line-height:1.85;font-size:.95rem}
+.public-two-col{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(260px,.75fr);gap:clamp(2rem,7vw,7rem);align-items:start}
+.public-list{display:grid;gap:0;border-top:1px solid var(--lp-line)}
+.public-list-item{display:grid;grid-template-columns:54px 1fr;gap:1rem;padding:1.2rem 0;border-bottom:1px solid var(--lp-line)}
+.public-list-item .num{font:600 .68rem Inter,sans-serif;color:#888}
+.public-list-item strong{display:block;font-size:.9rem;font-weight:700;color:#171717}
+.public-list-item span{display:block;margin-top:.25rem;color:#777;font-size:.8rem;line-height:1.6}
+.public-dark-block{background:#121212;color:#fff;padding:clamp(2rem,5vw,4rem);border-radius:2px}
+.public-dark-block h2,.public-dark-block strong{color:#fff}
+.public-dark-block p{color:#bcbcbc}
+
+/* ---------- enrolment ---------- */
+.enrol-public-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(260px,.65fr);gap:clamp(2rem,6vw,6rem);padding:clamp(3rem,7vw,5rem) 0}
+.enrol-form{max-width:none!important;margin:0!important;padding:0!important;display:grid!important;grid-template-columns:1fr 1fr;gap:1rem!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
+.enrol-form label{grid-column:span 1;font:700 .62rem Inter,sans-serif!important;letter-spacing:.05em;text-transform:uppercase;color:#666;margin-top:.4rem!important}
+.enrol-form input,.enrol-form select,.enrol-form textarea{grid-column:span 1;font:500 .86rem Inter,sans-serif!important;padding:.9rem 0!important;border:0!important;border-bottom:1px solid #cfcfc9!important;border-radius:0!important;background:transparent!important;color:#111!important;outline:none!important}
+.enrol-form textarea{grid-column:1/-1;min-height:120px!important;resize:vertical}
+.enrol-form label[for="details"]{grid-column:1/-1}
+.enrol-form .btn{grid-column:1/-1;width:max-content!important;margin-top:1rem!important;border-radius:999px!important;padding:.8rem 1.25rem!important;background:#111!important;color:#fff!important}
+#enrolMsg{grid-column:1/-1;margin:0!important;font-size:.78rem!important}
+.thank-you-note{margin:0!important;padding:1.25rem!important;border:1px solid var(--lp-line)!important;border-left:0!important;border-radius:0!important;background:#eeece6!important;color:#5f5f5f!important;font-size:.82rem!important;line-height:1.75}
+@media(max-width:700px){.enrol-form{grid-template-columns:1fr!important}.enrol-form label,.enrol-form input,.enrol-form select{grid-column:1!important}.enrol-public-grid{grid-template-columns:1fr}}
+
+/* ---------- FAQ ---------- */
+.faq-public-list{border-top:1px solid var(--lp-line);margin:3rem 0 0}
+.faq-item{border:0!important;border-bottom:1px solid var(--lp-line)!important;border-radius:0!important;margin:0!important;overflow:hidden}
+.faq-q{display:grid!important;grid-template-columns:42px 1fr 28px!important;gap:1rem!important;align-items:center!important;width:100%!important;padding:1.25rem 0!important;background:transparent!important;color:#111!important;text-align:left!important;font:600 .9rem Inter,sans-serif!important}
+.faq-q:before{content:counter(faq);counter-increment:faq;font-size:.64rem;color:#888}
+.faq-public-list{counter-reset:faq}
+.faq-q .chev{color:#555!important;transition:transform .2s ease}
+.faq-item.open .faq-q .chev{transform:rotate(180deg)}
+.faq-a{display:grid!important;grid-template-rows:0fr!important;opacity:0!important;background:transparent!important;transition:grid-template-rows .25s ease,opacity .25s ease!important}
+.faq-item.open .faq-a{grid-template-rows:1fr!important;opacity:1!important}
+.faq-a>div{min-height:0!important;overflow:hidden!important;padding:0!important}
+.faq-item.open .faq-a>div{padding:0 2.6rem 1.25rem 4rem!important}
+.faq-a p{margin:0!important;color:#737373!important;font-size:.83rem!important;line-height:1.8!important}
+
+/* ---------- updates ---------- */
+#updates-feed{margin-top:3rem;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--lp-line);border:1px solid var(--lp-line)}
+.update-card{background:#f7f6f2!important;border:0!important;border-radius:0!important;overflow:hidden!important}
+.update-card img{width:100%;aspect-ratio:16/10;object-fit:cover}
+.update-card-body{padding:1.3rem!important}
+.update-card-date{font:700 .62rem Inter,sans-serif!important;letter-spacing:.1em;text-transform:uppercase;color:#858585!important}
+.update-card-message{margin:.55rem 0 0!important;color:#222!important;font-size:.88rem!important;line-height:1.7!important}
+.empty-state{grid-column:1/-1;background:#f7f6f2;padding:4rem 1.5rem;text-align:center;color:#777;font-size:.82rem}
+@media(max-width:700px){#updates-feed{grid-template-columns:1fr}}
+
+/* ---------- contact ---------- */
+.contact-public-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(260px,.7fr);gap:clamp(2rem,7vw,7rem);padding:clamp(3rem,7vw,6rem) 0}
+.contact-card{background:transparent!important;border:0!important;border-radius:0!important;padding:0!important;box-shadow:none!important}
+.contact-card h2{font:500 clamp(1.6rem,3vw,2.4rem)/1.1 Inter,sans-serif!important;letter-spacing:-.04em;color:#111!important;margin:0 0 1.5rem!important}
+.contact-form{display:grid;grid-template-columns:1fr 1fr;gap:1rem!important}
+.contact-field{display:grid;gap:.35rem}
+.contact-field.full{grid-column:1/-1}
+.contact-field label{font:700 .62rem Inter,sans-serif!important;letter-spacing:.05em;text-transform:uppercase;color:#666!important}
+.contact-field input,.contact-field select,.contact-field textarea{padding:.85rem 0!important;border:0!important;border-bottom:1px solid #cfcfc9!important;border-radius:0!important;background:transparent!important;color:#111!important;font:500 .84rem Inter,sans-serif!important;outline:none!important}
+.contact-field textarea{min-height:130px!important}
+.contact-submit{grid-column:1/-1!important;display:flex!important;align-items:center!important;gap:1rem!important;justify-content:flex-start!important;padding-top:1rem!important}
+.contact-submit button{border:0!important;border-radius:999px!important;padding:.82rem 1.15rem!important;background:#111!important;color:#fff!important;font:700 .65rem Inter,sans-serif!important}
+.contact-submit small{color:#777!important;font-size:.68rem!important}
+#contactFormStatus{grid-column:1/-1!important;color:#555!important;font-size:.72rem!important}
+.contact-detail-list{display:grid;gap:0!important;border-top:1px solid var(--lp-line)}
+.contact-detail{display:block!important;padding:1rem 0!important;border:0!important;border-bottom:1px solid var(--lp-line)!important;border-radius:0!important;background:transparent!important}
+.contact-detail-icon{display:none!important}
+.contact-detail strong{font:700 .62rem Inter,sans-serif!important;letter-spacing:.1em;text-transform:uppercase;color:#888!important}
+.contact-detail a,.contact-detail span{margin-top:.3rem!important;color:#222!important;font-size:.85rem!important}
+.contact-social-head{margin-top:2rem!important;padding-top:0!important;border:0!important}
+.contact-social-head h3{font:700 .62rem Inter,sans-serif!important;letter-spacing:.1em;text-transform:uppercase;color:#888!important}
+#contactSocials a{border:1px solid var(--lp-line)!important;border-radius:999px!important;background:transparent!important;color:#222!important}
+.contact-address{margin-top:2rem!important;padding:1.2rem 0!important;border-top:1px solid var(--lp-line)!important;border-radius:0!important;background:transparent!important;border-bottom:0!important;border-left:0!important;border-right:0!important}
+.contact-address strong{font:700 .62rem Inter,sans-serif!important;letter-spacing:.1em;color:#888!important}
+.contact-address p{margin:.45rem 0 0!important;color:#666!important;font-size:.8rem!important;line-height:1.7}
+@media(max-width:760px){.contact-public-grid{grid-template-columns:1fr}.contact-form{grid-template-columns:1fr}.contact-field.full,.contact-submit,#contactFormStatus{grid-column:1!important}}
+
+/* ---------- footer ---------- */
+.site-footer{margin:0!important;padding:0 clamp(1.1rem,4vw,3.5rem)!important;background:#121212!important;color:#fff!important;border:0!important}
+.footer-inner{max-width:var(--lp-max)!important;margin:0 auto!important;padding:4rem 0!important;display:grid!important;grid-template-columns:1.5fr 1fr 1fr!important;gap:3rem!important}
+.footer-inner h4{margin:0 0 .8rem!important;color:#fff!important;font:700 .68rem Inter,sans-serif!important;letter-spacing:.08em;text-transform:uppercase}
+.footer-inner p,.footer-inner li,.footer-inner a{color:#a7a7a7!important;font-size:.75rem!important;line-height:1.8}
+.footer-inner a:hover{color:#fff!important}
+.footer-bottom{max-width:var(--lp-max)!important;margin:0 auto!important;padding:1.1rem 0 1.4rem!important;border-top:1px solid #2d2d2d!important;color:#777!important;font-size:.66rem!important}
+
+@media(max-width:850px){
+  .site-topbar{grid-template-columns:auto auto!important;justify-content:space-between!important}
+  .public-desktop-links,.public-nav-actions{display:none!important}
+  .nav-toggle{display:block!important}
+  .footer-inner{grid-template-columns:1fr 1fr!important}
+}
+@media(max-width:520px){.footer-inner{grid-template-columns:1fr!important}.public-page-hero h1{font-size:clamp(2.7rem,15vw,4.5rem)}}
+body.public-lovable-page-body{padding-left:0!important}

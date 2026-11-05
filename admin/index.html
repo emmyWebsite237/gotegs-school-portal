@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard | Go-Tegs International School</title>
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <link rel="stylesheet" href="/assets/css/admin.css" />
+  <style>
+    body.admin-shell-page{background:linear-gradient(135deg,#f7f1ea 0%,#edf3f6 55%,#f8fbfd 100%);}
+    .admin-dashboard{max-width:1180px;margin:0 auto;padding:3.2rem 1.25rem 4rem;}
+    .admin-header{display:flex;align-items:end;justify-content:space-between;gap:1.5rem;margin-bottom:1.4rem;}
+    .admin-eyebrow{display:block;color:#7a2139;font:800 .68rem var(--font-display);letter-spacing:.14em;text-transform:uppercase;}
+    .admin-header h1{margin:.2rem 0 .4rem;font-size:clamp(2rem,4vw,3.4rem);letter-spacing:-.05em;color:#20171a;}
+    .admin-header p{margin:0;color:#66717a;max-width:760px;font-size:.9rem;}
+    .admin-link-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin-top:1.35rem;}
+    .admin-link-card{position:relative;display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:92px;padding:1rem 1.15rem;border:1px solid #d9e0e5;border-radius:20px;background:rgba(255,255,255,.82);box-shadow:0 14px 36px rgba(32,23,26,.06);text-decoration:none;color:#1c2430;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;overflow:hidden;}
+    .admin-link-card::before{content:'';position:absolute;left:0;top:10px;bottom:10px;width:4px;background:linear-gradient(180deg,#7a2139,#c49b4e);border-radius:0 4px 4px 0;}
+    .admin-link-card:hover{transform:translateY(-3px);box-shadow:0 20px 45px rgba(32,23,26,.10);border-color:#c7d2d9;} .admin-link-card--disabled{opacity:.48;filter:grayscale(1);cursor:not-allowed;} .admin-link-card--disabled:hover{transform:none;box-shadow:0 14px 36px rgba(32,23,26,.06);}
+    .admin-link-copy{display:grid;gap:.2rem;padding-left:.25rem;}.admin-link-copy strong{font:800 .88rem var(--font-display);}.admin-link-copy span{font-size:.72rem;color:#7a8790;}
+    .admin-link-arrow{width:34px;height:34px;display:grid;place-items:center;border-radius:50%;background:#f6efe7;color:#7a2139;font-weight:800;flex:0 0 34px;}
+    .admin-settings-panel{margin-top:2rem;padding:1.3rem;border:1px solid #d9e0e5;border-radius:22px;background:rgba(255,255,255,.88);box-shadow:0 16px 40px rgba(32,23,26,.06);}
+    .admin-settings-head{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:1rem;}.admin-settings-head h2{margin:.25rem 0 .25rem;color:#20171a;}.admin-settings-head p{margin:0;max-width:720px;color:#6f7c85;font-size:.8rem;}.admin-settings-badge{padding:.42rem .6rem;border-radius:999px;background:#f4f0ec;color:#756f6b;font-size:.67rem;white-space:nowrap;}
+    .admin-settings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;}.admin-settings-grid label{font:700 .76rem var(--font-display);color:#52606a;}.admin-settings-grid label span{font-weight:500;color:#9aa4ab;}.admin-settings-grid input{display:block;width:100%;box-sizing:border-box;margin-top:.35rem;padding:.75rem;border:1px solid #dbe3e8;border-radius:10px;font:500 .9rem var(--font-body);background:#fff;}.admin-settings-actions{display:flex;align-items:center;gap:.8rem;margin-top:1rem;}.admin-settings-actions .btn{background:linear-gradient(135deg,#7a2139,#a94b61);color:#fff;border:0;}.admin-settings-actions span{font-size:.78rem;font-weight:700;}
+    @media(max-width:800px){.admin-link-grid{grid-template-columns:1fr}.admin-header{align-items:flex-start;flex-direction:column}.admin-settings-grid{grid-template-columns:1fr}.admin-dashboard{padding-top:2rem;}}
+  </style>
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+  <main class="admin-dashboard">
+    <div class="admin-header">
+      <div><span class="admin-eyebrow">Go-Tegs administration</span><h1>Admin Dashboard</h1><p>A private control workspace for student data, academic records, lesson notes, assessments and school content.</p></div>
+    </div>
+
+    <section class="admin-link-grid" aria-label="Administration tools">
+      <a class="admin-link-card" href="/admin/admin-updates/index.html"><span class="admin-link-copy"><strong>Post / Manage Updates</strong><span>School announcements and updates</span></span><span class="admin-link-arrow">→</span></a>
+      <a class="admin-link-card" href="/admin/admin-records/index.html"><span class="admin-link-copy"><strong>Manage Students &amp; Results</strong><span>Student profiles, marks, access and checks</span></span><span class="admin-link-arrow">→</span></a>
+      <a class="admin-link-card" href="/admin/admin-notes/index.html"><span class="admin-link-copy"><strong>Manage Lesson Notes</strong><span>JSS / SSS classes and terms</span></span><span class="admin-link-arrow">→</span></a>
+      <a class="admin-link-card" href="/admin/admin-store/index.html"><span class="admin-link-copy"><strong>Manage Store Products</strong><span>Product catalogue and availability</span></span><span class="admin-link-arrow">→</span></a>
+      <a class="admin-link-card" href="/admin/admin-social/index.html"><span class="admin-link-copy"><strong>Manage Social Links</strong><span>Public social channels</span></span><span class="admin-link-arrow">→</span></a>
+      <a class="admin-link-card" href="/admin/admin-quiz-codes/index.html"><span class="admin-link-copy"><strong>Manage Quiz Codes</strong><span>Create and maintain generated tests</span></span><span class="admin-link-arrow">→</span></a>
+      <a class="admin-link-card" href="/admin/quiz-playground/index.html"><span class="admin-link-copy"><strong>Quiz Code Playground</strong><span>Run, preview and publish quiz JSON</span></span><span class="admin-link-arrow">→</span></a>
+      <a class="admin-link-card" href="/admin/admin-quiz-attempts/index.html"><span class="admin-link-copy"><strong>Quiz Attempts</strong><span>See who took each test and how many times</span></span><span class="admin-link-arrow">→</span></a>
+      <a class="admin-link-card" href="/admin/admin-gallery/index.html"><span class="admin-link-copy"><strong>Manage Gallery</strong><span>Cloudinary-powered school gallery</span></span><span class="admin-link-arrow">→</span></a>
+      <div class="admin-link-card admin-link-card--disabled" aria-disabled="true"><span class="admin-link-copy"><strong>Tournaments</strong><span>Coming Soon · Planning workspace not yet active</span></span><span class="admin-link-arrow">✦</span></div>
+      <a class="admin-link-card" href="/admin/admin-results-pdf/index.html"><span class="admin-link-copy"><strong>Result Print Centre</strong><span>Prepare every student's report as a ready PDF packet</span></span><span class="admin-link-arrow">↓</span></a>
+    </section>
+
+    <section class="admin-settings-panel" aria-labelledby="resultSettingsTitle">
+      <div class="admin-settings-head"><div><span class="admin-eyebrow">Result control</span><h2 id="resultSettingsTitle">Current school year</h2><p>Students do not enter a school session when checking results. Set the current year here; the portal uses it automatically.</p></div><span class="admin-settings-badge">Term is not stored</span></div>
+      <form id="adminSettingsForm">
+        <div class="admin-settings-grid">
+          <label>School year / session<input id="adminYear" name="year" type="text" placeholder="2026/2027" maxlength="32" required /></label>
+          <label>New admin password <span>(optional)</span><input id="adminNewPassword" name="new_password" type="password" autocomplete="new-password" placeholder="Leave blank to keep current password" /></label>
+        </div>
+        <div class="admin-settings-actions"><button class="btn" type="submit" id="saveAdminSettings">Save settings</button><span id="adminSettingsMsg" role="status" aria-live="polite"></span></div>
+      </form>
+    </section>
+  </main>
+  <script src="/assets/js/main.js"></script>
+  <script>
+    (() => {
+      const form = document.getElementById('adminSettingsForm');
+      const year = document.getElementById('adminYear');
+      const pass = document.getElementById('adminNewPassword');
+      const msg = document.getElementById('adminSettingsMsg');
+      const token = () => sessionStorage.getItem('gotegs_admin_token') || '';
+      async function load(){try{const r=await fetch('/api/admin-verify?settings=1',{headers:{Authorization:'Bearer '+token()}});const d=await r.json();if(r.ok)year.value=d.year||'';}catch(_){} }
+      async function save(e){e.preventDefault();msg.textContent='Saving…';msg.style.color='#65717a';try{const r=await fetch('/api/admin-verify?settings=1',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token()},body:JSON.stringify({year:year.value.trim(),new_password:pass.value})});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||'Could not save settings.');pass.value='';msg.textContent='Saved.';msg.style.color='#0f766e';}catch(err){msg.textContent=err.message;msg.style.color='#dc2626';}}
+      form.addEventListener('submit',save);
+      if(sessionStorage.getItem('gotegs_admin_token')) load();
+    })();
+  </script>
+</body>
+</html>
