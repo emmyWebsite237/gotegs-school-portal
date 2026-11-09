@@ -22,7 +22,7 @@ const STUDENT_PROTECTED_PREFIXES = [
 
 function isAdminPathCheck(pathname){return pathname==='/admin'||pathname.startsWith('/admin/');}
 function isAdminPage(){return isAdminPathCheck(window.location.pathname);}
-function isStudentProtectedPath(pathname){if(pathname==='/student/index.html'||pathname==='/student/')return false;return STUDENT_PROTECTED_PREFIXES.some(p=>pathname===p||pathname.startsWith(p));}
+function isStudentProtectedPath(pathname){const clean = pathname.replace(/\/+$/, ''); if(clean === '/student' || clean === '/student/index.html') return false;return STUDENT_PROTECTED_PREFIXES.some(p=>pathname===p||pathname.startsWith(p));}
 function getAdminTokenPayload(token){try{const raw=String(token||'').split('.')[0];if(!raw)return null;return JSON.parse(atob(raw.replace(/-/g,'+').replace(/_/g,'/')+'==='.slice((raw.length+3)%4)));}catch{return null;}}
 function hasAdminAuthSession(){if(sessionStorage.getItem(ADMIN_AUTH_KEY)!=='true')return false;const token=sessionStorage.getItem(ADMIN_TOKEN_KEY);if(!token)return false;const p=getAdminTokenPayload(token);if(!p?.exp||Date.now()>=Number(p.exp)*1000){clearAdminSession();return false;}return true;}
 function clearAdminSession(){sessionStorage.removeItem(ADMIN_AUTH_KEY);sessionStorage.removeItem(ADMIN_TOKEN_KEY);sessionStorage.removeItem('gotegs_records_authed');}
