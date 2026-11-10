@@ -3,32 +3,210 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="description" content="Frequently asked questions about Go-Tegs International School."/>
+  <meta name="description" content="Frequently asked questions about Go-Tegs International School — admissions, results, school portal, and academic curriculum."/>
   <link rel="icon" type="image/png" href="/assets/img/logo.png"/>
-  <title>FAQ | Go-Tegs International School</title>
-  <link rel="stylesheet" href="/assets/css/public-site.css"/>
-  <link rel="stylesheet" href="/assets/css/public-header-fix.css"/>
-  <link rel="stylesheet" href="/assets/css/simple-public.css"/>
+  <title>Frequently Asked Questions | Go-Tegs International School</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/style.css"/>
+
+  <style>
+    .page-hero {
+      background: radial-gradient(circle at 15% 25%, rgba(37, 99, 235, 0.15) 0%, transparent 45%),
+                  radial-gradient(circle at 85% 75%, rgba(245, 158, 11, 0.1) 0%, transparent 50%),
+                  linear-gradient(145deg, #060911 0%, #090d16 50%, #0f172a 100%);
+      color: #ffffff;
+      padding: 4.5rem 1.5rem 5.5rem;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .page-hero-inner {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .page-hero .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      background: rgba(37, 99, 235, 0.15);
+      border: 1px solid rgba(96, 165, 250, 0.3);
+      color: #93c5fd;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 1.25rem;
+    }
+
+    .page-hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem, 4.5vw, 3.4rem);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 1.25rem;
+    }
+
+    .page-hero h1 span {
+      background: linear-gradient(135deg, #60a5fa, #fbbf24);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .page-hero p {
+      font-size: 1.1rem;
+      line-height: 1.65;
+      color: #cbd5e1;
+    }
+
+    .faq-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 4.5rem 1.5rem 6rem;
+    }
+
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .faq-item {
+      background: #ffffff;
+      border: 1px solid var(--border-light);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
+    }
+
+    .faq-item[open] {
+      border-color: #93c5fd;
+      box-shadow: var(--shadow-md);
+    }
+
+    .faq-item summary {
+      padding: 1.5rem 1.75rem;
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-main);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      user-select: none;
+      list-style: none;
+    }
+
+    .faq-item summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .faq-num {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 0.25rem 0.6rem;
+      border-radius: 8px;
+      flex-shrink: 0;
+    }
+
+    .faq-content {
+      padding: 0 1.75rem 1.5rem 3.8rem;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: var(--text-muted);
+    }
+
+    .faq-content a {
+      color: var(--primary);
+      font-weight: 600;
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
   <div id="navbar-placeholder"></div>
-  <main class="public-site">
-    <div class="content-page narrow">
-      <section class="page-intro">
-        <span class="section-kicker">Home / FAQ</span>
-        <h1>Frequently Asked Questions</h1>
-        <div class="page-intro-copy"><p>Quick answers to the things parents and students ask us most.</p></div>
-      </section>
-      <div class="faq-list">
-        <details class="faq-row"><summary><span>01</span>How do I enrol my child at Go-Tegs?</summary><p>Fill out the form on our <a href="/enrolment.html">Enrolment</a> page. We'll review it and reach out to arrange class screening before registration is completed.</p></details>
-        <details class="faq-row"><summary><span>02</span>How do I check my child's result?</summary><p>Go to the <a href="/student/index.html">Student Portal</a>. Once inside the portal, select Results and enter the result PIN.</p></details>
-        <details class="faq-row"><summary><span>03</span>How do I get a School Leaving Testimonial?</summary><p>Open the Student Portal and use the School Leaving Testimonial area when the feature is activated.</p></details>
-        <details class="faq-row"><summary><span>04</span>How do I order books or stationery?</summary><p>Open the Store from the Student Portal and follow the order and payment instructions provided there.</p></details>
-        <details class="faq-row"><summary><span>05</span>What programmes does Go-Tegs offer?</summary><p>Preparatory, Kindergarten / Pre-K, Nursery, Primary, Junior Arm, Senior Arm and extracurricular opportunities.</p></details>
-        <details class="faq-row"><summary><span>06</span>How do I contact the school directly?</summary><p>Call 0806 652 5319 or 0810 695 8638, email gotegs622@gmail.com, use WhatsApp, or submit the enquiry form on our <a href="/contact.html">Contact</a> page.</p></details>
-      </div>
+
+  <header class="page-hero">
+    <div class="page-hero-inner">
+      <span class="badge-pill">Common Questions</span>
+      <h1>Frequently Asked <span>Questions</span></h1>
+      <p>Quick, direct answers to common questions about admissions, student portals, terminal exams, curriculum, and campus life.</p>
+    </div>
+  </header>
+
+  <main class="faq-container">
+    <div class="faq-list">
+      <details class="faq-item" open>
+        <summary>
+          <span class="faq-num">01</span>
+          <span>How do I enrol my child at Go-Tegs International School?</span>
+        </summary>
+        <div class="faq-content">
+          You can initiate enrolment directly on our <a href="/enrolment.html">Admissions Page</a>. Simply complete the online application, and our admissions team will schedule an informal interaction and placement assessment for your child.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>
+          <span class="faq-num">02</span>
+          <span>How can my child or I check term examination results?</span>
+        </summary>
+        <div class="faq-content">
+          Results are released securely on our private <a href="/student/index.html">Student Portal</a>. Sign in with the student's ID and PIN, click on <strong>Results</strong>, and enter your verified scratch-card result PIN to inspect or download the official report sheet.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>
+          <span class="faq-num">03</span>
+          <span>How do students access downloadable curriculum lesson notes?</span>
+        </summary>
+        <div class="faq-content">
+          Students can log in to the <a href="/student/index.html">Student Portal</a> and open the <strong>Lesson Notes</strong> section. Notes are organized by Class and Academic Term, allowing online reading or direct Microsoft Word (.DOCX) downloads.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>
+          <span class="faq-num">04</span>
+          <span>What age groups and academic divisions are accommodated?</span>
+        </summary>
+        <div class="faq-content">
+          Go-Tegs offers education across four key academies: Early Years (Preparatory, Pre-K, Nursery), Primary School (Grades 1 to 6), Junior Secondary (JSS 1 to 3), and Senior Secondary (SSS 1 to 3) with specialized Science, Arts, and Commercial tracks.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>
+          <span class="faq-num">05</span>
+          <span>Where is the campus located, and how can we schedule a visit?</span>
+        </summary>
+        <div class="faq-content">
+          Our campus is located at <strong>15, Ayesanmi Street, GloryLand Estate, Powerline Bus Stop, Isheri Olofin, Alimosho, Lagos</strong>. You can reach out through our <a href="/contact.html">Contact Page</a> or call <a href="tel:08066525319">0806 652 5319</a> to arrange a guided campus walkthrough.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>
+          <span class="faq-num">06</span>
+          <span>How does the CBT practice testing system work?</span>
+        </summary>
+        <div class="faq-content">
+          The Student Portal features an interactive Computer-Based Testing (CBT) engine. Students can take timed practice quizzes across various subjects to prepare for WAEC, NECO, BECE, and JAMB UTME exams.
+        </div>
+      </details>
     </div>
   </main>
+
   <div id="footer-placeholder"></div>
   <script src="/assets/js/main.js"></script>
 </body>

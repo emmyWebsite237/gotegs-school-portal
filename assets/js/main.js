@@ -16,7 +16,6 @@ const STUDENT_PROTECTED_PREFIXES = [
   '/student/quiz-code/',
   '/student/store/',
   '/student/testimonial/',
-  '/lesson-notes/',
   '/quiz.html',
   '/quiz-code.html'
 ];
@@ -147,6 +146,27 @@ function adminGatePassedOrNotNeeded(){
   return !isAdminPage() || hasAdminAuthSession();
 }
 
+function loadScript(src){
+  return new Promise((resolve, reject) => {
+    if (document.querySelector(`script[src="${src}"]`)) { resolve(); return; }
+    const s = document.createElement('script');
+    s.src = src;
+    s.onload = resolve;
+    s.onerror = reject;
+    document.body.appendChild(s);
+  });
+}
+
+async function loadNotesScriptsIfNeeded(){
+  const needsNotes = !!document.querySelector('.note-file, .notes-table, .admin-notes-table');
+  if(!needsNotes) return;
+  try {
+    await loadScript('/assets/js/notes.js');
+  } catch(err) {
+    console.warn('Failed to load lesson notes script:', err);
+  }
+}
+
 async function injectPartial(url, targetId){
   const target = document.getElementById(targetId);
   if(!target) return;
@@ -241,7 +261,7 @@ function initStudentPortalShell(){
   if(path === '/student/dashboard.html' || path === '/student/' || path === '/student/index.html') activeKey = 'dashboard';
   else if(path === '/student/profile.html') activeKey = 'profile';
   else if(path.startsWith('/student/result/')) activeKey = 'results';
-  else if(path.startsWith('/student/lesson-notes/')) activeKey = 'notes';
+  else if(path.startsWith('/student/lesson-notes/') || path.startsWith('/lesson-notes/')) activeKey = 'notes';
   else if(path.startsWith('/student/quiz/')) activeKey = 'quiz';
   else if(path.startsWith('/student/quiz-code/')) activeKey = 'quiz-code';
   else if(path.startsWith('/student/store/')) activeKey = 'store';
@@ -269,18 +289,21 @@ async function initShell(){
   if(adminPage){
     document.body.classList.add('admin-shell-page');
     scheduleAdminExpiry();
+    await loadNotesScriptsIfNeeded();
   } else if(studentPage){
     const session = getValidStudentSession();
     if(session) touchStudentSession(session);
     document.body.classList.add('student-shell-page');
     await injectPartial('/partials/student-shell.html', 'navbar-placeholder');
     initStudentPortalShell();
+    await loadNotesScriptsIfNeeded();
   } else {
     await injectPartial('/partials/navbar.html', 'navbar-placeholder');
     await injectPartial('/partials/footer.html', 'footer-placeholder');
     highlightActiveLink();
     wireMobileNavigation();
     setFooterYear();
+    await loadNotesScriptsIfNeeded();
   }
 }
 

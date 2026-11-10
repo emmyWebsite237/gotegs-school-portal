@@ -3,51 +3,221 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lesson Notes | Go-Tegs International School</title>
+  <title>Lesson Notes | Go-Tegs Student Portal</title>
+  <link rel="icon" type="image/png" href="/assets/img/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/assets/css/style.css" />
   <link rel="stylesheet" href="/assets/css/portal.css" />
   <style>
-    .notes-panel { max-width:1180px; }
-    .notes-header { display:flex; align-items:end; justify-content:space-between; gap:1rem; padding-bottom:1rem; border-bottom:1px solid #dbe5ee; }
-    .notes-header h1 { margin:0 0 .25rem; }
-    .notes-header p { margin:0; }
-    .term-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; margin-top:1.2rem; }
-    .term-card { position:relative; min-height:170px; display:flex; flex-direction:column; justify-content:flex-end; padding:1.2rem; border:1px solid #dce6ef; border-radius:20px; background:#fff; box-shadow:0 12px 30px rgba(20,41,66,.06); overflow:hidden; transition:transform .18s ease, box-shadow .18s ease; }
-    .term-card::before { content:''; position:absolute; inset:-40% -30% auto auto; width:150px; height:150px; border-radius:50%; background:radial-gradient(circle,rgba(36,198,216,.14),transparent 68%); }
-    .term-card:hover { transform:translateY(-4px); box-shadow:0 18px 40px rgba(20,41,66,.10); }
-    .term-number { position:absolute; top:1rem; left:1rem; color:#8aa0b4; font:800 .62rem var(--font-display); letter-spacing:.1em; text-transform:uppercase; }
-    .term-card h2 { margin:0 0 .3rem; font-size:1.1rem; }
-    .term-card p { margin:0; font-size:.76rem; }
-    .term-arrow { position:absolute; top:1rem; right:1rem; color:#1d63c9; font:800 1rem var(--font-display); }
-    @media(max-width:760px){ .term-grid{grid-template-columns:1fr;} .notes-header{align-items:flex-start;flex-direction:column;} }.term-locked{opacity:.65;filter:saturate(.65)}
+    .notes-panel {
+      margin-left: var(--portal-rail-width);
+      padding: 2.25rem 3rem 4rem;
+      min-height: 100vh;
+      box-sizing: border-box;
+      max-width: 1100px;
+    }
+    .notes-header-card {
+      background: #ffffff;
+      border: 1px solid var(--portal-border);
+      border-radius: 20px;
+      padding: 2rem 2.5rem;
+      box-shadow: var(--portal-shadow-sm);
+      margin-bottom: 2rem;
+    }
+    .notes-header-card .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.8rem;
+      border-radius: 999px;
+      background: rgba(37, 99, 235, 0.12);
+      border: 1px solid rgba(96, 165, 250, 0.3);
+      color: var(--portal-primary);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+    .notes-header-card h1 {
+      font-family: var(--font-heading);
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--portal-text-main);
+      margin-bottom: 0.5rem;
+    }
+    .notes-header-card p {
+      font-size: 0.95rem;
+      color: var(--portal-text-muted);
+    }
+    .term-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.5rem;
+    }
+    .term-card {
+      position: relative;
+      background: #ffffff;
+      border: 1px solid var(--portal-border);
+      border-radius: 18px;
+      padding: 1.75rem;
+      box-shadow: var(--portal-shadow-sm);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 200px;
+      text-decoration: none;
+      transition: all 0.22s ease;
+    }
+    .term-card:hover:not(.term-locked) {
+      transform: translateY(-4px);
+      border-color: #93c5fd;
+      box-shadow: var(--portal-shadow-hover);
+    }
+    .term-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+    }
+    .term-number {
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--portal-primary);
+    }
+    .term-status-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .badge-open {
+      background: #ecfdf5;
+      color: #059669;
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+    .badge-locked {
+      background: #f1f5f9;
+      color: #64748b;
+      border: 1px solid var(--portal-border);
+    }
+    .term-card h2 {
+      font-family: var(--font-heading);
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--portal-text-main);
+      margin-bottom: 0.5rem;
+    }
+    .term-card p {
+      font-size: 0.88rem;
+      color: var(--portal-text-muted);
+      line-height: 1.5;
+    }
+    .term-card-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 1.25rem;
+      padding-top: 0.85rem;
+      border-top: 1px solid var(--portal-border);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--portal-primary);
+    }
+    .term-locked {
+      opacity: 0.7;
+      cursor: not-allowed;
+      background: #fbfcfd;
+    }
+    .term-locked .term-card-foot {
+      color: #94a3b8;
+    }
+    @media(max-width: 960px){
+      .notes-panel { margin-left: 0; padding: 1.5rem 1rem 3rem; }
+      .term-grid { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body class="student-shell-page">
   <div id="navbar-placeholder"></div>
-  <main class="page-container notes-panel">
-    <div class="notes-header">
-      <div>
-        <div class="portal-section-label">Study workspace</div>
-        <h1>Lesson Notes</h1>
-        <p id="classLine">Loading your class...</p>
+
+  <main class="notes-panel">
+    <div class="notes-header-card">
+      <span class="badge-pill">Study Materials</span>
+      <h1>Curriculum Lesson Notes</h1>
+      <p id="classLine">Loading your registered class curriculum…</p>
+    </div>
+
+    <div class="term-grid" id="termList">
+      <div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: #64748b;">
+        Loading term notes…
       </div>
     </div>
-    <div class="term-grid" id="termList"></div>
   </main>
-  <div id="footer-placeholder"></div>
+
   <script src="/assets/js/main.js"></script>
   <script>
-    const session = JSON.parse(localStorage.getItem('gotegs_student_session') || 'null');
-    if (!session) {
-      window.location.href = '/student/index.html';
-    } else {
+    (function(){
+      const session = JSON.parse(localStorage.getItem('gotegs_student_session') || 'null');
+      if (!session) {
+        window.location.replace('/student/index.html');
+        return;
+      }
+      
       const sectionFolder = session.section === 'sss_students' ? 'sss' : 'jss';
       const classFolder = (session.class || '').replace(/\s+/g, '').toLowerCase();
       document.getElementById('classLine').textContent =
-        `Showing notes for ${session.class || 'your class'}${session.dept ? ' · ' + session.dept : ''}.`;
-      const terms = ['Term 1','Term 2','Term 3'];
-      fetch('/api/term-access').then(r=>r.json()).then(data=>{const access=data.access||{};document.getElementById('termList').innerHTML=terms.map((term,i)=>{const enabled=access[term]===true;return `<a class="term-card ${enabled?'':'term-locked'}" href="/lesson-notes/${sectionFolder}/${classFolder}/term${i + 1}.html" data-term-enabled="${enabled}" data-portal-interactive data-tilt-card><span class="term-number">TERM 0${i + 1}</span><span class="term-arrow">${enabled?'↗':'🔒'}</span><h2>${term}</h2><p>${enabled?'Open the subjects and notes prepared for this term.':'Access denied — this term is currently locked.'}</p></a>`}).join('');document.querySelectorAll('.term-card').forEach(card=>card.addEventListener('click',e=>{if(card.dataset.termEnabled!=='true'){e.preventDefault();alert('Access Denied\n\nReason: This term is currently locked.')}}));}).catch(()=>{document.getElementById('termList').innerHTML='<p>Could not load lesson-note access settings.</p>'});
-    }
+        `Showing approved syllabus notes for ${session.class || 'your class'}${session.dept ? ' · ' + session.dept : ''}.`;
+      
+      const terms = ['Term 1', 'Term 2', 'Term 3'];
+
+      fetch('/api/term-access')
+        .then(r => r.json())
+        .then(data => {
+          const access = data.access || {};
+          document.getElementById('termList').innerHTML = terms.map((term, i) => {
+            const enabled = access[term] === true;
+            const linkHref = `/lesson-notes/${sectionFolder}/${classFolder}/term${i + 1}.html`;
+            return `
+              <a class="term-card ${enabled ? '' : 'term-locked'}" href="${enabled ? linkHref : '#'}" data-term-enabled="${enabled}">
+                <div>
+                  <div class="term-card-top">
+                    <span class="term-number">TERM 0${i + 1}</span>
+                    <span class="term-status-badge ${enabled ? 'badge-open' : 'badge-locked'}">
+                      ${enabled ? '● Available' : '🔒 Locked'}
+                    </span>
+                  </div>
+                  <h2>${term}</h2>
+                  <p>${enabled ? 'Access all subject notes, scheme of work, and reading materials.' : 'This term is currently locked by the school administration.'}</p>
+                </div>
+                <div class="term-card-foot">
+                  <span>${enabled ? 'Open Subjects' : 'Locked'}</span>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </div>
+              </a>
+            `;
+          }).join('');
+
+          document.querySelectorAll('.term-card').forEach(card => {
+            card.addEventListener('click', e => {
+              if (card.dataset.termEnabled !== 'true') {
+                e.preventDefault();
+                alert('Access Notice\n\nThis term is currently locked. Please select an available term.');
+              }
+            });
+          });
+        })
+        .catch(() => {
+          document.getElementById('termList').innerHTML = '<p style="color:#ef4444;grid-column:1/-1;">Could not load lesson note settings. Please try again.</p>';
+        });
+    })();
   </script>
 </body>
 </html>

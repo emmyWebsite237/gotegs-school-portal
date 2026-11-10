@@ -3,79 +3,432 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="description" content="Contact Go-Tegs International School by enquiry form, phone, email or WhatsApp."/>
+  <meta name="description" content="Contact Go-Tegs International School in Isheri Olofin, Lagos — enquiries, phone, email, WhatsApp, and campus visits."/>
   <link rel="icon" type="image/png" href="/assets/img/logo.png"/>
-  <title>Contact | Go-Tegs International School</title>
-  <link rel="stylesheet" href="/assets/css/public-site.css"/>
-  <link rel="stylesheet" href="/assets/css/public-header-fix.css"/>
-  <link rel="stylesheet" href="/assets/css/simple-public.css"/>
+  <title>Contact Us | Go-Tegs International School</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/style.css"/>
+
+  <style>
+    .page-hero {
+      background: radial-gradient(circle at 15% 25%, rgba(37, 99, 235, 0.15) 0%, transparent 45%),
+                  radial-gradient(circle at 85% 75%, rgba(245, 158, 11, 0.1) 0%, transparent 50%),
+                  linear-gradient(145deg, #060911 0%, #090d16 50%, #0f172a 100%);
+      color: #ffffff;
+      padding: 4.5rem 1.5rem 5.5rem;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .page-hero-inner {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .page-hero .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      background: rgba(37, 99, 235, 0.15);
+      border: 1px solid rgba(96, 165, 250, 0.3);
+      color: #93c5fd;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 1.25rem;
+    }
+
+    .page-hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem, 4.5vw, 3.4rem);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 1.25rem;
+    }
+
+    .page-hero h1 span {
+      background: linear-gradient(135deg, #60a5fa, #fbbf24);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .page-hero p {
+      font-size: 1.1rem;
+      line-height: 1.65;
+      color: #cbd5e1;
+    }
+
+    .contact-container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 4.5rem 1.5rem 6rem;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 0.9fr;
+      gap: 3.5rem;
+      align-items: start;
+    }
+
+    .contact-card {
+      background: #ffffff;
+      border: 1px solid var(--border-light);
+      border-radius: 24px;
+      padding: 2.75rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .contact-card h2 {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 0.5rem;
+    }
+
+    .contact-card .intro-p {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      margin-bottom: 2rem;
+    }
+
+    .form-group-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 0.45rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 0.85rem 1rem;
+      border: 1px solid var(--border-light);
+      border-radius: 12px;
+      background: #f8fafc;
+      font-family: var(--font-body);
+      font-size: 0.92rem;
+      color: var(--text-main);
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      background: #ffffff;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    .form-group textarea {
+      min-height: 130px;
+      resize: vertical;
+    }
+
+    .btn-submit-contact {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.95rem 2rem;
+      border-radius: 999px;
+      background: var(--primary);
+      color: #ffffff;
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+      transition: all 0.2s ease;
+    }
+
+    .btn-submit-contact:hover:not(:disabled) {
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+    }
+
+    .btn-submit-contact:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .form-status {
+      min-height: 1.3rem;
+      margin-top: 1rem;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    /* Details Aside */
+    .details-card {
+      background: var(--bg-alt);
+      border: 1px solid var(--border-light);
+      border-radius: 24px;
+      padding: 2.5rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .details-card h2 {
+      font-family: var(--font-display);
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 1.5rem;
+    }
+
+    .detail-item {
+      display: flex;
+      gap: 1.15rem;
+      margin-bottom: 1.5rem;
+      align-items: flex-start;
+    }
+
+    .detail-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--primary-light);
+      color: var(--primary);
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+
+    .detail-icon svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .detail-text strong {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+    }
+
+    .detail-text p,
+    .detail-text a {
+      font-size: 0.95rem;
+      color: var(--text-main);
+      line-height: 1.5;
+      display: block;
+    }
+
+    .detail-text a:hover {
+      color: var(--primary);
+    }
+
+    .whatsapp-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.15rem;
+      border-radius: 999px;
+      background: #ecfdf5;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #059669;
+      font-weight: 700;
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
+      text-decoration: none;
+    }
+
+    .whatsapp-badge:hover {
+      background: #d1fae5;
+    }
+
+    @media (max-width: 960px) {
+      .contact-grid {
+        grid-template-columns: 1fr;
+      }
+      .form-group-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
   <div id="navbar-placeholder"></div>
-  <main class="public-site">
-    <div class="content-page">
-      <section class="page-intro">
-        <span class="section-kicker">Go-Tegs · Connect with us</span>
-        <h1>Let's talk about what you need.</h1>
-        <div class="page-intro-copy"><p>Send an enquiry using the form and choose the topic that best matches your question. You can also reach the school directly through the channels below.</p></div>
-      </section>
-      <div class="form-layout-public">
-        <section class="panel-card-public">
-          <h2>Send an enquiry</h2>
-          <form id="contactForm" class="school-form-public">
-            <label>Full name<input id="contactName" name="name" autocomplete="name" required/></label>
-            <label>Phone<input id="contactPhone" name="phone" type="tel" autocomplete="tel" required/></label>
-            <label>Email<input id="contactEmail" name="email" type="email" autocomplete="email" required/></label>
-            <label>Related topic<select id="contactTopic" name="topic" required><option value="">Choose a topic</option><option>Admissions / Enrolment</option><option>Student Portal</option><option>Lesson Notes</option><option>Quiz &amp; Practice</option><option>School Store</option><option>Fees / Payments</option><option>Updates &amp; Events</option><option>General Enquiry</option><option>Other</option></select></label>
-            <label class="full">Message<textarea id="contactMessage" name="message" placeholder="Tell us what you would like help with..." required></textarea></label>
-            <div class="full" style="display:flex;flex-wrap:wrap;gap:.75rem;align-items:center">
-              <button class="gt-button gt-button--primary" type="submit" id="contactSubmit">Send Enquiry ↗</button>
-              <span style="font-size:.8rem;color:var(--gt-slate)">Your message is submitted securely through FormSubmit.</span>
-            </div>
-            <p class="full status-text" id="contactFormStatus" aria-live="polite"></p>
-          </form>
-        </section>
 
-        <aside class="panel-card-public details">
-          <h2>Contact details</h2>
-          <div class="contact-detail-public"><div class="icon">☎</div><div><strong>Phone</strong><a href="tel:08066525319">0806 652 5319</a><a href="tel:08106958638">0810 695 8638</a></div></div>
-          <div class="contact-detail-public"><div class="icon">✉</div><div><strong>Email</strong><a href="mailto:gotegs622@gmail.com">gotegs622@gmail.com</a></div></div>
-          <div class="contact-detail-public"><div class="icon">◌</div><div><strong>WhatsApp</strong><a href="https://wa.me/2348066525319" target="_blank" rel="noopener">Chat on WhatsApp</a></div></div>
-          <div class="contact-detail-public"><div class="icon">⌂</div><div><strong>School address</strong><p>15, Ayesanmi Street, GloryLand Estate,<br/>Powerline Bus Stop, Isheri Olofin,<br/>Alimosho, Lagos.</p></div></div>
-          <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--gt-sky-2)">
-            <strong>Social channels</strong>
-            <div id="contactSocials" style="display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.65rem"><span style="color:var(--gt-slate);font-size:.8rem">Loading social channels…</span></div>
+  <!-- Hero Header -->
+  <header class="page-hero">
+    <div class="page-hero-inner">
+      <span class="badge-pill">Reach Out</span>
+      <h1>Let's Connect With <span>Your Family</span></h1>
+      <p>Have questions about admissions, fees, our academic curriculum, or scheduling a private campus tour? Our administrative team is here to assist you.</p>
+    </div>
+  </header>
+
+  <main class="contact-container">
+    <div class="contact-grid">
+      <!-- Enquiry Form -->
+      <section class="contact-card">
+        <h2>Send an Online Enquiry</h2>
+        <p class="intro-p">Fill out the form below and an admissions officer will respond promptly.</p>
+
+        <form id="contactForm">
+          <div class="form-group-row">
+            <div class="form-group">
+              <label for="contactName">Full Name</label>
+              <input id="contactName" name="name" type="text" placeholder="e.g. Mrs. Adeyemi" required />
+            </div>
+            <div class="form-group">
+              <label for="contactPhone">Phone Number</label>
+              <input id="contactPhone" name="phone" type="tel" placeholder="e.g. 0801 234 5678" required />
+            </div>
           </div>
-        </aside>
-      </div>
+
+          <div class="form-group-row">
+            <div class="form-group">
+              <label for="contactEmail">Email Address</label>
+              <input id="contactEmail" name="email" type="email" placeholder="name@example.com" required />
+            </div>
+            <div class="form-group">
+              <label for="contactTopic">Inquiry Topic</label>
+              <select id="contactTopic" name="topic" required>
+                <option value="">Select a topic</option>
+                <option value="Admissions / Enrolment">Admissions &amp; Enrolment</option>
+                <option value="Tuition &amp; Fees">Tuition &amp; School Fees</option>
+                <option value="Student Portal Support">Student Portal Support</option>
+                <option value="Curriculum &amp; Academics">Curriculum &amp; Academics</option>
+                <option value="Campus Tour Booking">Campus Tour Booking</option>
+                <option value="General Information">General Information</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="contactMessage">Your Message</label>
+            <textarea id="contactMessage" name="message" placeholder="Please provide any details or questions..." required></textarea>
+          </div>
+
+          <button class="btn-submit-contact" id="contactSubmit" type="submit">
+            <span>Send Enquiry Message</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+
+          <p class="form-status" id="contactFormStatus" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <!-- Campus Details -->
+      <aside class="details-card">
+        <h2>Campus Information</h2>
+
+        <div class="detail-item">
+          <div class="detail-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <div class="detail-text">
+            <strong>School Address</strong>
+            <p>15, Ayesanmi Street, GloryLand Estate,<br/>Powerline Bus Stop, Isheri Olofin,<br/>Alimosho, Lagos State, Nigeria.</p>
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <div class="detail-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          </div>
+          <div class="detail-text">
+            <strong>Phone Numbers</strong>
+            <a href="tel:08066525319">0806 652 5319</a>
+            <a href="tel:08106958638">0810 695 8638</a>
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <div class="detail-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          </div>
+          <div class="detail-text">
+            <strong>Email Contact</strong>
+            <a href="mailto:gotegs622@gmail.com">gotegs622@gmail.com</a>
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <div class="detail-icon" style="background:#ecfdf5;color:#059669;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+          </div>
+          <div class="detail-text">
+            <strong>Instant Messaging</strong>
+            <a href="https://wa.me/2348066525319" target="_blank" rel="noopener" class="whatsapp-badge">
+              <span>Chat on WhatsApp</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+          </div>
+        </div>
+      </aside>
     </div>
   </main>
+
   <div id="footer-placeholder"></div>
+
   <script src="/assets/js/main.js"></script>
   <script>
-    const contactForm=document.getElementById('contactForm');
-    const contactStatus=document.getElementById('contactFormStatus');
-    const contactSubmit=document.getElementById('contactSubmit');
-    contactForm.addEventListener('submit',async (e)=>{
-      e.preventDefault();
-      contactSubmit.disabled=true; contactSubmit.textContent='Sending…'; contactStatus.textContent='Sending your enquiry…'; contactStatus.style.color='var(--gt-blue-deep)';
-      const data=new FormData(contactForm);
-      data.append('_subject','Go-Tegs International School — Website Enquiry');
-      data.append('_captcha','false');
-      data.append('_template','table');
-      try{
-        const res=await fetch('https://formsubmit.co/ajax/gotegs622@gmail.com',{method:'POST',body:data,headers:{Accept:'application/json'}});
-        if(!res.ok) throw new Error('Unable to submit the form right now.');
-        contactForm.reset();
-        contactStatus.textContent='Thank you. Your enquiry has been sent successfully.';
-        contactStatus.style.color='#177a55';
-      }catch(err){
-        contactStatus.textContent=err.message||'Something went wrong. Please try again or contact the school directly.';
-        contactStatus.style.color='#b42318';
-      }finally{
-        contactSubmit.disabled=false; contactSubmit.textContent='Send Enquiry ↗';
-      }
-    });
+    (function(){
+      const contactForm = document.getElementById('contactForm');
+      const contactStatus = document.getElementById('contactFormStatus');
+      const contactSubmit = document.getElementById('contactSubmit');
+
+      contactForm.addEventListener('submit', async e => {
+        e.preventDefault();
+        contactSubmit.disabled = true;
+        contactSubmit.innerHTML = '<span>Sending message…</span>';
+        contactStatus.textContent = 'Submitting your enquiry securely…';
+        contactStatus.style.color = '#2563eb';
+
+        const data = new FormData(contactForm);
+        data.append('_subject', 'New Contact Form Enquiry - Go-Tegs');
+        data.append('_cc', 'sammyemmy237@gmail.com');
+        data.append('_captcha', 'false');
+        data.append('_template', 'table');
+
+        try {
+          const res = await fetch('https://formsubmit.co/ajax/gotegs622@gmail.com', {
+            method: 'POST',
+            body: data,
+            headers: { Accept: 'application/json' }
+          });
+          if(!res.ok) throw new Error('Could not submit form right now.');
+
+          contactForm.reset();
+          contactStatus.textContent = 'Enquiry sent successfully! Our administrative team will reach out to you shortly.';
+          contactStatus.style.color = '#10b981';
+        } catch (err) {
+          contactStatus.textContent = err.message || 'Something went wrong. Please call or message us via WhatsApp directly.';
+          contactStatus.style.color = '#ef4444';
+        } finally {
+          contactSubmit.disabled = false;
+          contactSubmit.innerHTML = '<span>Send Enquiry Message</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+        }
+      });
+    })();
   </script>
 </body>
 </html>

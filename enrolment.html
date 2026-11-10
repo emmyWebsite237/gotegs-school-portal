@@ -3,47 +3,389 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="description" content="Apply for enrolment at Go-Tegs International School."/>
+  <meta name="description" content="Apply for admission at Go-Tegs International School Lagos — Early Years, Primary, Junior and Senior Secondary."/>
   <link rel="icon" type="image/png" href="/assets/img/logo.png"/>
-  <title>Enrolment | Go-Tegs International School</title>
-  <link rel="stylesheet" href="/assets/css/public-site.css"/>
-  <link rel="stylesheet" href="/assets/css/public-header-fix.css"/>
-  <link rel="stylesheet" href="/assets/css/simple-public.css"/>
+  <title>Admissions &amp; Enrolment | Go-Tegs International School</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/style.css"/>
+
+  <style>
+    .page-hero {
+      background: radial-gradient(circle at 15% 25%, rgba(37, 99, 235, 0.15) 0%, transparent 45%),
+                  radial-gradient(circle at 85% 75%, rgba(245, 158, 11, 0.1) 0%, transparent 50%),
+                  linear-gradient(145deg, #060911 0%, #090d16 50%, #0f172a 100%);
+      color: #ffffff;
+      padding: 4.5rem 1.5rem 5.5rem;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .page-hero-inner {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .page-hero .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      background: rgba(37, 99, 235, 0.15);
+      border: 1px solid rgba(96, 165, 250, 0.3);
+      color: #93c5fd;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 1.25rem;
+    }
+
+    .page-hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem, 4.5vw, 3.4rem);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 1.25rem;
+    }
+
+    .page-hero h1 span {
+      background: linear-gradient(135deg, #60a5fa, #fbbf24);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .page-hero p {
+      font-size: 1.1rem;
+      line-height: 1.65;
+      color: #cbd5e1;
+    }
+
+    .enrol-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 4.5rem 1.5rem 6rem;
+    }
+
+    /* Steps Ribbon */
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 4rem;
+    }
+
+    .step-card {
+      background: var(--bg-alt);
+      border: 1px solid var(--border-light);
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .step-num {
+      display: inline-block;
+      font-family: var(--font-display);
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 0.25rem 0.65rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .step-card h3 {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 0.4rem;
+    }
+
+    .step-card p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+
+    /* Enrolment Form Card */
+    .enrol-form-card {
+      background: #ffffff;
+      border: 1px solid var(--border-light);
+      border-radius: 28px;
+      padding: 3.5rem 3rem;
+      box-shadow: var(--shadow-md);
+    }
+
+    .enrol-form-card h2 {
+      font-family: var(--font-display);
+      font-size: 1.85rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 0.5rem;
+    }
+
+    .enrol-form-card .form-sub {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.35rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.35rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 0.45rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 0.9rem 1rem;
+      border: 1px solid var(--border-light);
+      border-radius: 12px;
+      background: #f8fafc;
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      color: var(--text-main);
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      background: #ffffff;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    .form-group textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .btn-submit-enrol {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 1rem 2.25rem;
+      border-radius: 999px;
+      background: var(--primary);
+      color: #ffffff;
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(37, 99, 235, 0.35);
+      transition: all 0.2s ease;
+      margin-top: 0.5rem;
+    }
+
+    .btn-submit-enrol:hover:not(:disabled) {
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+    }
+
+    .btn-submit-enrol:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .enrol-status {
+      min-height: 1.4rem;
+      margin-top: 1.25rem;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    @media (max-width: 860px) {
+      .steps-grid {
+        grid-template-columns: 1fr;
+      }
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+      .enrol-form-card {
+        padding: 2.25rem 1.5rem;
+      }
+    }
+  </style>
 </head>
 <body>
   <div id="navbar-placeholder"></div>
-  <main class="public-site">
-    <div class="content-page narrow">
-      <section class="page-intro">
-        <span class="section-kicker">Home / Enrolment</span>
-        <h1>Start an enrolment conversation.</h1>
-        <div class="page-intro-copy"><p>Fill in the form and the school team can review the information and get in touch about class screening and the next steps.</p></div>
-      </section>
-      <div class="enrolment-layout-public">
-        <form class="school-form-public panel-card-public" id="enrolForm">
-          <label class="full">Your Name (Parent/Guardian)<input name="Parent Name" required/></label>
-          <label class="full">Child's Name<input name="Child's Name" required/></label>
-          <label>Email<input type="email" name="Email" required/></label>
-          <label>Phone<input type="tel" name="Phone" required/></label>
-          <label class="full">How did you hear about us?<select name="How did you hear about us?"><option value="">Select one option</option><option>Search Engine</option><option>Social Media</option><option>TV</option><option>Radio</option><option>Friend or Family</option><option>Other</option></select></label>
-          <label class="full">Other Details<textarea name="Other Details" placeholder="Anything else we should know (intended class, age, etc.)"></textarea></label>
-          <div class="full"><button class="gt-button gt-button--primary" type="submit" id="enrolBtn">Send Enrolment Request</button><p class="status-text" id="enrolMsg" aria-live="polite"></p></div>
-        </form>
-        <aside class="enrolment-note-public"><strong>What happens next</strong><p>Thank you for your interest in Go-Tegs International School. We'll review the request and reach out to arrange class screening before full registration is completed.</p></aside>
+
+  <!-- Hero Header -->
+  <header class="page-hero">
+    <div class="page-hero-inner">
+      <span class="badge-pill">Join Our School</span>
+      <h1>Start Your Child's <span>Admission</span></h1>
+      <p>Give your child the lifelong advantage of a balanced British-Nigerian education focused on character, modern STEM, academic excellence, and leadership.</p>
+    </div>
+  </header>
+
+  <main class="enrol-container">
+    <!-- Admissions Process -->
+    <div class="steps-grid">
+      <div class="step-card">
+        <span class="step-num">Step 01</span>
+        <h3>Submit Application</h3>
+        <p>Complete the online expression of interest form below with your child's basic educational details.</p>
+      </div>
+
+      <div class="step-card">
+        <span class="step-num">Step 02</span>
+        <h3>Assessment &amp; Screening</h3>
+        <p>The admissions office invites you for an informal interaction or diagnostic placement assessment.</p>
+      </div>
+
+      <div class="step-card">
+        <span class="step-num">Step 03</span>
+        <h3>Offer &amp; Enrolment</h3>
+        <p>Receive formal admission offer, complete documentation, and welcome your child to Go-Tegs.</p>
       </div>
     </div>
+
+    <!-- Application Form -->
+    <section class="enrol-form-card">
+      <h2>Student Admission Request</h2>
+      <p class="form-sub">Please fill in the required fields. Our admissions team will review your application and get in touch.</p>
+
+      <form id="enrolForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="parentName">Parent / Guardian Full Name</label>
+            <input id="parentName" name="Parent Name" type="text" placeholder="e.g. Dr. &amp; Mrs. Johnson" required />
+          </div>
+          <div class="form-group">
+            <label for="childName">Child's Full Name</label>
+            <input id="childName" name="Child Name" type="text" placeholder="e.g. Samuel Johnson" required />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="parentEmail">Parent Email Address</label>
+            <input id="parentEmail" name="Email" type="email" placeholder="parent@example.com" required />
+          </div>
+          <div class="form-group">
+            <label for="parentPhone">Phone Number</label>
+            <input id="parentPhone" name="Phone" type="tel" placeholder="e.g. 0803 123 4567" required />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="intendedClass">Intended Class / Division</label>
+            <select id="intendedClass" name="Intended Class" required>
+              <option value="">Select Class of Interest</option>
+              <optgroup label="Early Years">
+                <option value="Preparatory">Preparatory (Ages 1 - 2)</option>
+                <option value="Kindergarten / Pre-K">Kindergarten / Pre-K</option>
+                <option value="Nursery">Nursery</option>
+              </optgroup>
+              <optgroup label="Primary School">
+                <option value="Primary 1 - 3">Lower Primary (Grades 1 - 3)</option>
+                <option value="Primary 4 - 6">Upper Primary (Grades 4 - 6)</option>
+              </optgroup>
+              <optgroup label="Secondary School">
+                <option value="JSS 1 - 3">Junior Secondary (JSS 1 - 3)</option>
+                <option value="SSS 1 - 3 (Science)">Senior Secondary — Science</option>
+                <option value="SSS 1 - 3 (Arts)">Senior Secondary — Arts</option>
+                <option value="SSS 1 - 3 (Commercial)">Senior Secondary — Commercial</option>
+              </optgroup>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="referralSource">How Did You Hear About Us?</label>
+            <select id="referralSource" name="Referral Source">
+              <option value="">Please select</option>
+              <option value="Word of Mouth / Parent Recommendation">Word of Mouth / Parent Recommendation</option>
+              <option value="Google Search">Google Search</option>
+              <option value="Social Media (Facebook, Instagram)">Social Media</option>
+              <option value="School Signage in Isheri Olofin">School Signage / Campus Banner</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="otherNotes">Additional Details / Medical or Educational Background</label>
+          <textarea id="otherNotes" name="Other Details" placeholder="Mention previous school attended, hobbies, or any questions you have for our team..."></textarea>
+        </div>
+
+        <button class="btn-submit-enrol" id="enrolBtn" type="submit">
+          <span>Submit Enrolment Request</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+
+        <p class="enrol-status" id="enrolMsg" role="status" aria-live="polite"></p>
+      </form>
+    </section>
   </main>
+
   <div id="footer-placeholder"></div>
+
   <script src="/assets/js/main.js"></script>
   <script>
-    const enrolForm=document.getElementById('enrolForm'),enrolBtn=document.getElementById('enrolBtn'),enrolMsg=document.getElementById('enrolMsg');
-    enrolForm.addEventListener('submit',async e=>{
-      e.preventDefault(); enrolBtn.disabled=true; enrolBtn.textContent='Sending…'; enrolMsg.textContent='Sending your enrolment request…';
-      const data=new FormData(enrolForm); data.append('_subject','New Enrolment Request - Go-Tegs International School'); data.append('_cc','sammyemmy237@gmail.com'); data.append('_captcha','false'); data.append('_template','table');
-      try{const res=await fetch('https://formsubmit.co/ajax/gotegs622@gmail.com',{method:'POST',body:data,headers:{Accept:'application/json'}});if(!res.ok)throw new Error('Unable to send the form right now.');enrolForm.reset();enrolMsg.textContent='Thank you! Your enrolment request has been sent.';enrolMsg.style.color='#177a55';}
-      catch(err){enrolMsg.textContent=err.message||'Something went wrong. Please try again or contact the school directly.';enrolMsg.style.color='#b42318';}
-      finally{enrolBtn.disabled=false;enrolBtn.textContent='Send Enrolment Request';}
-    });
+    (function(){
+      const enrolForm = document.getElementById('enrolForm');
+      const enrolBtn = document.getElementById('enrolBtn');
+      const enrolMsg = document.getElementById('enrolMsg');
+
+      enrolForm.addEventListener('submit', async e => {
+        e.preventDefault();
+        enrolBtn.disabled = true;
+        enrolBtn.innerHTML = '<span>Submitting Application…</span>';
+        enrolMsg.textContent = 'Transmitting your admission request securely…';
+        enrolMsg.style.color = '#2563eb';
+
+        const data = new FormData(enrolForm);
+        data.append('_subject', 'New Student Admission Application - Go-Tegs');
+        data.append('_cc', 'sammyemmy237@gmail.com');
+        data.append('_captcha', 'false');
+        data.append('_template', 'table');
+
+        try {
+          const res = await fetch('https://formsubmit.co/ajax/gotegs622@gmail.com', {
+            method: 'POST',
+            body: data,
+            headers: { Accept: 'application/json' }
+          });
+          if(!res.ok) throw new Error('Could not submit application at this moment.');
+
+          enrolForm.reset();
+          enrolMsg.textContent = 'Application received successfully! Our admissions coordinator will reach out to you within 24 hours.';
+          enrolMsg.style.color = '#10b981';
+        } catch (err) {
+          enrolMsg.textContent = err.message || 'Something went wrong. Please reach us directly via our helpline or WhatsApp.';
+          enrolMsg.style.color = '#ef4444';
+        } finally {
+          enrolBtn.disabled = false;
+          enrolBtn.innerHTML = '<span>Submit Enrolment Request</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+        }
+      });
+    })();
   </script>
 </body>
 </html>

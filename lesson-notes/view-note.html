@@ -3,90 +3,232 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lesson Note | Go-Tegs International School</title>
+  <title>Lesson Note View | Go-Tegs International School</title>
+  <link rel="icon" type="image/png" href="/assets/img/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/assets/css/style.css" />
-  <link rel="stylesheet" href="/assets/css/public-site.css" />
-  <link rel="stylesheet" href="/assets/css/lesson-notes-public.css" />
   <style>
-    .document-preview{margin-top:1.25rem;background:var(--paper,#fff);border:1px solid var(--border,#e5e7eb);border-radius:var(--radius,18px);overflow:hidden;box-shadow:0 10px 30px rgba(15,23,42,.06)}
-    .document-preview-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.9rem 1rem;border-bottom:1px solid var(--border,#e5e7eb);background:#fff;flex-wrap:wrap}
-    .document-preview-head small{color:#667085}
-    .document-preview-frame{display:block;width:100%;height:min(78vh,900px);min-height:600px;border:0;background:#f3f4f6}
-    .document-fallback{padding:1.25rem;text-align:center;color:#667085}
-    .document-fallback a{display:inline-flex;margin-top:.75rem;padding:.65rem 1rem;border-radius:999px;text-decoration:none;background:#123f80;color:#fff;font-weight:700}
-    @media(max-width:700px){.document-preview-frame{min-height:70vh;height:70vh}.document-preview-head{align-items:flex-start}}
+    .viewer-layout {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 5rem;
+    }
+
+    .viewer-top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .viewer-breadcrumb {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .viewer-breadcrumb a {
+      color: var(--primary);
+    }
+
+    .viewer-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .btn-download-note {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.25rem;
+      border-radius: 999px;
+      background: var(--primary);
+      color: #ffffff;
+      font-family: var(--font-display);
+      font-size: 0.88rem;
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
+      transition: all 0.2s ease;
+    }
+
+    .btn-download-note:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.65rem 1.1rem;
+      border-radius: 999px;
+      background: #ffffff;
+      border: 1px solid var(--border-light);
+      color: var(--text-main);
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .btn-back:hover {
+      background: var(--bg-alt);
+    }
+
+    .document-card {
+      background: #ffffff;
+      border: 1px solid var(--border-light);
+      border-radius: 20px;
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+
+    .document-card-header {
+      padding: 1.25rem 1.75rem;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f8fafc;
+    }
+
+    .document-card-header h1 {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .document-card-header small {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .document-preview-frame {
+      display: block;
+      width: 100%;
+      height: 80vh;
+      min-height: 650px;
+      border: 0;
+      background: #f1f5f9;
+    }
+
+    .document-fallback {
+      padding: 3rem 2rem;
+      text-align: center;
+      color: var(--text-muted);
+    }
+
+    .document-fallback h3 {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      color: var(--text-main);
+      margin-bottom: 0.5rem;
+    }
   </style>
 </head>
 <body>
   <div id="navbar-placeholder"></div>
 
-  <main class="page-container">
-    <nav class="breadcrumb" id="noteBreadcrumb">Home / Lesson Notes</nav>
-    <h1 id="noteTitle">Loading note...</h1>
-    <p id="noteMeta">Loading document...</p>
-
-    <section class="document-preview" aria-label="Lesson note document preview">
-      <div class="document-preview-head">
-        <small id="documentName">Lesson note</small>
+  <main class="viewer-layout">
+    <div class="viewer-top-bar">
+      <div class="viewer-breadcrumb" id="noteBreadcrumb">
+        <a href="/index.html">Home</a> / <a href="/student/lesson-notes/index.html">Lesson Notes</a> / Loading…
       </div>
+      <div class="viewer-actions">
+        <a href="javascript:history.back()" class="btn-back">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+          <span>Back</span>
+        </a>
+        <a id="btnDownload" href="#" class="btn-download-note" download>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+          <span>Download DOCX</span>
+        </a>
+      </div>
+    </div>
+
+    <section class="document-card">
+      <div class="document-card-header">
+        <h1 id="noteTitle">Loading note…</h1>
+        <small id="documentName">Word Document</small>
+      </div>
+
       <iframe id="documentFrame" class="document-preview-frame" title="Lesson note preview" allowfullscreen></iframe>
+      
       <div id="documentFallback" class="document-fallback" hidden>
-        The document preview could not be displayed here. Please return to the lesson-note list and try again.
+        <h3>Document Preview</h3>
+        <p>Your browser could not render the online document frame. You can download the complete Word document directly.</p>
+        <a id="btnFallbackDownload" href="#" class="btn-download-note" style="margin-top:1rem;display:inline-flex;" download>
+          Download Note File
+        </a>
       </div>
     </section>
   </main>
 
   <div id="footer-placeholder"></div>
+
   <script src="/assets/js/main.js"></script>
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const className = params.get('class') || '';
-    const term = params.get('term') || '';
-    const subject = params.get('subject') || '';
+    (function(){
+      const params = new URLSearchParams(window.location.search);
+      const className = params.get('class') || '';
+      const term = params.get('term') || '';
+      const subject = params.get('subject') || '';
 
-    function slug(value){
-      return String(value || '').trim().toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
-    }
+      function slug(v){
+        return String(v || '').trim().toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
+      }
 
-    function sectionForClass(value){
-      const c = String(value || '').toLowerCase();
-      return c.startsWith('jss') ? 'jss' : 'ss';
-    }
+      function sectionForClass(v){
+        return String(v || '').toLowerCase().startsWith('jss') ? 'jss' : 'ss';
+      }
 
-    function classFolder(value){
-      const c = String(value || '').trim().toLowerCase();
-      const match = c.match(/(jss|sss|ss)\s*([1-3])/i);
-      return match ? `${match[1].toLowerCase() === 'jss' ? 'jss' : 'ss'}${match[2]}` : slug(c);
-    }
+      function classFolder(v){
+        const m = String(v || '').trim().toLowerCase().match(/(jss|sss|ss)\s*([1-3])/i);
+        return m ? `${m[1].toLowerCase() === 'jss' ? 'jss' : 'ss'}${m[2]}` : slug(v);
+      }
 
-    function termFolder(value){
-      const match = String(value || '').match(/(1|2|3)/);
-      return match ? `term${match[1]}` : slug(value);
-    }
+      function termFolder(v){
+        const m = String(v || '').match(/(1|2|3)/);
+        return m ? `term${m[1]}` : slug(v);
+      }
 
-    function documentUrl(){
-      const section = sectionForClass(className);
-      const klass = classFolder(className);
-      const termFolderName = termFolder(term);
-      const file = `${subject.trim()}.docx`;
-      return `/lesson-notes/documents/${section}/${klass}/${termFolderName}/${encodeURIComponent(file)}`;
-    }
+      function documentUrl(){
+        const sec = sectionForClass(className);
+        const kls = classFolder(className);
+        const tf = termFolder(term);
+        const file = `${subject.trim()}.docx`;
+        return `/lesson-notes/documents/${sec}/${kls}/${tf}/${encodeURIComponent(file)}`;
+      }
 
-    const title = `${subject || 'Lesson Note'} — ${className} — ${term}`;
-    const url = documentUrl();
-    document.title = `${subject || 'Lesson Note'} | Go-Tegs International School`;
-    document.getElementById('noteTitle').textContent = title;
-    document.getElementById('noteMeta').textContent = 'Lesson note document';
-    document.getElementById('noteBreadcrumb').textContent = `Home / Lesson Notes / ${className} / ${term} / ${subject}`;
-    document.getElementById('documentName').textContent = `${subject}.docx`;
+      const fileUrl = documentUrl();
+      document.title = `${subject || 'Lesson Note'} | Go-Tegs International School`;
+      document.getElementById('noteTitle').textContent = `${subject} — ${className} (${term})`;
+      document.getElementById('documentName').textContent = `${subject}.docx`;
+      document.getElementById('btnDownload').href = fileUrl;
+      document.getElementById('btnDownload').download = `${subject}.docx`;
+      document.getElementById('btnFallbackDownload').href = fileUrl;
+      document.getElementById('noteBreadcrumb').innerHTML = `
+        <a href="/index.html">Home</a> / <a href="/student/lesson-notes/index.html">Lesson Notes</a> / <strong>${className}</strong> / <strong>${term}</strong> / ${subject}
+      `;
 
-    // The DOCX is hosted by the same deployed site. Microsoft Office Online renders
-    // the document without exposing the GitHub raw-file URL to students.
-    const viewer = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(window.location.origin + url)}`;
-    const frame = document.getElementById('documentFrame');
-    const fallback = document.getElementById('documentFallback');
-    frame.src = viewer;
-    frame.addEventListener('error', () => { frame.hidden = true; fallback.hidden = false; });
+      // Live Office Viewer
+      const viewer = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(window.location.origin + fileUrl)}`;
+      const frame = document.getElementById('documentFrame');
+      const fallback = document.getElementById('documentFallback');
+      frame.src = viewer;
+
+      frame.addEventListener('error', () => {
+        frame.hidden = true;
+        fallback.hidden = false;
+      });
+    })();
   </script>
 </body>
 </html>
