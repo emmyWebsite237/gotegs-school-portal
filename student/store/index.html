@@ -1,161 +1,559 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Go-Tegs Store | Go-Tegs International School</title>
+  <title>School Store | Go-Tegs International School</title>
+  <link rel="icon" type="image/png" href="/assets/img/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/assets/css/style.css" />
   <link rel="stylesheet" href="/assets/css/portal.css" />
   <style>
-    .category-tabs { display: flex; gap: 0.6rem; margin: 1.5rem 0; flex-wrap: wrap; }
-    .category-tab {
-      font-family: var(--font-display); font-weight: 600; font-size: 0.9rem;
-      padding: 0.6rem 1.2rem; border-radius: 999px; border: 1px solid var(--border);
-      background: var(--paper); cursor: pointer;
+    .store-layout {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem 4rem;
     }
-    .category-tab.active { background: var(--teal); color: #fff; border-color: var(--teal); }
 
+    .store-header {
+      margin-bottom: 2rem;
+    }
+    .store-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--primary-light, #eff6ff);
+      color: var(--primary, #2563eb);
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      margin-bottom: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .store-header h1 {
+      font-family: var(--font-display, 'Plus Jakarta Sans', sans-serif);
+      font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+      font-weight: 800;
+      color: #0f172a;
+      margin: 0 0 0.5rem;
+      letter-spacing: -0.03em;
+    }
+    .store-header p {
+      color: #64748b;
+      max-width: 700px;
+      margin: 0;
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    /* Category Navigation */
+    .category-tabs {
+      display: flex;
+      gap: 0.6rem;
+      margin: 1.75rem 0 1.5rem;
+      flex-wrap: wrap;
+    }
+    .category-tab {
+      font-family: var(--font-display, 'Plus Jakarta Sans', sans-serif);
+      font-weight: 600;
+      font-size: 0.9rem;
+      padding: 0.65rem 1.4rem;
+      border-radius: 999px;
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+      color: #475569;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+    .category-tab:hover {
+      border-color: #cbd5e1;
+      background: #f8fafc;
+      color: #0f172a;
+    }
+    .category-tab.active {
+      background: #2563eb;
+      color: #ffffff;
+      border-color: #2563eb;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
+    }
+
+    /* Product Grid */
     .store-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 1.1rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 3.5rem;
     }
     .store-card {
-      border: 1px solid var(--border); border-radius: var(--radius); background: var(--paper);
-      overflow: hidden; display: flex; flex-direction: column;
+      border: 1px solid #e2e8f0;
+      border-radius: 18px;
+      background: #ffffff;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.03);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     }
-    .store-card .thumb { width: 100%; height: 130px; object-fit: cover; background: var(--teal-light); }
-    .store-card .thumb-placeholder {
-      width: 100%; height: 130px; background: var(--teal-light); display: flex;
-      align-items: center; justify-content: center; color: var(--teal-dark); font-size: 0.78rem;
+    .store-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.07);
+      border-color: #cbd5e1;
     }
-    .store-card .body { padding: 0.9rem; display: flex; flex-direction: column; gap: 0.5rem; flex: 1; }
-    .store-card .name { font-family: var(--font-display); font-weight: 600; font-size: 0.92rem; }
-    .store-card .price { color: var(--teal-dark); font-weight: 700; }
-    .store-card .unavailable { color: var(--slate); font-style: italic; font-size: 0.85rem; }
-    .store-card .qty-row { display: flex; align-items: center; gap: 0.5rem; margin-top: auto; }
-    .store-card .qty-row input {
-      width: 60px; padding: 0.4rem; border: 1px solid var(--border); border-radius: 6px; text-align: center;
+    .store-card .thumb-wrap {
+      width: 100%;
+      height: 140px;
+      background: linear-gradient(135deg, #f8fafc, #edf2f7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .store-card .thumb {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .store-card .thumb-icon {
+      width: 48px;
+      height: 48px;
+      color: #94a3b8;
+      stroke-width: 1.5;
+    }
+    .store-card .body {
+      padding: 1.15rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      flex: 1;
+    }
+    .store-card .name {
+      font-family: var(--font-display, 'Plus Jakarta Sans', sans-serif);
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: #0f172a;
+      line-height: 1.4;
+    }
+    .store-card .price {
+      color: #2563eb;
+      font-family: var(--font-display, 'Plus Jakarta Sans', sans-serif);
+      font-weight: 800;
+      font-size: 1.1rem;
+    }
+    .store-card .unavailable {
+      color: #94a3b8;
+      font-style: italic;
+      font-size: 0.85rem;
+    }
+    .store-card .qty-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.6rem;
+      margin-top: auto;
+      padding-top: 0.75rem;
+      border-top: 1px dashed #e2e8f0;
+    }
+    .store-card .qty-row label {
+      font-weight: 600;
+      font-size: 0.82rem;
+      color: #64748b;
+    }
+    .qty-control {
+      display: flex;
+      align-items: center;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      background: #f8fafc;
+      overflow: hidden;
+    }
+    .qty-btn {
+      border: 0;
+      background: transparent;
+      width: 28px;
+      height: 32px;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #475569;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: background 0.15s;
+    }
+    .qty-btn:hover {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+    .qty-input {
+      width: 44px;
+      height: 32px;
+      padding: 0;
+      border: 0;
+      background: #ffffff;
+      text-align: center;
+      font-weight: 700;
+      font-size: 0.92rem;
+      color: #0f172a;
+      -moz-appearance: textfield;
+    }
+    .qty-input::-webkit-outer-spin-button,
+    .qty-input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
     }
 
-    #cartSection {
-      margin-top: 3rem; padding: 1.5rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--paper);
+    /* Order / Checkout Section */
+    .order-section {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 24px;
+      padding: clamp(1.5rem, 3vw, 2.5rem);
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.05);
     }
-    #cartItems { margin: 1rem 0; }
-    .cart-row { display: flex; justify-content: space-between; padding: 0.4rem 0; border-bottom: 1px solid var(--border); font-size: 0.92rem; }
-    #cartTotal { text-align: right; font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; margin-top: 0.75rem; }
+    .order-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+    @media (max-width: 860px) {
+      .order-grid {
+        grid-template-columns: 1fr;
+        gap: 1.75rem;
+      }
+    }
 
-    .order-form { margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0.6rem; max-width: 480px; }
-    .order-form label { font-family: var(--font-display); font-weight: 600; font-size: 0.85rem; }
-    .order-form input { padding: 0.7rem 0.8rem; border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem; }
+    .order-cart-col h2,
+    .order-form-col h2 {
+      font-family: var(--font-display, 'Plus Jakarta Sans', sans-serif);
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 0 0 1rem;
+      letter-spacing: -0.02em;
+    }
+    .cart-box {
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      background: #f8fafc;
+      padding: 1.25rem;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .cart-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.65rem 0;
+      border-bottom: 1px solid #e2e8f0;
+      font-size: 0.92rem;
+      color: #334155;
+    }
+    .cart-row:last-child {
+      border-bottom: 0;
+    }
+    .cart-row-price {
+      font-weight: 700;
+      color: #0f172a;
+    }
+    .cart-total-box {
+      margin-top: 1rem;
+      padding: 1rem 1.25rem;
+      background: #ffffff;
+      border: 2px solid #e2e8f0;
+      border-radius: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-display, 'Plus Jakarta Sans', sans-serif);
+    }
+    .cart-total-label {
+      font-weight: 700;
+      color: #475569;
+      font-size: 1rem;
+    }
+    .cart-total-amount {
+      font-weight: 800;
+      color: #2563eb;
+      font-size: 1.35rem;
+    }
 
+    /* Bank Account Card */
+    .bank-card {
+      margin-top: 1.25rem;
+      background: linear-gradient(135deg, #090d16 0%, #1e293b 100%);
+      color: #ffffff;
+      padding: 1.25rem;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.15);
+    }
+    .bank-card-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #94a3b8;
+      font-weight: 700;
+      margin-bottom: 0.6rem;
+    }
+    .bank-detail-item {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.88rem;
+      padding: 0.35rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .bank-detail-item:last-child {
+      border-bottom: 0;
+    }
+    .bank-detail-item span {
+      color: #cbd5e1;
+    }
+    .bank-detail-item strong {
+      color: #ffffff;
+      font-family: var(--font-display, 'Plus Jakarta Sans', sans-serif);
+    }
+
+    /* Disclaimer */
     .disclaimer {
-      background: #fff7ed; border-left: 3px solid #d97706; padding: 0.9rem 1.1rem;
-      border-radius: 0 8px 8px 0; font-size: 0.85rem; color: #92400e; margin-top: 1rem;
+      margin-top: 1rem;
+      padding: 0.85rem 1rem;
+      background: #fffbeb;
+      border-left: 4px solid #f59e0b;
+      border-radius: 0 10px 10px 0;
+      font-size: 0.82rem;
+      line-height: 1.5;
+      color: #92400e;
     }
 
-    .bank-details {
-      background: var(--teal-light); border-left: 3px solid var(--teal); padding: 1rem 1.2rem;
-      border-radius: 0 8px 8px 0; margin-top: 1rem; font-size: 0.92rem;
+    /* Form */
+    .order-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
     }
-    .bank-details strong { display: block; font-family: var(--font-display); margin-bottom: 0.3rem; }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .form-group label {
+      font-family: var(--font-display, 'Plus Jakarta Sans', sans-serif);
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: #1e293b;
+    }
+    .form-group input {
+      padding: 0.75rem 0.95rem;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-family: var(--font-body, 'Inter', sans-serif);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-group input:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+    .btn-submit-order {
+      background: #2563eb;
+      color: #ffffff;
+      border: 0;
+      border-radius: 12px;
+      padding: 0.9rem 1.5rem;
+      font-family: var(--font-display, 'Plus Jakarta Sans', sans-serif);
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: background 0.2s, transform 0.1s;
+      margin-top: 0.5rem;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+    }
+    .btn-submit-order:hover {
+      background: #1d4ed8;
+      transform: translateY(-1px);
+    }
+    .btn-submit-order:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+      transform: none;
+    }
 
-    #orderMsg { margin-top: 0.9rem; font-size: 0.9rem; font-weight: 600; }
+    #orderMsg {
+      margin-top: 0.75rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      line-height: 1.5;
+    }
+
+    .empty-state {
+      padding: 2.5rem 1rem;
+      text-align: center;
+      color: #64748b;
+      font-size: 0.95rem;
+    }
   </style>
 </head>
 <body class="student-shell-page">
   <div id="navbar-placeholder"></div>
 
   <main class="page-container">
-    <nav class="breadcrumb">Student / Store</nav>
-    <h1>Go-Tegs Store</h1>
-    <p>Browse school books and stationery below. There's no limit on quantity — order as much as you need. Set quantities for what you'd like, then place your order at the bottom of the page.</p>
+    <div class="store-layout">
+      <!-- Breadcrumb -->
+      <nav class="breadcrumb" style="margin-bottom: 1.25rem;">
+        <a href="/student/dashboard.html" style="color: #64748b; text-decoration: none;">Student Portal</a>
+        <span style="margin: 0 0.5rem; color: #94a3b8;">/</span>
+        <span style="color: #0f172a; font-weight: 600;">Store</span>
+      </nav>
 
-    <div class="category-tabs" id="categoryTabs"></div>
-
-    <div class="store-grid" id="storeGrid"></div>
-
-    <div id="cartSection">
-      <h2>Your Order</h2>
-      <div id="cartItems"><p class="empty-state">No items selected yet.</p></div>
-      <div id="cartTotal"></div>
-
-      <div class="disclaimer">
-        Please only place an order if you intend to pay and collect it. Kindly do not place test orders just to
-        check if the store is working — this takes up staff time preparing orders that are never collected or paid for.
+      <!-- Store Header -->
+      <div class="store-header">
+        <div class="store-badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          Go-Tegs Official Bookstore & Stationery
+        </div>
+        <h1>School Store & Bookshop</h1>
+        <p>Order official textbooks, workbooks, and stationery items directly. Simply specify the quantities you require, view your instant total, and complete your order below.</p>
       </div>
 
-      <form class="order-form" id="orderForm">
-        <label for="buyerName">Your Name (person paying)</label>
-        <input type="text" id="buyerName" required />
+      <!-- Categories -->
+      <div class="category-tabs" id="categoryTabs"></div>
 
-        <label for="receiverName">Name of Person Receiving the Order in School</label>
-        <input type="text" id="receiverName" required />
+      <!-- Products Grid -->
+      <div class="store-grid" id="storeGrid">
+        <div class="empty-state" style="grid-column: 1/-1;">Loading available products…</div>
+      </div>
 
-        <label for="senderBankName">Name on the Bank Account Used to Pay</label>
-        <input type="text" id="senderBankName" required placeholder="So we can match your payment to your order" />
+      <!-- Order & Checkout Section -->
+      <section class="order-section" id="cartSection">
+        <div class="order-grid">
+          <!-- Left: Cart & Payment Info -->
+          <div class="order-cart-col">
+            <h2>Your Order Summary</h2>
+            <div class="cart-box" id="cartItems">
+              <p class="empty-state" style="padding: 1.5rem 0;">No items selected yet. Adjust quantities above.</p>
+            </div>
+            
+            <div class="cart-total-box">
+              <span class="cart-total-label">Total Amount:</span>
+              <span class="cart-total-amount" id="cartTotal">₦0</span>
+            </div>
 
-        <div class="bank-details">
-          <strong>Payment Details</strong>
-          Account Number: 3015286007<br />
-          Bank: First Bank PLC<br />
-          Account Name: Akhimien Glory Osas
+            <!-- Bank Details Card -->
+            <div class="bank-card">
+              <div class="bank-card-title">School Payment Account</div>
+              <div class="bank-detail-item">
+                <span>Bank Name:</span>
+                <strong>First Bank PLC</strong>
+              </div>
+              <div class="bank-detail-item">
+                <span>Account Number:</span>
+                <strong>3015286007</strong>
+              </div>
+              <div class="bank-detail-item">
+                <span>Account Name:</span>
+                <strong>Akhimien Glory Osas</strong>
+              </div>
+            </div>
+
+            <div class="disclaimer">
+              <strong>Order Policy:</strong> Please only place an order if you intend to pay and collect it. Test orders cause unnecessary administrative delays.
+            </div>
+          </div>
+
+          <!-- Right: Order Form -->
+          <div class="order-form-col">
+            <h2>Order Details</h2>
+            <form class="order-form" id="orderForm">
+              <div class="form-group">
+                <label for="buyerName">Your Name (Person Paying)</label>
+                <input type="text" id="buyerName" required placeholder="e.g. Mr. Emmanuel Akhimien" />
+              </div>
+
+              <div class="form-group">
+                <label for="receiverName">Student / Person Receiving in School</label>
+                <input type="text" id="receiverName" required placeholder="e.g. Marvelous Akhimien (JSS 2)" />
+              </div>
+
+              <div class="form-group">
+                <label for="senderBankName">Name on the Bank Account Used to Pay</label>
+                <input type="text" id="senderBankName" required placeholder="Used to verify and match your bank transfer" />
+              </div>
+
+              <button type="submit" class="btn-submit-order" id="submitOrderBtn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                Submit Order
+              </button>
+              <p id="orderMsg"></p>
+            </form>
+          </div>
         </div>
-
-        <button type="submit" class="btn" id="submitOrderBtn" style="margin-top:1rem;">Submit Order</button>
-        <p id="orderMsg"></p>
-      </form>
+      </section>
     </div>
   </main>
 
-  
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/assets/js/main.js"></script>
-  <script src="/assets/js/supabase-config.js"></script>
   <script>
     const DEFAULT_CATEGORIES = ["Books", "Stationery"];
     let allProducts = [];
     let activeCategory = "Books";
     const cart = {}; // { productId: { name, price, qty } }
 
-    // Case-insensitive helper so "Books" and "books" are treated as the same category
     function normalizeCat(cat) {
       const match = DEFAULT_CATEGORIES.find(c => c.toLowerCase() === String(cat).toLowerCase());
       return match || cat;
     }
 
     async function loadProducts() {
-      const { data, error } = await supabaseClient
-        .from('products')
-        .select('*')
-        .order('category', { ascending: true })
-        .order('display_order', { ascending: true });
+      const grid = document.getElementById('storeGrid');
+      try {
+        const res = await fetch('/api/store-products');
+        if (!res.ok) throw new Error('Could not fetch products');
+        const data = await res.json();
+        
+        const rawProducts = data.products || [];
+        allProducts = rawProducts.map(p => ({ ...p, category: normalizeCat(p.category) }));
 
-      if (error) {
-        document.getElementById('storeGrid').innerHTML = `<p class="empty-state">Could not load products.</p>`;
-        return;
-      }
+        if (!allProducts.length) {
+          grid.innerHTML = `<p class="empty-state" style="grid-column: 1/-1;">No products currently listed in the store.</p>`;
+          return;
+        }
 
-      // Normalize each product's category so mismatched capitalization doesn't create duplicate tabs
-      allProducts = data.map(p => ({ ...p, category: normalizeCat(p.category) }));
+        const extraCategories = [...new Set(allProducts.map(p => p.category))].filter(c => !DEFAULT_CATEGORIES.includes(c));
+        const categories = [...DEFAULT_CATEGORIES, ...extraCategories];
 
-      const extraCategories = [...new Set(allProducts.map(p => p.category))].filter(c => !DEFAULT_CATEGORIES.includes(c));
-      const categories = [...DEFAULT_CATEGORIES, ...extraCategories];
+        document.getElementById('categoryTabs').innerHTML = categories.map(cat =>
+          `<button class="category-tab ${cat === activeCategory ? 'active' : ''}" data-cat="${cat}">
+            ${cat === 'Books' ? '📚' : (cat === 'Stationery' ? '✏️' : '📦')} ${cat}
+          </button>`
+        ).join('');
 
-      document.getElementById('categoryTabs').innerHTML = categories.map(cat =>
-        `<button class="category-tab ${cat === activeCategory ? 'active' : ''}" data-cat="${cat}">${cat}</button>`
-      ).join('');
-
-      document.querySelectorAll('.category-tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-          document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
-          tab.classList.add('active');
-          activeCategory = tab.dataset.cat;
-          renderGrid();
+        document.querySelectorAll('.category-tab').forEach(tab => {
+          tab.addEventListener('click', () => {
+            document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            activeCategory = tab.dataset.cat;
+            renderGrid();
+          });
         });
-      });
 
-      renderGrid();
+        renderGrid();
+      } catch (err) {
+        console.error('Error loading store products:', err);
+        grid.innerHTML = `<p class="empty-state" style="grid-column: 1/-1; color: #dc2626;">Could not load products right now. Please check your connection and try again.</p>`;
+      }
     }
 
     function renderGrid() {
@@ -163,22 +561,41 @@
       const grid = document.getElementById('storeGrid');
 
       if (!items.length) {
-        grid.innerHTML = `<p class="empty-state">No products in this category yet.</p>`;
+        grid.innerHTML = `<p class="empty-state" style="grid-column: 1/-1;">No items found in ${activeCategory}.</p>`;
         return;
       }
 
       grid.innerHTML = items.map(p => {
         const available = p.price !== null && p.price !== undefined;
+        const currentQty = cart[p.id]?.qty || 0;
+        const isBook = p.category === 'Books';
+
         return `
           <div class="store-card">
-            ${p.image_url ? `<img class="thumb" src="${p.image_url}" alt="${p.name}" />` : `<div class="thumb-placeholder">No image</div>`}
+            <div class="thumb-wrap">
+              ${p.image_url ? 
+                `<img class="thumb" src="${p.image_url}" alt="${p.name}" />` : 
+                `<svg class="thumb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  ${isBook ? 
+                    '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>' : 
+                    '<path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/>'}
+                </svg>`
+              }
+            </div>
             <div class="body">
               <div class="name">${p.name}</div>
-              ${available ? `<div class="price">₦${Number(p.price).toLocaleString()}</div>` : `<div class="unavailable">Unavailable yet</div>`}
+              ${available ? 
+                `<div class="price">₦${Number(p.price).toLocaleString()}</div>` : 
+                `<div class="unavailable">Price pending</div>`
+              }
               ${available ? `
                 <div class="qty-row">
-                  <label style="font-weight:500; font-size:0.85rem;">Qty:</label>
-                  <input type="number" min="0" value="${cart[p.id]?.qty || 0}" data-id="${p.id}" data-name="${p.name}" data-price="${p.price}" class="qty-input" />
+                  <label>Quantity:</label>
+                  <div class="qty-control">
+                    <button type="button" class="qty-btn" onclick="updateQty('${p.id}', -1)">−</button>
+                    <input type="number" min="0" value="${currentQty}" data-id="${p.id}" data-name="${p.name}" data-price="${p.price}" class="qty-input" />
+                    <button type="button" class="qty-btn" onclick="updateQty('${p.id}', 1)">+</button>
+                  </div>
                 </div>
               ` : ''}
             </div>
@@ -187,17 +604,32 @@
       }).join('');
 
       grid.querySelectorAll('.qty-input').forEach(input => {
-        input.addEventListener('input', () => {
+        input.addEventListener('change', () => {
           const id = input.dataset.id;
           const qty = Math.max(0, parseInt(input.value) || 0);
-          if (qty === 0) {
-            delete cart[id];
-          } else {
-            cart[id] = { name: input.dataset.name, price: parseFloat(input.dataset.price), qty };
-          }
-          renderCart();
+          setItemQty(id, input.dataset.name, parseFloat(input.dataset.price), qty);
         });
       });
+    }
+
+    window.updateQty = function(id, delta) {
+      const p = allProducts.find(item => String(item.id) === String(id));
+      if (!p) return;
+      const current = cart[id]?.qty || 0;
+      const next = Math.max(0, current + delta);
+      setItemQty(id, p.name, parseFloat(p.price), next);
+      
+      const input = document.querySelector(`.qty-input[data-id="${id}"]`);
+      if (input) input.value = next;
+    };
+
+    function setItemQty(id, name, price, qty) {
+      if (qty === 0) {
+        delete cart[id];
+      } else {
+        cart[id] = { name, price, qty };
+      }
+      renderCart();
     }
 
     function renderCart() {
@@ -205,8 +637,8 @@
       const entries = Object.values(cart);
 
       if (!entries.length) {
-        cartItemsEl.innerHTML = `<p class="empty-state">No items selected yet.</p>`;
-        document.getElementById('cartTotal').textContent = '';
+        cartItemsEl.innerHTML = `<p class="empty-state" style="padding: 1.5rem 0;">No items selected yet. Adjust quantities above.</p>`;
+        document.getElementById('cartTotal').textContent = '₦0';
         return;
       }
 
@@ -214,10 +646,15 @@
       cartItemsEl.innerHTML = entries.map(item => {
         const subtotal = item.price * item.qty;
         total += subtotal;
-        return `<div class="cart-row"><span>${item.name} × ${item.qty}</span><span>₦${subtotal.toLocaleString()}</span></div>`;
+        return `
+          <div class="cart-row">
+            <span><strong>${item.name}</strong> × ${item.qty}</span>
+            <span class="cart-row-price">₦${subtotal.toLocaleString()}</span>
+          </div>
+        `;
       }).join('');
 
-      document.getElementById('cartTotal').textContent = `Total: ₦${total.toLocaleString()}`;
+      document.getElementById('cartTotal').textContent = `₦${total.toLocaleString()}`;
     }
 
     document.getElementById('orderForm').addEventListener('submit', async (e) => {
@@ -227,7 +664,7 @@
 
       if (!entries.length) {
         msg.style.color = '#d97706';
-        msg.textContent = 'Please select at least one item before ordering.';
+        msg.textContent = 'Please select at least one item before submitting an order.';
         return;
       }
 
@@ -237,7 +674,7 @@
 
       if (!buyerName || !receiverName || !senderBankName) {
         msg.style.color = '#d97706';
-        msg.textContent = 'Please fill in all fields.';
+        msg.textContent = 'Please fill in all the required form fields.';
         return;
       }
 
@@ -245,14 +682,14 @@
       const itemsList = entries.map(item => {
         const subtotal = item.price * item.qty;
         total += subtotal;
-        return `${item.name} x${item.qty} = ₦${subtotal.toLocaleString()}`;
+        return `${item.name} × ${item.qty} = ₦${subtotal.toLocaleString()}`;
       }).join('\n');
 
       const btn = document.getElementById('submitOrderBtn');
       btn.disabled = true;
-      btn.textContent = 'Submitting...';
-      msg.style.color = 'var(--slate)';
-      msg.textContent = 'Submitting your order...';
+      btn.innerHTML = 'Submitting order…';
+      msg.style.color = '#64748b';
+      msg.textContent = 'Submitting your order request...';
 
       const payload = {
         "Buyer's Name": buyerName,
@@ -273,20 +710,20 @@
           body: JSON.stringify(payload)
         });
 
-        if (!res.ok) throw new Error("Failed to send");
+        if (!res.ok) throw new Error("Submission failed");
 
-        msg.style.color = '#2c8c87';
-        msg.textContent = "Order submitted! Please make payment to the account details above and send proof of payment to the whatsapp number, 08066525319.";
+        msg.style.color = '#10b981';
+        msg.innerHTML = "✅ <strong>Order submitted successfully!</strong> Please make payment to the First Bank account shown above and send your proof of payment via WhatsApp to <strong>08066525319</strong>.";
         document.getElementById('orderForm').reset();
         Object.keys(cart).forEach(k => delete cart[k]);
         renderGrid();
         renderCart();
       } catch (err) {
         msg.style.color = '#dc2626';
-        msg.textContent = "Something went wrong submitting your order. Please try again.";
+        msg.textContent = "Something went wrong submitting your order. Please try again or contact school admin.";
       } finally {
         btn.disabled = false;
-        btn.textContent = 'Submit Order';
+        btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg> Submit Order`;
       }
     });
 
