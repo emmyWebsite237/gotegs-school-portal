@@ -3,49 +3,184 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Student Dashboard | Go-Tegs</title>
+  <title>Student Dashboard | Go-Tegs International School</title>
+  <link rel="icon" type="image/png" href="/assets/img/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/assets/css/style.css" />
   <link rel="stylesheet" href="/assets/css/portal.css" />
 </head>
 <body class="student-shell-page">
   <div id="navbar-placeholder"></div>
-  <main class="portal-dashboard">
-    <div class="dashboard-topline"><span>Go-Tegs / Private Student Workspace</span><span id="portalDate">Today</span></div>
 
+  <main class="portal-dashboard">
+    <div class="dashboard-topline">
+      <span>Private Student Workspace</span>
+      <span id="portalDate">Today</span>
+    </div>
+
+    <!-- Student Welcome Hero -->
     <section class="portal-hero" aria-labelledby="dashboardHeading">
       <div class="portal-hero-copy">
-        <div class="portal-kicker">Your school workspace</div>
-        <h1 id="dashboardHeading">Welcome back, <span id="dashName">Student</span>.</h1>
-        <p>Everything here is personal to your student account—results, notes, practice, your profile and the tools the school will unlock next.</p>
-        <div class="portal-identity-row"><span class="portal-identity-chip">ID · <span id="dashStudentId">—</span></span><span class="portal-identity-chip">Class · <span id="dashClass">—</span></span><span class="portal-identity-chip">Session · <span id="dashYear">—</span></span></div>
+        <div class="portal-kicker">Academic Portal Active</div>
+        <h1 id="dashboardHeading">Welcome back, <span id="dashName">Student</span> 👋</h1>
+        <p>Everything personal to your Go-Tegs academic profile is organized here. Check your verified term results, download class notes, or challenge yourself with CBT practice quizzes.</p>
+        
+        <div class="portal-identity-row">
+          <div class="portal-identity-chip">
+            Student ID: <span id="dashStudentId">—</span>
+          </div>
+          <div class="portal-identity-chip">
+            Class: <span id="dashClass">—</span>
+          </div>
+          <div class="portal-identity-chip">
+            Academic Year: <span id="dashYear">—</span>
+          </div>
+        </div>
       </div>
-      <div class="portal-hero-orbit" aria-label="Student profile visual"><span class="portal-orbit-tag a">LEARN</span><span class="portal-orbit-tag b">LEAD</span><span class="portal-orbit-tag c">BECOME</span><div class="portal-orbit-core"><img src="/assets/img/logo.png" data-portal-profile-image alt="Go-Tegs logo" /><span class="portal-profile-initials" data-portal-initials aria-hidden="true"></span></div></div>
     </section>
 
+    <!-- Core Academic Modules -->
     <section class="portal-section" aria-labelledby="workspaceTitle">
-      <div class="portal-section-head"><div><div class="portal-section-label">Your workspace</div><h2 class="portal-section-title" id="workspaceTitle">Choose what you want to do</h2></div><p class="portal-section-note">Tap a card to enter</p></div>
-      <div class="portal-card-grid">
-        <a class="portal-card portal-card--feature span-7" href="/student/profile.html" data-portal-interactive data-tilt-card><div class="portal-card-top"><span class="portal-icon">◉</span><span class="portal-badge">Identity</span></div><h3>Your Profile</h3><p>Review your student details and manage your profile picture.</p><span class="portal-arrow">↗</span></a>
-        <a class="portal-card span-5" href="/student/result/index.html" data-portal-interactive data-tilt-card><div class="portal-card-top"><span class="portal-icon">▥</span><span class="portal-badge">Academic</span></div><h3>Results</h3><p>Use your result PIN to check a released result.</p><span class="portal-arrow">↗</span></a>
-        <a class="portal-card span-5" href="/student/lesson-notes/index.html" data-portal-interactive data-tilt-card><div class="portal-card-top"><span class="portal-icon">▤</span><span class="portal-badge">Study</span></div><h3>Lesson Notes</h3><p>Open notes for your class, term and subjects.</p><span class="portal-arrow">↗</span></a>
-        <a class="portal-card portal-card--dark span-7" href="/student/quiz/" data-portal-interactive data-tilt-card><div class="portal-card-top"><span class="portal-icon">✦</span><span class="portal-badge">Practice</span></div><h3>Quiz &amp; Practice</h3><p>Train your recall and sharpen your knowledge through practice.</p><span class="portal-arrow">↗</span></a>
-        <a class="portal-card span-6" href="/student/quiz-code/" data-portal-interactive data-tilt-card><div class="portal-card-top"><span class="portal-icon">⌘</span><span class="portal-badge">Teacher code</span></div><h3>Quiz Code</h3><p>Preview and start a teacher-assigned test with a code.</p><span class="portal-arrow">↗</span></a>
-        <a class="portal-card span-6" href="/student/store/" data-portal-interactive data-tilt-card><div class="portal-card-top"><span class="portal-icon">◫</span><span class="portal-badge">School</span></div><h3>Store</h3><p>Access school items and place an order from your private portal.</p><span class="portal-arrow">↗</span></a>
+      <div class="portal-section-head">
+        <div>
+          <div class="portal-section-label">Quick Actions</div>
+          <h2 class="portal-section-title" id="workspaceTitle">Academic Modules</h2>
+        </div>
       </div>
-    </section>
 
-    <section class="portal-section" aria-labelledby="futureTitle">
-      <div class="portal-section-head"><div><div class="portal-section-label">Coming next</div><h2 class="portal-section-title" id="futureTitle">More tools will appear here</h2></div><p class="portal-section-note">Inactive until released</p></div>
       <div class="portal-card-grid">
-        <div class="portal-card portal-card--disabled span-6" aria-disabled="true"><div class="portal-card-top"><span class="portal-icon">♜</span><span class="portal-badge">Coming Soon</span></div><h3>Tournaments</h3><p>Competitive school challenges will appear here when the school opens the feature.</p></div>
-        <div class="portal-card portal-card--disabled span-6" aria-disabled="true"><div class="portal-card-top"><span class="portal-icon">▣</span><span class="portal-badge">Coming Soon</span></div><h3>School Leaving Testimonial</h3><p>This module remains inactive until the school makes it available.</p></div>
+        <!-- Results Card -->
+        <a class="portal-card portal-card--blue" href="/student/result/index.html">
+          <div>
+            <div class="portal-card-top">
+              <div class="portal-icon-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+              </div>
+              <span class="portal-badge">Academic Record</span>
+            </div>
+            <h3>Check Results</h3>
+            <p>Access and view your verified term examination results and report sheets using your PIN.</p>
+          </div>
+          <div class="portal-card-footer">
+            <span>View Result Sheet</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </a>
+
+        <!-- Lesson Notes -->
+        <a class="portal-card portal-card--emerald" href="/student/lesson-notes/index.html">
+          <div>
+            <div class="portal-card-top">
+              <div class="portal-icon-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10M6 10h10"/></svg>
+              </div>
+              <span class="portal-badge">Study Materials</span>
+            </div>
+            <h3>Lesson Notes</h3>
+            <p>Download and review approved curriculum notes and teaching materials for all your subjects.</p>
+          </div>
+          <div class="portal-card-footer">
+            <span>Open Study Library</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </a>
+
+        <!-- CBT Quizzes -->
+        <a class="portal-card portal-card--purple" href="/student/quiz/">
+          <div>
+            <div class="portal-card-top">
+              <div class="portal-icon-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+              </div>
+              <span class="portal-badge">Interactive Test</span>
+            </div>
+            <h3>CBT Practice Quiz</h3>
+            <p>Test your knowledge with computer-based questions across science, arts, and commercial subjects.</p>
+          </div>
+          <div class="portal-card-footer">
+            <span>Start Practice</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </a>
+
+        <!-- Teacher Quiz Code -->
+        <a class="portal-card portal-card--amber" href="/student/quiz-code/">
+          <div>
+            <div class="portal-card-top">
+              <div class="portal-icon-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m9 10 2 2-2 2M15 10l-2 2 2 2"/></svg>
+              </div>
+              <span class="portal-badge">Exam Code</span>
+            </div>
+            <h3>Teacher Quiz Code</h3>
+            <p>Enter an assigned 6-digit test code given by your teacher to take a timed classroom assessment.</p>
+          </div>
+          <div class="portal-card-footer">
+            <span>Enter Test Code</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </a>
+
+        <!-- Student Profile -->
+        <a class="portal-card portal-card--cyan" href="/student/profile.html">
+          <div>
+            <div class="portal-card-top">
+              <div class="portal-icon-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
+              </div>
+              <span class="portal-badge">Identity</span>
+            </div>
+            <h3>My Profile</h3>
+            <p>Manage your account settings, update your passport picture, and verify your department details.</p>
+          </div>
+          <div class="portal-card-footer">
+            <span>Manage Profile</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </a>
+
+        <!-- School Store -->
+        <a class="portal-card portal-card--rose" href="/student/store/">
+          <div>
+            <div class="portal-card-top">
+              <div class="portal-icon-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+              </div>
+              <span class="portal-badge">Supplies</span>
+            </div>
+            <h3>School Store</h3>
+            <p>Order school uniforms, sport wears, textbooks, and branded stationery directly through your portal.</p>
+          </div>
+          <div class="portal-card-footer">
+            <span>Browse Items</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </a>
       </div>
-      <div class="portal-focus"><div class="portal-focus-mark">→</div><div><strong>Keep moving</strong><span>Choose one active module above. Your private workspace stays focused and the school can unlock future tools without changing the shell.</span></div></div>
     </section>
   </main>
+
   <script src="/assets/js/main.js"></script>
   <script>
-    (()=>{const raw=localStorage.getItem('gotegs_student_session');if(!raw)return;let s;try{s=JSON.parse(raw)}catch{return}const $=id=>document.getElementById(id);$('dashName').textContent=s.full_name||'Student';$('dashStudentId').textContent=s.student_id||'—';$('dashClass').textContent=(s.class||'—')+(s.dept?' · '+s.dept:'');$('dashYear').textContent=s.year||'Current';$('portalDate').textContent=new Date().toLocaleDateString(undefined,{weekday:'long',month:'short',day:'numeric'});})();
+    (function(){
+      const raw = localStorage.getItem('gotegs_student_session');
+      if (!raw) {
+        window.location.replace('/student/index.html');
+        return;
+      }
+      let s;
+      try { s = JSON.parse(raw); } catch { return; }
+      const $ = id => document.getElementById(id);
+      $('dashName').textContent = s.full_name || 'Student';
+      $('dashStudentId').textContent = s.student_id || '—';
+      $('dashClass').textContent = (s.class || '—') + (s.dept ? ' · ' + s.dept : '');
+      $('dashYear').textContent = s.year || 'Current Session';
+      
+      const options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
+      $('portalDate').textContent = new Date().toLocaleDateString(undefined, options);
+    })();
   </script>
 </body>
 </html>

@@ -1,23 +1,149 @@
-<!-- Private student portal shell: no public site navbar/footer inside the authenticated workspace. -->
-<aside class="portal-rail" aria-label="Student portal navigation" data-portal-shell-version="fade-20260924">
-  <div class="portal-brand"><a class="portal-brand-mark" href="/student/dashboard.html" aria-label="Go-Tegs student dashboard"><img src="/assets/img/logo.png" alt="Go-Tegs logo" /></a><div class="portal-brand-copy"><strong>Go-Tegs</strong><span>Student Portal</span></div></div>
-  <div class="portal-profile-mini"><div class="portal-profile-avatar"><img src="/assets/img/logo.png" data-portal-profile-image alt="Go-Tegs logo" /><span class="portal-profile-initials" data-portal-initials aria-hidden="true"></span></div><div><strong data-portal-name>Student</strong><span data-portal-class>Portal account</span></div></div>
+<!-- Modern Student Portal Sidebar Navigation -->
+<aside class="portal-rail" aria-label="Student portal navigation">
+  <div class="portal-brand">
+    <a class="portal-brand-mark" href="/student/dashboard.html" aria-label="Go-Tegs student dashboard">
+      <img src="/assets/img/logo.png" alt="Go-Tegs logo" />
+    </a>
+    <div class="portal-brand-copy">
+      <strong>Go-Tegs</strong>
+      <span>Student Workspace</span>
+    </div>
+  </div>
+
+  <div class="portal-profile-mini">
+    <div class="portal-profile-avatar">
+      <img src="/assets/img/logo.png" data-portal-profile-image alt="Student profile" />
+      <span class="portal-profile-initials" data-portal-initials aria-hidden="true">GT</span>
+    </div>
+    <div class="portal-profile-details">
+      <strong data-portal-name>Student</strong>
+      <span data-portal-class>Portal Account</span>
+    </div>
+  </div>
+
   <nav class="portal-nav" aria-label="Student workspace">
-    <span class="portal-nav-label">Workspace</span>
-    <a class="portal-nav-link" data-portal-link="dashboard" href="/student/dashboard.html"><span>⌂</span>Dashboard</a>
-    <a class="portal-nav-link" data-portal-link="profile" href="/student/profile.html"><span>◉</span>Profile</a>
-    <a class="portal-nav-link" data-portal-link="results" href="/student/result/index.html"><span>▥</span>Results</a>
-    <a class="portal-nav-link" data-portal-link="notes" href="/student/lesson-notes/index.html"><span>▤</span>Lesson Notes</a>
-    <a class="portal-nav-link" data-portal-link="quiz" href="/student/quiz/"><span>✦</span>Quiz &amp; Practice</a>
-    <a class="portal-nav-link" data-portal-link="quiz-code" href="/student/quiz-code/"><span>⌘</span>Quiz Code</a>
-    <a class="portal-nav-link" data-portal-link="store" href="/student/store/"><span>◫</span>Store</a>
+    <span class="portal-nav-label">Academic Tools</span>
     
-    <span class="portal-nav-label portal-nav-label--spaced">Coming next</span>
-    <span class="portal-nav-link portal-nav-link--disabled" aria-disabled="true"><span>♜</span>Tournaments<em>Coming Soon</em></span>
-    <span class="portal-nav-link portal-nav-link--disabled" aria-disabled="true"><span>▣</span>School Leaving Testimonial<em>Coming Soon</em></span>
+    <a class="portal-nav-link" data-portal-link="dashboard" href="/student/dashboard.html">
+      <svg class="portal-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>Dashboard</span>
+    </a>
+
+    <a class="portal-nav-link" data-portal-link="results" href="/student/result/index.html">
+      <svg class="portal-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      <span>Check Results</span>
+    </a>
+
+    <a class="portal-nav-link" data-portal-link="notes" href="/student/lesson-notes/index.html">
+      <svg class="portal-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10M6 10h10"/></svg>
+      <span>Lesson Notes</span>
+    </a>
+
+    <a class="portal-nav-link" data-portal-link="quiz" href="/student/quiz/">
+      <svg class="portal-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+      <span>CBT Quizzes</span>
+    </a>
+
+    <a class="portal-nav-link" data-portal-link="quiz-code" href="/student/quiz-code/">
+      <svg class="portal-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m9 10 2 2-2 2M15 10l-2 2 2 2"/></svg>
+      <span>Quiz Code</span>
+    </a>
+
+    <a class="portal-nav-link" data-portal-link="store" href="/student/store/">
+      <svg class="portal-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      <span>School Store</span>
+    </a>
+
+    <span class="portal-nav-label portal-nav-label--spaced">Account</span>
+
+    <a class="portal-nav-link" data-portal-link="profile" href="/student/profile.html">
+      <svg class="portal-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
+      <span>My Profile</span>
+    </a>
+
+    <a class="portal-nav-link" href="/index.html">
+      <svg class="portal-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+      <span>School Website</span>
+    </a>
   </nav>
-  <button class="portal-logout" id="portalLogout" type="button"><span>↪</span>Log Out</button>
+
+  <div class="portal-rail-footer">
+    <button class="portal-logout-btn" id="portalLogout" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+      <span>Sign Out</span>
+    </button>
+  </div>
 </aside>
-<header class="portal-mobile-bar"><a class="portal-mobile-brand" href="/student/dashboard.html"><img src="/assets/img/logo.png" alt="Go-Tegs logo" /><span>Go-Tegs <small>Student Portal</small></span></a><button class="portal-mobile-toggle" id="portalMobileToggle" type="button" aria-label="Open student portal menu" aria-expanded="false">☰</button></header>
+
+<!-- Mobile Top Navigation Bar -->
+<header class="portal-mobile-bar">
+  <a class="portal-mobile-brand" href="/student/dashboard.html">
+    <img src="/assets/img/logo.png" alt="Go-Tegs logo" />
+    <div>
+      <strong>Go-Tegs Portal</strong>
+      <span data-portal-name>Student</span>
+    </div>
+  </a>
+  <button class="portal-mobile-toggle" id="portalMobileToggle" type="button" aria-label="Open portal menu" aria-expanded="false">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+  </button>
+</header>
+
 <div class="portal-mobile-scrim" id="portalMobileScrim"></div>
-<aside class="portal-mobile-drawer" id="portalMobileDrawer" aria-label="Mobile student portal menu"><div class="portal-mobile-drawer-head"><div class="portal-profile-mini"><div class="portal-profile-avatar"><img src="/assets/img/logo.png" data-portal-profile-image alt="Go-Tegs logo" /><span class="portal-profile-initials" data-portal-initials aria-hidden="true"></span></div><div><strong data-portal-name>Student</strong><span data-portal-class>Portal account</span></div></div><button id="portalMobileClose" type="button" aria-label="Close menu">×</button></div><nav class="portal-nav" aria-label="Mobile student workspace"><a class="portal-nav-link" data-portal-link="dashboard" href="/student/dashboard.html"><span>⌂</span>Dashboard</a><a class="portal-nav-link" data-portal-link="profile" href="/student/profile.html"><span>◉</span>Profile</a><a class="portal-nav-link" data-portal-link="results" href="/student/result/index.html"><span>▥</span>Results</a><a class="portal-nav-link" data-portal-link="notes" href="/student/lesson-notes/index.html"><span>▤</span>Lesson Notes</a><a class="portal-nav-link" data-portal-link="quiz" href="/student/quiz/"><span>✦</span>Quiz &amp; Practice</a><a class="portal-nav-link" data-portal-link="quiz-code" href="/student/quiz-code/"><span>⌘</span>Quiz Code</a><a class="portal-nav-link" data-portal-link="store" href="/student/store/"><span>◫</span>Store</a><span class="portal-nav-link portal-nav-link--disabled" aria-disabled="true"><span>♜</span>Tournaments<em>Coming Soon</em></span><span class="portal-nav-link portal-nav-link--disabled" aria-disabled="true"><span>▣</span>School Leaving Testimonial<em>Coming Soon</em></span></nav><button class="portal-logout" id="portalLogoutMobile" type="button"><span>↪</span>Log Out</button></aside>
+
+<!-- Mobile Drawer -->
+<aside class="portal-mobile-drawer" id="portalMobileDrawer" aria-label="Mobile student portal menu">
+  <div class="portal-mobile-drawer-head">
+    <div class="portal-profile-mini">
+      <div class="portal-profile-avatar">
+        <img src="/assets/img/logo.png" data-portal-profile-image alt="Student profile" />
+        <span class="portal-profile-initials" data-portal-initials aria-hidden="true">GT</span>
+      </div>
+      <div class="portal-profile-details">
+        <strong data-portal-name>Student</strong>
+        <span data-portal-class>Portal Account</span>
+      </div>
+    </div>
+    <button id="portalMobileClose" class="portal-drawer-close" type="button" aria-label="Close menu">&times;</button>
+  </div>
+
+  <nav class="portal-nav" aria-label="Mobile student workspace">
+    <a class="portal-nav-link" data-portal-link="dashboard" href="/student/dashboard.html">
+      <svg class="portal-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>Dashboard</span>
+    </a>
+    <a class="portal-nav-link" data-portal-link="results" href="/student/result/index.html">
+      <svg class="portal-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      <span>Check Results</span>
+    </a>
+    <a class="portal-nav-link" data-portal-link="notes" href="/student/lesson-notes/index.html">
+      <svg class="portal-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/></svg>
+      <span>Lesson Notes</span>
+    </a>
+    <a class="portal-nav-link" data-portal-link="quiz" href="/student/quiz/">
+      <svg class="portal-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+      <span>CBT Quizzes</span>
+    </a>
+    <a class="portal-nav-link" data-portal-link="quiz-code" href="/student/quiz-code/">
+      <svg class="portal-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/></svg>
+      <span>Quiz Code</span>
+    </a>
+    <a class="portal-nav-link" data-portal-link="store" href="/student/store/">
+      <svg class="portal-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/></svg>
+      <span>Store</span>
+    </a>
+    <a class="portal-nav-link" data-portal-link="profile" href="/student/profile.html">
+      <svg class="portal-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
+      <span>My Profile</span>
+    </a>
+    <a class="portal-nav-link" href="/index.html">
+      <svg class="portal-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+      <span>School Website</span>
+    </a>
+  </nav>
+
+  <button class="portal-logout-btn" id="portalLogoutMobile" type="button" style="margin-top:auto">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+    <span>Sign Out</span>
+  </button>
+</aside>

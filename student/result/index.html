@@ -3,43 +3,247 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Results | Go-Tegs Student Portal</title>
+  <title>Check Results | Go-Tegs Student Portal</title>
+  <link rel="icon" type="image/png" href="/assets/img/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/assets/css/style.css" />
   <link rel="stylesheet" href="/assets/css/portal.css" />
   <style>
-    .result-app{width:100%;max-width:1180px;margin:0 auto;padding:1.2rem 0 3rem;box-sizing:border-box;}body.student-shell-page>.result-app{margin-left:var(--portal-rail-width);max-width:none;width:calc(100vw - var(--portal-rail-width));padding-left:clamp(1rem,3vw,3rem);padding-right:clamp(1rem,3vw,3rem);box-sizing:border-box;}.result-panel{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr);gap:1rem;background:linear-gradient(135deg,#26171c,#4c1d2d 62%,#8a6a32);border-radius:30px;overflow:hidden;box-shadow:0 24px 60px rgba(58,28,35,.16);min-height:420px;}.result-copy{padding:clamp(1.5rem,4vw,3rem);display:flex;flex-direction:column;justify-content:center;color:#fff;}.result-kicker{font:800 .65rem var(--font-display);letter-spacing:.16em;text-transform:uppercase;color:#e9c77b}.result-copy h1{margin:.4rem 0 .65rem;color:#fff;font-size:clamp(2rem,4.2vw,3.4rem);letter-spacing:-.05em}.result-copy p{max-width:590px;color:#eadfe3;font-size:.9rem}.result-identity{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1rem}.result-chip{padding:.42rem .68rem;border:1px solid rgba(255,255,255,.15);border-radius:999px;background:rgba(255,255,255,.05);font:700 .65rem var(--font-display);color:#f4e9df}.result-card{align-self:stretch;margin:1rem;padding:1.15rem;border:1px solid rgba(255,255,255,.12);border-radius:22px;background:rgba(255,255,255,.96);display:flex;flex-direction:column;justify-content:center;box-shadow:0 20px 45px rgba(0,0,0,.12)}.result-card label{display:block;font:800 .75rem var(--font-display);color:#58616a;letter-spacing:.04em;margin-bottom:.4rem}.result-card input{width:100%;box-sizing:border-box;padding:.9rem 1rem;border:1px solid #d7dfe4;border-radius:12px;font-size:1.05rem;letter-spacing:.14em;text-align:center;background:#fbfcfd}.result-card .btn{margin-top:1rem;width:100%;justify-content:center;background:linear-gradient(135deg,#7a2139,#a94b61);color:#fff;border:0}.result-note{margin-top:.85rem;color:#81909a;font-size:.72rem;line-height:1.55}.result-msg{min-height:1.2rem;margin:.7rem 0 0;text-align:center;font-size:.76rem;font-weight:700}.result-meta{margin-top:1rem;padding:.85rem 1rem;border:1px solid #e0e5e8;border-radius:16px;background:#fbfaf8;color:#6e777e;font-size:.75rem}.result-meta strong{color:#2d353b}@media(max-width:1050px){.result-panel{grid-template-columns:1fr}.result-card{margin:0 1rem 1rem}.result-copy{padding-bottom:1rem;}}@media(max-width:899px){body.student-shell-page>.result-app{margin-left:0;width:100%;padding-left:.9rem;padding-right:.9rem;}}
+    .result-app {
+      margin-left: var(--portal-rail-width);
+      padding: 2.25rem 3rem 4rem;
+      min-height: 100vh;
+      box-sizing: border-box;
+      max-width: 1000px;
+    }
+    .result-card-container {
+      background: #ffffff;
+      border: 1px solid var(--portal-border);
+      border-radius: 24px;
+      box-shadow: var(--portal-shadow-sm);
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+    }
+    .result-info-pane {
+      background: linear-gradient(135deg, #090d16 0%, #0f172a 60%, #172554 100%);
+      padding: 3rem 2.5rem;
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .result-kicker {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #93c5fd;
+      margin-bottom: 0.5rem;
+    }
+    .result-info-pane h1 {
+      font-family: var(--font-heading);
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1.25;
+      margin-bottom: 0.75rem;
+    }
+    .result-info-pane p {
+      font-size: 0.92rem;
+      line-height: 1.6;
+      color: #cbd5e1;
+      margin-bottom: 2rem;
+    }
+    .student-chips {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+    .student-chip {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.65rem 0.9rem;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 0.82rem;
+    }
+    .student-chip span:first-child { color: #94a3b8; }
+    .student-chip span:last-child { color: #ffffff; font-weight: 700; }
+    .result-form-pane {
+      padding: 3rem 2.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .result-form-pane h2 {
+      font-family: var(--font-heading);
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--portal-text-main);
+      margin-bottom: 0.35rem;
+    }
+    .result-form-pane p {
+      font-size: 0.88rem;
+      color: var(--portal-text-muted);
+      margin-bottom: 1.5rem;
+    }
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--portal-text-main);
+      margin-bottom: 0.5rem;
+    }
+    .form-group input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 0.95rem 1rem;
+      border: 1px solid var(--portal-border);
+      border-radius: 12px;
+      font-size: 1.15rem;
+      letter-spacing: 0.15em;
+      text-align: center;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+    .form-group input:focus {
+      border-color: var(--portal-primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+    .btn-submit {
+      width: 100%;
+      padding: 0.95rem;
+      border-radius: 12px;
+      background: var(--portal-primary);
+      border: none;
+      color: #ffffff;
+      font-family: var(--font-heading);
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-submit:hover:not(:disabled) {
+      background: var(--portal-primary-hover);
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
+    }
+    .btn-submit:disabled { opacity: 0.7; cursor: not-allowed; }
+    .result-msg {
+      min-height: 1.3rem;
+      margin-top: 1rem;
+      text-align: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+    @media (max-width: 960px) {
+      .result-app { margin-left: 0; padding: 1.5rem 1rem 3rem; }
+      .result-card-container { grid-template-columns: 1fr; }
+      .result-info-pane, .result-form-pane { padding: 2rem 1.5rem; }
+    }
   </style>
 </head>
 <body class="student-shell-page">
   <div id="navbar-placeholder"></div>
+
   <main class="result-app">
-    <section class="result-panel">
-      <div class="result-copy">
-        <span class="result-kicker">Academic record</span>
-        <h1>Check your result.</h1>
-        <p id="welcomeCopy">Your student identity is already connected to this portal. You only need your result PIN to request the released result.</p>
-        <div class="result-identity"><span class="result-chip" id="identityName">Student</span><span class="result-chip" id="identityClass">Class</span><span class="result-chip" id="identityId">ID</span></div>
-        <div class="result-meta"><strong>School session</strong><br><span id="identityYear">Current school year</span></div>
+    <div class="result-card-container">
+      <div class="result-info-pane">
+        <div>
+          <span class="result-kicker">Verified Academic Records</span>
+          <h1>Check Your Term Report</h1>
+          <p>Your student profile is already linked. Just enter your assigned scratch-card result PIN below to unlock your published grades.</p>
+        </div>
+
+        <div class="student-chips">
+          <div class="student-chip">
+            <span>Student Name</span>
+            <span id="identityName">Student</span>
+          </div>
+          <div class="student-chip">
+            <span>Class</span>
+            <span id="identityClass">Class</span>
+          </div>
+          <div class="student-chip">
+            <span>Student ID</span>
+            <span id="identityId">ID</span>
+          </div>
+          <div class="student-chip">
+            <span>Academic Session</span>
+            <span id="identityYear">Session</span>
+          </div>
+        </div>
       </div>
-      <form class="result-card" id="resultForm">
-        <label for="pin">Result PIN</label>
-        <input id="pin" type="password" inputmode="numeric" autocomplete="current-password" placeholder="Enter your PIN" required />
-        <button class="btn" id="checkBtn" type="submit">Check Result</button>
-        <p class="result-msg" id="resultMsg" role="status" aria-live="polite"></p>
-        <p class="result-note">No student ID, class, department or school year entry is required here. Those details are already attached to your signed-in student session.</p>
-      </form>
-    </section>
+
+      <div class="result-form-pane">
+        <h2>Enter Result PIN</h2>
+        <p>Please type the scratch card PIN issued by the school.</p>
+
+        <form id="resultForm">
+          <div class="form-group">
+            <label for="pin">Result PIN</label>
+            <input id="pin" type="password" inputmode="numeric" placeholder="••••••••" autocomplete="current-password" required />
+          </div>
+
+          <button class="btn-submit" id="checkBtn" type="submit">Verify & View Result</button>
+          <p class="result-msg" id="resultMsg" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </div>
   </main>
+
   <script src="/assets/js/main.js"></script>
   <script>
-    (()=>{
-      const raw=localStorage.getItem('gotegs_student_session'); if(!raw){window.location.href='/student/index.html';return;}
-      let s;try{s=JSON.parse(raw)}catch{window.location.href='/student/index.html';return;}
-      const esc=v=>String(v??'—'); document.getElementById('identityName').textContent=esc(s.full_name||'Student');document.getElementById('identityClass').textContent=esc((s.class||'Class')+(s.dept?' · '+s.dept:''));document.getElementById('identityId').textContent=esc(s.student_id||'ID');document.getElementById('identityYear').textContent=esc(s.year||'Current school year');
-      const form=document.getElementById('resultForm'),pin=document.getElementById('pin'),btn=document.getElementById('checkBtn'),msg=document.getElementById('resultMsg');
-      form.addEventListener('submit',async e=>{e.preventDefault();const value=pin.value.trim();if(!value){msg.style.color='#b76e00';msg.textContent='Enter your result PIN.';pin.focus();return;}btn.disabled=true;btn.textContent='Checking…';msg.textContent='';
-        try{const params=new URLSearchParams({student_id:s.student_id,pin:value});const res=await fetch('/api/verify-result?'+params.toString());const data=await res.json().catch(()=>({}));if(!res.ok)throw new Error(data.error||'Could not check your result.');sessionStorage.setItem('gotegs_result_data',JSON.stringify(data));window.location.href='/student/result/view.html';}
-        catch(err){msg.style.color='#c53030';msg.textContent=err.message||'Could not check your result.';btn.disabled=false;btn.textContent='Check Result';}
+    (function(){
+      const raw = localStorage.getItem('gotegs_student_session');
+      if (!raw) { window.location.replace('/student/index.html'); return; }
+      let s;
+      try { s = JSON.parse(raw); } catch { window.location.replace('/student/index.html'); return; }
+
+      const esc = v => String(v ?? '—');
+      document.getElementById('identityName').textContent = esc(s.full_name || 'Student');
+      document.getElementById('identityClass').textContent = esc((s.class || 'Class') + (s.dept ? ' · ' + s.dept : ''));
+      document.getElementById('identityId').textContent = esc(s.student_id || 'ID');
+      document.getElementById('identityYear').textContent = esc(s.year || 'Current Session');
+
+      const form = document.getElementById('resultForm');
+      const pin = document.getElementById('pin');
+      const btn = document.getElementById('checkBtn');
+      const msg = document.getElementById('resultMsg');
+
+      form.addEventListener('submit', async e => {
+        e.preventDefault();
+        const value = pin.value.trim();
+        if(!value) {
+          msg.style.color = '#ef4444';
+          msg.textContent = 'Please enter your Result PIN.';
+          pin.focus();
+          return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = 'Verifying with examination portal…';
+        msg.textContent = '';
+
+        try {
+          const params = new URLSearchParams({ student_id: s.student_id, pin: value });
+          const res = await fetch('/api/verify-result?' + params.toString());
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok) throw new Error(data.error || 'Could not verify result. Please check the PIN.');
+
+          sessionStorage.setItem('gotegs_result_data', JSON.stringify(data));
+          window.location.href = '/student/result/view.html';
+        } catch (err) {
+          msg.style.color = '#ef4444';
+          msg.textContent = err.message || 'Verification failed.';
+          btn.disabled = false;
+          btn.textContent = 'Verify & View Result';
+        }
       });
     })();
   </script>
